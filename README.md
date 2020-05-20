@@ -1,8 +1,8 @@
-# <a href='yohasebe.com/paradocs'>Paradocs</a>
+# <a href='https://yohasebe.com/paradocs'>Paradocs</a>
 
 A Paragraph-Oriented Text Document Presentation System
 
-<a href='yohasebe.com/paradocs'><img src="https://yohasebe.com/paradocs/img/paradocs.png"></a>
+<a href='https://yohasebe.com/paradocs'><img src="https://yohasebe.com/paradocs/img/paradocs.png"></a>
 
 <hr />
 <div id="overview" class="anchor"></div>
