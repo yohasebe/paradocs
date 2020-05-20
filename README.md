@@ -4,7 +4,7 @@ A Paragraph-Oriented Text Document Presentation System
 
 <a href='https://yohasebe.com/paradocs'>https://yohasebe.com/paradocs</a>
 
-<img src="https://yohasebe.com/paradocs/img/paradocs.png" style='width:250px; height:250px;'>
+<img src="https://yohasebe.com/paradocs/img/paradocs.png" width="250px">
 
 <hr />
 <div id="overview" class="anchor"></div>
