@@ -46,7 +46,7 @@ Many available during the presentation can be performed using the mouse, but can
 | `ESC`                     | Enter **overview-mode**; Exit **fullscreen-mode**                           |
 | `s`                       | Show/hide **sticky note**                                                   |
 | `SHIFT+TAB`                     | Finish editing (de-focus) **sticky note**                             |
-| `g`                       | Open **Google** in a new browser tab                                        |
+| `g`                       | Open **Google** in a new browser tab and search text string currently selected |
 
 **TIPS** 
 
