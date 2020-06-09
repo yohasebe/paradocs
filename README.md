@@ -61,6 +61,7 @@ Many available during the presentation can be performed using the mouse, but can
 **Sentence**
 
 Sentences are separated by a single line break (`↩`). In a paragraph, they are treated as adjacent elements, each of which are highlighted one after the other.
+The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used (English, Japanese, etc.). To perform automatic sentence-segmentation, prefix the text with `!!` at the beginning of the text.
 
 **Paragraph**
 
@@ -85,6 +86,17 @@ Sentence #2
 Sentence #3 
 ----
 ```
+
+With the automatic sentence splitting feature, the above can be written as follows:
+
+```text
+----
+!! Sentence #1 Sentence #2 Sentence #3
+----
+```
+
+To perform automatic sentence splitting, prefix the text with `!!` at the beginning of the text. Also, each sentence must end with a sentence delimiter, such as a period or some other punctuation mark.
+
 
 #### How to arrange multiple blocks in a slide
 
@@ -237,7 +249,7 @@ This is also part of main text. {note: This is another note}
 You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 ```
 
-**N.B.** Notes and pop-up images are available in "regular paragraphs" and "unordered/ordered lists" (not available in static paragraphs).
+**N.B.** Notes and pop-up images are available in "regular paragraphs" and "unordered/ordered lists" (not available in static paragraphs). You cannot display notes and pop-up images when the automatic sentence-segmentation function is used. The curly brackets `{ }` and the text inside will be ignored.
 
 #### Quizzes
 
