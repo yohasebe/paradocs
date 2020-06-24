@@ -31,21 +31,22 @@ Paradocs was developed by [Yoichiro Hasebe] (https://yohasebe.com). This site us
 Many available during the presentation can be performed using the mouse, but can also be operated using the keyboard.
 
 
-| Key | Function |
-|:--------------------------|:----------------------------------------------------------------------------|
-| `↓`                       | Move to  the **next** item                                                  |
-| `↑`                       | Move back to the **previous** item                                          |
-| `j`                       | Move to  the **next** item                                                  |
-| `k`                       | Move back to the **previous** item                                          |
-| `SPACE`                   | Move to  the **next** item                                                  |
-| `SHIFT+SPACE`             | Move back to the **previous** item                                          |
+| Key                       | Function                                                                       |
+|:--------------------------|:-------------------------------------------------------------------------------|
+| `↓`                      | Move to  the **next** item                                                     |
+| `↑`                      | Move back to the **previous** item                                             |
+| `j`                       | Move to  the **next** item                                                     |
+| `k`                       | Move back to the **previous** item                                             |
+| `SPACE`                   | Move to  the **next** item                                                     |
+| `SHIFT+SPACE`             | Move back to the **previous** item                                             |
 | `.`                       | Play/Stop **TTS read-aloud**; Play/Stop **video/audio clips** (including YouTube videos); Enlarge/Shrink **pop-up images** |
-| `a`                       | Play/Stop **automatic presentation**                                        |
-| `/`                       | Enter/Exit screen **blackout**                                              |
-| `f`                       | Enter **fullscreen-mode**                                                   |
-| `ESC`                     | Enter **overview-mode**; Exit **fullscreen-mode**                           |
-| `s`                       | Show/hide **sticky note**                                                   |
-| `SHIFT+TAB`                     | Finish editing (de-focus) **sticky note**                             |
+| `a`                       | Play/Stop **automatic presentation**                                           |
+| `/`                       | Enter/Exit screen **blackout**                                                 |
+| `f`                       | Enter **fullscreen-mode**                                                      |
+| `ESC`                     | Enter **overview-mode**; Exit **fullscreen-mode**                              |
+| `s`                       | Show/hide **sticky note**                                                      |
+| `p`                       | Enable/disable **laser pointer** mode                                          |
+| `SHIFT+TAB`               | Finish editing (de-focus) **sticky note**                                      |
 | `g`                       | Open **Google** in a new browser tab and search text string currently selected |
 
 **TIPS** 
@@ -357,7 +358,14 @@ When TTS is available for highlighted content, a speaker icon appears in the upp
 
 You can show your audience what comes to mind during your presentation by writing it in a sticky note. 
 
-You can show or hide the sticky note by clicking its icon at the top right of the presentation screen. The contents of the sticky note will be retained even if the slide changes.
+You can show or hide the sticky note by clicking its icon at the top left of the presentation screen. The contents of the sticky note will be retained even if the slide changes.
+
+#### Laser Pointer
+
+You can change shape/color of your mouse cursor from the ordinary one to a laser-pointer-like colored dot. Click on ● at the top left of the screen to toggle modes.
+
+The color of the modified mouse pointer is determined by the selection for the "accent color" in the setting panel.
+
 
 #### Automatic Presentation
 
