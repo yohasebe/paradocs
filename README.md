@@ -306,10 +306,16 @@ or
 yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
 ```
 
-You can specify the start and end points in the URL of the youtube video. Note that each is represented by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the `&start=x&end=y` format. The following will play from 12 minutes 27 seconds (`x=747`) to 12 minutes 55 seconds (`x=775`) of the video.
+You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the `&start=x&end=y` format. The following will play from 12 minutes 27 seconds (`x=747`) to 12 minutes 55 seconds (`x=775`) of the video.
 
 ```text
 youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&start=747&end=775
+```
+
+You can also specify the start time and the end time by "hour:min:sec" notation, which may be easier for many users.
+
+```text
+youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&start=12:27&end=12:55
 ```
 
 **N.B.** To display a YouTube video on a slide, make sure that the above command is the only block on that slide. If multiple blocks are described, the videos themselves are not displayed, but links to the videos are used.
