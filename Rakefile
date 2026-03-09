@@ -1,6 +1,15 @@
 $LOAD_PATH << File.dirname(__FILE__)
 
-require 'uglifier'
+require 'json'
+require 'rake/testtask'
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/test_*.rb']
+end
+
+task default: :test
 
 CONFIG_FILE = File.expand_path(File.dirname(__FILE__) + "/paradocs.conf")
 CONFIG_JSON = File.read(CONFIG_FILE).gsub("\n", " ").gsub(/\s+/, " ")
@@ -9,6 +18,7 @@ PARA_VERSION = CONFIG["para_version"]
 
 desc "Minify JavaScript files"
 task :minify do
+  require 'uglifier'
   path = File.dirname(__FILE__) + '/public'
   files = ["/js/paradocs.js", "/js/upload.js", "/css/upload.css"]
   puts "Minifying and renameing JS and CSS . . ."

@@ -9,3 +9,8 @@ gem 'unicorn'
 gem 'unicorn-worker-killer'
 gem 'i18n_data'
 gem 'pragmatic_segmenter'
+
+group :test do
+  gem 'rack-test'
+  gem 'minitest'
+end

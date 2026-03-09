@@ -40,7 +40,7 @@ class Parser
     # 改行コードを統一
     @data = text.gsub("\r\n", "\n").gsub("\r", "\n")
     # 最終的な出力を格納する変数
-    @output = ""
+    @output = +""
     # ローディング用gifファイル
     @poster = PREFIX + "img/loading.gif"
   end
