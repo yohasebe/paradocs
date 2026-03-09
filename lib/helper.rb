@@ -675,11 +675,10 @@ div.list-table td {
 }
 
 .reveal i{
-    font-family: 'FontAwesome';
     font-style: normal;
 }
 
-.reveal i.fas.fa-play{
+.reveal i.fa-solid.fa-play{
   color: #F45B69;
 }
 

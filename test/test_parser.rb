@@ -141,7 +141,7 @@ class TestParser < Minitest::Test
     parser = Parser.new(text)
     result = parser.parse
     assert_includes result, "id='eos'"
-    assert_includes result, "fa-coffee"
+    assert_includes result, "fa-mug-hot"
   end
 
   def test_code_block

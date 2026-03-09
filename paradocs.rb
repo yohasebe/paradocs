@@ -22,7 +22,7 @@ class CustomRenderer < Redcarpet::Render::HTML
     end
   end
   def table(header, body)
-    "<table class='table table-condensed table-striped'>" \
+    "<table class='table table-sm table-striped'>" \
       "<thead>#{header}</thead>" \
       "<tbody>#{body}</tbody>" \
     "</table>"

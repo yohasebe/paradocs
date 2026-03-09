@@ -225,17 +225,12 @@ div#accent_color_controller, div#highlight_background_color_controller, div#reso
     opacity: 1.0;
 }
 
-.ctrl-wrapper.scroll-top i.fa {
+.ctrl-wrapper.scroll-top i.fa-solid {
     line-height: inherit;
 }
 
 .ctrl-wrapper.scroll-top {
     visibility: hidden;
-}
-
-span.fas {
-  font-family:'FontAwesome';
-  font-style: normal;
 }
 
 pre {
@@ -300,7 +295,9 @@ span.highlighted{
 }
 
 .table-condensed td,
-.table-condensed th {
+.table-condensed th,
+.table-sm td,
+.table-sm th {
   color: #707070;
   padding: 4px;
   font-size: 0.9em;

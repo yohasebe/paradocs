@@ -14,17 +14,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="<%= PREFIX %>/ico/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="<%= PREFIX %>/ico/favicon-16x16.png">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/reveal.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/theme/simple.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/themes/light-border.css" />
 
     <%= @css %>
-    <!--[if lt IE 9]>
-      <script src="https://cdn.jsdelivr.net/npm/html5shiv.min.js@3.7.2/html5shiv.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
-    <![endif]-->
   </head>
   <body>
     <div class="reveal <%= @if_inverted %>">
@@ -36,36 +33,36 @@
     <div class='additional'>
       <div class='gadgets' id='gadgets'>
         <div class='sticky' data-prevent-swipe>
-          <div class='edit_control'><i class='fa fa-pencil'></i><i class='fa fa-eraser'></i><i class='fa fa-close'></i></div>
+          <div class='edit_control'><i class='fa-solid fa-pencil'></i><i class='fa-solid fa-eraser'></i><i class='fa-solid fa-xmark'></i></div>
           <textarea  class='sticky_editor' spellcheck='false'></textarea>
         </div>
         <div class='note' data-prevent-swipe></div>
         <div class='imagenote' data-prevent-swipe data-enlarged='false'>
-          <div class='enlarge'><span class='fa fa-plus'></span></div>
+          <div class='enlarge'><span class='fa-solid fa-plus'></span></div>
         </div>
       </div>
       <div class='switches'>
         <div id='left_switches'>
-          <span class='left_switch'><span class='fa fa-sticky-note-o' id='sticky_icon'></span></span>
-          <span class='left_switch'><span class='fa fa-circle' id='pointer_icon'></span></span>
-          <span class='left_switch'><span class='fa fa-magic' id='playall_icon'></span></span>
-          <span class='left_switch'><span class='fa fa-volume-up' id='speaker_icon'></span></span>
+          <span class='left_switch'><span class='fa-regular fa-note-sticky' id='sticky_icon'></span></span>
+          <span class='left_switch'><span class='fa-solid fa-circle' id='pointer_icon'></span></span>
+          <span class='left_switch'><span class='fa-solid fa-wand-magic-sparkles' id='playall_icon'></span></span>
+          <span class='left_switch'><span class='fa-solid fa-volume-high' id='speaker_icon'></span></span>
         </div>
         <div id='right_switches'>
-          <span class='fa fa-arrows-v' id='overview_icon'></span>
+          <span class='fa-solid fa-arrows-up-down' id='overview_icon'></span>
         </div>
       </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/js/reveal.js"></script>
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
 
     <script>
       var pconf;
-      jQuery(function($){  
+      jQuery(function($){
 
         var ua = navigator.userAgent.toLowerCase();
         var isMobile = false;
@@ -78,9 +75,9 @@
           var punch_script = document.createElement("script");
           punch_script.src = punch_url;
           document.body.appendChild(punch_script);
-        } 
+        }
 
-        pconf = jQuery.parseJSON('<%= @config %>');
+        pconf = JSON.parse('<%= @config %>');
       });
     </script>
 

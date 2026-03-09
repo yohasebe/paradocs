@@ -75,21 +75,23 @@ class TestApp < Minitest::Test
     assert_includes last_response.body, 'inverted'
   end
 
-  # Verify CDN URLs are present in the layout (used for frontend update checks)
+  # Verify CDN URLs are present in the layout (updated versions)
   def test_layout_contains_cdn_references
     get '/'
     body = last_response.body
-    # jQuery
-    assert_match(/jquery/, body)
-    # Bootstrap
-    assert_match(/bootstrap/, body)
-    # Font Awesome
-    assert_match(/font-awesome|fontawesome/, body)
+    # jQuery 3.7.1
+    assert_match(/jquery@3\.7\.1/, body)
+    # Bootstrap 5.x
+    assert_match(/bootstrap@5/, body)
+    # Font Awesome 6.x
+    assert_match(/font-awesome\/6/, body)
     # Ace editor
-    assert_match(/ace/, body)
+    assert_match(/ace-builds/, body)
+    # jQuery UI 1.14
+    assert_match(/jquery-ui@1\.14/, body)
   end
 
-  # Verify deck page contains Reveal.js reference
+  # Verify deck page contains Reveal.js 5.x reference
   def test_deck_contains_reveal_reference
     post '/deck', {
       text: "----\nTest\n----",
@@ -99,7 +101,10 @@ class TestApp < Minitest::Test
       resolution: "1280x800", wallpaper: "sandpaper.png"
     }
     body = last_response.body
-    assert_match(/reveal/, body)
+    assert_match(/reveal\.js@5/, body)
     assert_match(/tippy/, body)
+    assert_match(/font-awesome\/6/, body)
+    # Font Awesome 6 icon classes
+    assert_match(/fa-solid/, body)
   end
 end

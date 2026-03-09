@@ -334,7 +334,7 @@ jQuery(function($){
       controlsTutorial: true,
       progress: true,
       slideNumber: 'c/t',
-      history: true,
+      hash: true,
       overview: true,
       navigationMode: "default",
       center: true,
@@ -351,33 +351,20 @@ jQuery(function($){
       autoSlideStoppable: true,
       autoPlayMedia: false,
       mouseWheel: true,
-      hideAddressBar: true,
       previewLinks: false,
-      theme: Reveal.getQueryHash().theme,
       transition: 'none',
       transitionSpeed: 'normal',
       viewDistance: 2,
       keyboard: keybindings,
       margin: 0.1
-    });
-  
-    //////////////////// Configure reveal.js ///////////////
-    Reveal.configure(pconf);
-    if(isMobile){
-      Reveal.configure({overview: false, touch: true});
-      $overview_icon.hide();
-    }
+    }).then(function() {
+      //////////////////// Configure reveal.js ///////////////
+      Reveal.configure(pconf);
+      if(isMobile){
+        Reveal.configure({overview: false, touch: true});
+        $overview_icon.hide();
+      }
 
-    //////////////////// Event Listeners ///////////////
-    Reveal.addEventListener('slidechanged', function(event) {
-      stopVideo();
-      stopYoutube();
-      stopSpeechSound();
-      flip_page(event);
-      resetConfig();
-    });
-
-    Reveal.addEventListener('ready', function(event) {
       $current_fragment = $('.current-fragment');
       $('.reveal').css("visibility", "visible");
       $('.fragment').css("visibility", "visible");
@@ -399,12 +386,12 @@ jQuery(function($){
           mouse_mode = "regular";
           $("#highlighted_cursor").hide();
           $("body").css("cursor", "auto");
-          $("#pointer_icon").removeClass("fa-mouse-pointer").addClass("fa-circle");
+          $("#pointer_icon").removeClass("fa-arrow-pointer").addClass("fa-circle");
         } else {
           mouse_mode = "laser";
           $("#highlighted_cursor").show();
           $("body").css("cursor", "none");
-          $("#pointer_icon").removeClass("fa-circle").addClass("fa-mouse-pointer");
+          $("#pointer_icon").removeClass("fa-circle").addClass("fa-arrow-pointer");
         }
       });
 
@@ -421,7 +408,16 @@ jQuery(function($){
       });
     });
 
-    Reveal.addEventListener('fragmentshown', function(event) {
+    //////////////////// Event Listeners ///////////////
+    Reveal.on('slidechanged', function(event) {
+      stopVideo();
+      stopYoutube();
+      stopSpeechSound();
+      flip_page(event);
+      resetConfig();
+    });
+
+    Reveal.on('fragmentshown', function(event) {
       $current_fragment = $('.current-fragment');
       stopVideo();
       stopYoutube();
@@ -433,12 +429,12 @@ jQuery(function($){
       }
     });
 
-    Reveal.addEventListener('fragmenthidden', function(event) {
+    Reveal.on('fragmenthidden', function(event) {
       $current_fragment = $('.current-fragment');
       stopVideo();
       stopYoutube();
       stopSpeechSound();
-      move_to_fragment(true);    
+      move_to_fragment(true);
       if(!$current_fragment.is(':empty') && typeof($current_fragment[0]) != "undefined"){
         scrollIfNecessary($current_fragment);
       }
@@ -447,7 +443,7 @@ jQuery(function($){
       }
     });
 
-    Reveal.addEventListener('overviewshown', function(event) {
+    Reveal.on('overviewshown', function(event) {
       showingNote = $div_note.is(":visible");
       showingImageNote = $div_imagenote.is(":visible");
       showingSticky = $div_sticky.is(":visible");
@@ -460,7 +456,7 @@ jQuery(function($){
       Reveal.configure({keyboard: keybindings_overview});
     });
 
-    Reveal.addEventListener('overviewhidden', function(event) {
+    Reveal.on('overviewhidden', function(event) {
       $left_switches.show();
       if(showingSticky){
         $div_sticky.show();
@@ -606,7 +602,7 @@ jQuery(function($){
       adjust_sticky();
     });
 
-    $('div.sticky i.fa-close').on('click', function(){
+    $('div.sticky i.fa-xmark').on('click', function(){
       hideSticky()
     });
 
@@ -753,7 +749,7 @@ jQuery(function($){
     if(notetype === "img" || notetype === "image"){
       var img = $("<img src='" + note + "' />");
       $div_imagenote.data("enlarged", false);
-      img.bind("load",function(){
+      img.on("load",function(){
         var iWidth = $(this).width();
         var iHeight = $(this).height();
         var iRate = iWidth/iHeight;

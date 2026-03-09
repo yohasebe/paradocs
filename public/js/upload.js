@@ -388,7 +388,13 @@ $(document).click(function (event) {
   var clickover = $(event.target);
   var _opened = $(".navbar-collapse").hasClass("show");
   if (_opened === true && !clickover.hasClass("navbar-toggler")) {
-    $(".navbar-toggler").click();
+    var navbarCollapse = document.querySelector('.navbar-collapse');
+    if (navbarCollapse) {
+      var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+      if (bsCollapse) {
+        bsCollapse.hide();
+      }
+    }
   }
 });
 
@@ -396,9 +402,8 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
   editor.resize();
 });
 
-$('.carousel').carousel({
-  interval: 8000
-})
+// Bootstrap 5 carousel initialization via data attributes (data-bs-ride="carousel")
+// Interval can be set via data-bs-interval on the carousel element
 
 $("#accent_color_selected").change(function(){
   var accent_color = $(this).val();

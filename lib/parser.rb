@@ -281,7 +281,7 @@ class Parser
             if paragraphs.size == 1
               sentences = "<iframe class='#{class_str}' width='100%' style='opacity: 1;' allow='autoplay' data-ytid='#{ytid}' src='#{yt_url}' id='yt#{num_yt_videos}' data-ignore='true' ></iframe>"
             else
-              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{yt_url}'> <i class='fas fa-play'></i> <span>click to play YouTube video</span></a></span></p></div>"
+              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{yt_url}'> <i class='fa-solid fa-play'></i> <span>click to play YouTube video</span></a></span></p></div>"
             end
           ##### for non-youtube video
           when "vi"
@@ -290,7 +290,7 @@ class Parser
               sentences = "<img class='#{class_str}' src='#{@poster}' id='poster-#{num_media}' />\n"
               sentences << "<video class='#{class_str}' src='#{vid_url}' preload='auto' id='md#{num_media}' controls style='display: none;' />\n"
             else
-              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{vid_url}'> <i class='fas fa-download'></i> <span>download to video</span></a></span></p></div>"
+              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{vid_url}'> <i class='fa-solid fa-download'></i> <span>download to video</span></a></span></p></div>"
             end
           when "au"
             audio_url = spans.join("").strip
@@ -302,7 +302,7 @@ class Parser
             if paragraphs.size == 1
               sentences = "<img class='#{class_str} large_img' src='#{img_url}'/>"
             else
-              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{img_url}'> <i class='fas fa-picture-o'></i> <span>click to show image</span></a></span></p></div>"
+              sentences = "<div class='text'><p><span class='#{class_str}'><a target='_blank' href='#{img_url}'> <i class='fa-solid fa-image'></i> <span>click to show image</span></a></span></p></div>"
             end
           ##### for (un)ordered lists
           when "list-table"
@@ -346,7 +346,7 @@ class Parser
         
         if last_slide
           @output << "<div class='fragment' id='eos'></div>"
-          @output << "<div class='coffee' id='coffee'><i class='fa fa-coffee'></i></div>"
+          @output << "<div class='coffee' id='coffee'><i class='fa-solid fa-mug-hot'></i></div>"
         end
         @output << "</section>\n"
       end
