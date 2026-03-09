@@ -1,0 +1,54 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    execjs (2.9.0)
+    ffi (1.15.5)
+    get_process_mem (0.2.7)
+      ffi (~> 1.0)
+    i18n_data (0.17.1)
+      simple_po_parser (~> 1.1)
+    kgio (2.11.4)
+    mustermann (3.0.0)
+      ruby2_keywords (~> 0.0.1)
+    pragmatic_segmenter (0.3.23)
+      unicode
+    rack (2.2.8)
+    rack-protection (3.1.0)
+      rack (~> 2.2, >= 2.2.4)
+    raindrops (0.20.1)
+    rake (13.0.6)
+    redcarpet (3.6.0)
+    ruby2_keywords (0.0.5)
+    simple_po_parser (1.1.6)
+    sinatra (3.1.0)
+      mustermann (~> 3.0)
+      rack (~> 2.2, >= 2.2.4)
+      rack-protection (= 3.1.0)
+      tilt (~> 2.0)
+    tilt (2.3.0)
+    uglifier (4.2.0)
+      execjs (>= 0.3.0, < 3)
+    unicode (0.4.4.4)
+    unicorn (6.1.0)
+      kgio (~> 2.6)
+      raindrops (~> 0.7)
+    unicorn-worker-killer (0.4.5)
+      get_process_mem (~> 0)
+      unicorn (>= 4, < 7)
+
+PLATFORMS
+  aarch64-linux
+  x86_64-linux
+
+DEPENDENCIES
+  i18n_data
+  pragmatic_segmenter
+  rake
+  redcarpet
+  sinatra
+  uglifier
+  unicorn
+  unicorn-worker-killer
+
+BUNDLED WITH
+   2.4.10
