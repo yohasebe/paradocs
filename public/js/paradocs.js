@@ -101,21 +101,9 @@ jQuery(function($){
 
   //////////////////// Things need to be done when document is ready ///////////////
   $(document).ready(function() {
-    sqrScale = getSqrt();
-    if($reveal_video.length > 0){
-      var vid = $reveal_video.attr('id');
-      $('video#' + vid).on('loadeddata', function() {
-        $(this).prev('img').remove();
-        $(this).show();
-        var indices = Reveal.getIndices();
-        Reveal.slide(indices.h, indices.v, indices.f);
-      });
-    }
-
     $div_note.draggable({
       containment: "parent",
       drag: function(e, ui) {
-        // 拡大倍率で割ることで位置を調整
         ui.position.left = ui.position.left / sqrScale;
         ui.position.top  = ui.position.top / sqrScale;
       }
@@ -124,7 +112,6 @@ jQuery(function($){
     $div_imagenote.draggable({
       containment: "parent",
       drag: function(e, ui) {
-        // 拡大倍率で割ることで位置を調整
         ui.position.left = ui.position.left / sqrScale;
         ui.position.top  = ui.position.top / sqrScale;
       }
@@ -133,9 +120,7 @@ jQuery(function($){
     initializeReveal();
     createSticky();
     setFontSize();
-    adjust_size();
     adjust_sticky();
-    adjust_media();
     prepareYoutube();
     initializeSpeechSynthesis();
     get_punch_script();
@@ -360,6 +345,21 @@ jQuery(function($){
     }).then(function() {
       //////////////////// Configure reveal.js ///////////////
       Reveal.configure(pconf);
+
+      // These must run after Reveal is initialized
+      sqrScale = getSqrt();
+      adjust_size();
+      adjust_media();
+
+      if($reveal_video.length > 0){
+        var vid = $reveal_video.attr('id');
+        $('video#' + vid).on('loadeddata', function() {
+          $(this).prev('img').remove();
+          $(this).show();
+          var indices = Reveal.getIndices();
+          Reveal.slide(indices.h, indices.v, indices.f);
+        });
+      }
       if(isMobile){
         Reveal.configure({overview: false, touch: true});
         $overview_icon.hide();

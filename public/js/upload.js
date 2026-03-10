@@ -1,5 +1,5 @@
 //////////////////// Setup Ace Syntax ///////////////
-define('ace/mode/custom', [], function(require, exports, module) {
+ace.define('ace/mode/custom', [], function(require, exports, module) {
   var oop = require("ace/lib/oop");
   var TextMode = require("ace/mode/text").Mode;
   var Tokenizer = require("ace/tokenizer").Tokenizer;
@@ -13,7 +13,7 @@ define('ace/mode/custom', [], function(require, exports, module) {
   exports.Mode = Mode;
 });
 
-define('ace/mode/custom_highlight_rules', [], function(require, exports, module) {
+ace.define('ace/mode/custom_highlight_rules', [], function(require, exports, module) {
   var oop = require("ace/lib/oop");
   var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
   var CustomHighlightRules = function() {

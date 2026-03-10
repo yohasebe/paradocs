@@ -10,7 +10,7 @@
     </div>
 
     <div id='input-textarea' class="ui-widget-content" style='height:480px; border:solid 1px lightgray;'><%= @sample_text %></div>
-    <div class='text-right'>
+    <div class='text-end'>
       <sub>
         <%= @keywords["textarea"] %>
       </sub>
@@ -30,7 +30,7 @@
     <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
   </div>
 
-  <div class="form-group row" style='margin:0;'>
+  <div class="row" style='margin:0;'>
     <div id='voice_controller' style='display: none;' >
       <span class='form-label'><%= @keywords["speech_voice"] %></span>
       <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>

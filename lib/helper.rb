@@ -89,13 +89,13 @@ body{
 .left_switch{
   display: block;
   width: 40px;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 4px 0;
 }
 
 .left_switches span{
-  padding:0;
-  margin:0;
+  padding: 0;
+  margin: 0;
 }
 
 .gadgets{
@@ -198,19 +198,10 @@ div.gadgets div.sticky{
   cursor: grab;
 }
 
-.gadgets div.sticky i.fa-pencil {
+.gadgets div.sticky .edit_control i {
   cursor: pointer;
   margin-left: 10px;
-}
-
-.gadgets div.sticky i.fa-eraser {
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.gadgets div.sticky i.fa-close {
-  cursor: pointer;
-  margin-left: 10px;
+  margin-right: 4px;
 }
 
 .gadgets div.sticky div.edit_panel{

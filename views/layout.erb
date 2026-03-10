@@ -35,41 +35,43 @@
   <div id='top' style='visibility:hidden;' subdir='<%= PREFIX %>'></div>
 
     <nav class="navbar fixed-top navbar-expand-lg">
-      <a class="navbar-brand" href="<%= PREFIX %><%= @current_lang %>">Paradocs</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="<%= PREFIX %><%= @current_lang %>">Paradocs</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-item nav-link" href="/paradocs">English</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-item nav-link" href="/paradocs/ja">日本語</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-item nav-link emphasized" href="#use">
-              <span class='emphasized'><%= @keywords["use"] %></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-item nav-link" href="#overview"><%= @keywords["overview"] %></a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <%= @keywords["documentation"] %>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#bindings"><%= @keywords["keybindings"] %></a>
-              <a class="dropdown-item" href="#concepts"><%= @keywords["concepts"] %></a>
-              <a class="dropdown-item" href="#blocks"><%= @keywords["blocks"] %></a>
-              <a class="dropdown-item" href="#decoration"><%= @keywords["decoration"] %></a>
-              <a class="dropdown-item" href="#embedding"><%= @keywords["embedding"] %></a>
-              <a class="dropdown-item" href="#additional"><%= @keywords["additional"] %></a>
-            </div>
-          </li>
-        </ul>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/paradocs">English</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/paradocs/ja">日本語</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link emphasized" href="#use">
+                <span class='emphasized'><%= @keywords["use"] %></span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#overview"><%= @keywords["overview"] %></a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <%= @keywords["documentation"] %>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#bindings"><%= @keywords["keybindings"] %></a>
+                <a class="dropdown-item" href="#concepts"><%= @keywords["concepts"] %></a>
+                <a class="dropdown-item" href="#blocks"><%= @keywords["blocks"] %></a>
+                <a class="dropdown-item" href="#decoration"><%= @keywords["decoration"] %></a>
+                <a class="dropdown-item" href="#embedding"><%= @keywords["embedding"] %></a>
+                <a class="dropdown-item" href="#additional"><%= @keywords["additional"] %></a>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
 

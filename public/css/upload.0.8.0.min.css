@@ -103,6 +103,10 @@ div.carousel-inner {
 	filter: alpha(opacity=0);
 }
 
+#input-textarea {
+  overflow: hidden;
+}
+
 .inline-form {
   display: inline-block;
   width: auto;

@@ -10,6 +10,11 @@ gem 'unicorn-worker-killer'
 gem 'i18n_data'
 gem 'pragmatic_segmenter'
 
+group :development do
+  gem 'rackup'
+  gem 'webrick'
+end
+
 group :test do
   gem 'rack-test'
   gem 'minitest'
