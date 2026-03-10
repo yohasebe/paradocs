@@ -101,16 +101,52 @@
   };
 
   /**
+   * Convert an image blob to a base64 data URI string.
+   */
+  function blobToDataURI(blob) {
+    return new Promise(function (resolve) {
+      var reader = new FileReader();
+      reader.onloadend = function () { resolve(reader.result); };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  /**
+   * Replace relative wallpaper url(...) in CSS with inline base64 data URI.
+   * Returns a Promise that resolves to the updated CSS string.
+   */
+  function inlineWallpaperInCSS(cssText) {
+    var match = cssText.match(/url\(([^)]*img\/wallpaper\/[^)]+)\)/);
+    if (!match) return Promise.resolve(cssText);
+
+    var relativeUrl = match[1];
+    return fetch(relativeUrl)
+      .then(function (r) { return r.blob(); })
+      .then(function (blob) { return blobToDataURI(blob); })
+      .then(function (dataUri) {
+        return cssText.replace(/url\([^)]*img\/wallpaper\/[^)]+\)/g, 'url(' + dataUri + ')');
+      })
+      .catch(function () {
+        // If fetch fails, remove wallpaper rather than leaving broken reference
+        return cssText.replace(/url\([^)]*img\/wallpaper\/[^)]+\)/g, 'none');
+      });
+  }
+
+  /**
    * Trigger a download of the standalone HTML (browser only).
-   * Fetches paradocs.js and inlines it into the exported file.
+   * Fetches paradocs.js and wallpaper image, inlining both.
    * basePath should be './' or '../' depending on the page.
    */
   Exporter.download = function (slidesHtml, config, cssText, inverted, basePath) {
     var scriptUrl = (basePath || './') + 'js/paradocs.js';
-    fetch(scriptUrl)
-      .then(function (r) { return r.text(); })
-      .then(function (paradocsScript) {
-        var html = Exporter.generateHTML(slidesHtml, config, cssText, inverted, paradocsScript);
+    Promise.all([
+      fetch(scriptUrl).then(function (r) { return r.text(); }),
+      inlineWallpaperInCSS(cssText)
+    ])
+      .then(function (results) {
+        var paradocsScript = results[0];
+        var inlinedCss = results[1];
+        var html = Exporter.generateHTML(slidesHtml, config, inlinedCss, inverted, paradocsScript);
         var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
@@ -122,8 +158,8 @@
         URL.revokeObjectURL(url);
       })
       .catch(function (err) {
-        console.error('Failed to fetch paradocs.js for export:', err);
-        alert('Export failed: could not load presentation script.');
+        console.error('Failed to prepare export:', err);
+        alert('Export failed: could not load required resources.');
       });
   };
 
