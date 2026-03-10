@@ -281,16 +281,16 @@ youtube: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
 ```text
 yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
 ```
-youtube動画のURLには開始時点と終了時点を指定することができます。その際には `&start=x&end=y` の形式でオプションをURLに追加します。動画全体の中でスライドで再生するセグメントは動画の始まりからの経過秒数で指定します。下記の指定では動画の12分27秒（`x=747`）から12分55秒（`x=775`）までを再生します。
+youtube動画のURLには開始時点と終了時点を指定することができます。その際には `&start=x&end=y` の形式でオプションをURLに追加します。動画全体の中でスライドで再生するセグメントは動画の始まりからの経過秒数で指定します。下記の指定では動画の30秒地点（`x=30`）から60秒地点（`x=60`）までを再生します。
 
 ```text
-youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&start=747&end=775
+youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=30&end=60
 ```
 
 もっと直感的な `時間:分:秒` の形式で指定することもできます。
 
 ```text
-youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&start=12:27&end=12:55
+youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=0:30&end=1:00
 ```
 
 **注：** YouTube 動画を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、動画自体は表示されず、動画へのリンクが用いられます。

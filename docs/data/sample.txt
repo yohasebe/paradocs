@@ -100,9 +100,9 @@ image: https://yohasebe.com/paradocs/img/sample/towerofbabel.jpg
 You can specify the URL of a YouTube 📺 video and display it on the slide.
 The video will be enlarged as much as possible
 
-| TED Talk: How language shapes the way we think | Lera Boroditsky
+| TED-Ed: The benefits of a bilingual brain | Mia Nacamulli
 ----
-youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&start=747&end=775
+youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=30&end=60
 ----
 #### Embed MP3 Audio
 
