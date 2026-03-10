@@ -686,6 +686,74 @@ textarea::selection{
   color: ${conf.highlight_background_color};
 }
 
+/* ---- Dark mode: inverted overrides for non-reveal elements ---- */
+
+.reveal.inverted ~ .additional .sticky {
+  background-color: #4a2035;
+  color: #ddd;
+}
+
+.reveal.inverted ~ .additional .sticky_editor {
+  border-color: #4a2035 !important;
+  background-color: #4a2035;
+  color: #ddd;
+}
+
+.reveal.inverted ~ .additional .sticky:hover .sticky_editor[contenteditable="true"],
+.reveal.inverted ~ .additional .sticky_editor:focus {
+  background-color: #5c2845 !important;
+}
+
+.reveal.inverted ~ .additional div.note {
+  background-color: #3a3520;
+  color: #ddd;
+}
+
+.reveal.inverted ~ .additional div.note em {
+  background-color: #5a4f28;
+}
+
+.reveal.inverted ~ .additional .switches span {
+  color: #aaa;
+}
+
+/* ---- Dark mode: inverted overrides for reveal elements ---- */
+
+.reveal.inverted .slide-number {
+  background-color: #444;
+  color: #ccc;
+}
+
+.reveal.inverted .slides section .fragment {
+  color: #777;
+}
+
+.reveal.inverted .slides section .fragment mark {
+  color: #ccc;
+  background-color: #5a4f28;
+}
+
+.reveal.inverted .slides section .fragment.visible.current-fragment mark {
+  color: #ddd;
+  background-color: #6b5e30;
+}
+
+.reveal.inverted .slides section div.text a,
+.reveal.inverted .slides section div.text a:link,
+.reveal.inverted .slides section div.text a:hover,
+.reveal.inverted .slides section div.text a:visited {
+  color: #999;
+}
+
+.reveal.inverted blockquote {
+  color: #aaa;
+}
+
+.reveal.inverted ul li:before,
+.reveal.inverted ol li:before {
+  color: #888;
+}
+
 </style>`;
 
   return css;

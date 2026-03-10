@@ -91,12 +91,51 @@ editor.renderer.setOption('showInvisibles', true);
 editor.renderer.setOption('showGutter', false);
 editor.setAutoScrollEditorIntoView(true);
 
-//////////////////// Load sample text ///////////////
-fetch(BASE_PATH + 'data/sample' + (default_lang === 'ja-JP' ? '_ja' : '') + '.txt')
-  .then(function(r) { return r.text(); })
-  .then(function(text) {
-    editor.setValue(text, -1);
-  });
+//////////////////// Auto-save setup ///////////////
+var autosave = new AutoSave('paradocs_');
+
+//////////////////// Load saved or sample text ///////////////
+if (autosave.hasSavedData()) {
+  editor.setValue(autosave.loadText(), -1);
+  // Restore form settings after speech voices are loaded
+  var savedSettings = autosave.loadSettings();
+  if (savedSettings) {
+    $(function() {
+      // Wait for voices to load before restoring speech settings
+      var restoreTimer = setInterval(function() {
+        if ($('#lang_selected option').length > 0 || --restoreTimer._tries <= 0) {
+          clearInterval(restoreTimer);
+          if (savedSettings.resolution) $('#resolution_selected').val(savedSettings.resolution).trigger('change');
+          if (savedSettings.font_family) $('#font_family_selected').val(savedSettings.font_family).trigger('change');
+          if (savedSettings.font_size) $('#font_size_selected').val(savedSettings.font_size);
+          if (savedSettings.wallpaper) $('#wallpaper_selected').val(savedSettings.wallpaper).trigger('change');
+          if (savedSettings.accent_color) $('#accent_color_selected').val(savedSettings.accent_color).trigger('change');
+          if (savedSettings.highlight_background_color) $('#highlight_background_color_selected').val(savedSettings.highlight_background_color).trigger('change');
+          if (savedSettings.color_inverted) $('#text_background').prop('checked', true).trigger('change');
+          if (savedSettings.speech_lang) {
+            $('#lang_selected').val(savedSettings.speech_lang).trigger('change');
+            setTimeout(function() {
+              if (savedSettings.speech_voice) $('#voice_selected').val(savedSettings.speech_voice);
+              if (savedSettings.speech_rate) $('#rate_selected').val(savedSettings.speech_rate);
+            }, 200);
+          }
+        }
+      }, 200);
+      restoreTimer._tries = 25; // Give up after 5 seconds
+    });
+  }
+} else {
+  fetch(BASE_PATH + 'data/sample' + (default_lang === 'ja-JP' ? '_ja' : '') + '.txt')
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      editor.setValue(text, -1);
+    });
+}
+
+// Auto-save editor text on change (debounced)
+editor.session.on('change', function() {
+  autosave.debouncedSaveText(editor.getValue());
+});
 
 //////////////////// Speech setup ///////////////
 try{
@@ -222,16 +261,19 @@ var DEFAULT_CONFIG = {
 };
 
 //////////////////// Client-side conversion ///////////////
-$('#submit_button').on('click', function(){
+
+// Shared conversion logic: validates input, builds config, parses text.
+// Returns { slides, config, css, colorInverted } or null on error.
+function buildPresentation() {
   var text = editor.getValue();
 
   if (!text || text.trim().length === 0) {
     showError("Error: Input text is empty!");
-    return false;
+    return null;
   }
   if (text.length >= 50000) {
     showError("Input text must be less than 50,000 characters.");
-    return false;
+    return null;
   }
 
   // Build config from form values
@@ -291,16 +333,29 @@ $('#submit_button').on('click', function(){
   config.height = parseInt(resParts[1]);
 
   // Parse text
+  var slides;
   try {
     var parser = new Parser(text, config);
-    var slides = parser.parse();
+    slides = parser.parse();
   } catch(e) {
     showError('Parser error: ' + e.message);
-    return false;
+    return null;
   }
 
   // Generate CSS
   var css = createCSS(config);
+
+  return { slides: slides, config: config, css: css, colorInverted: colorInverted };
+}
+
+$('#submit_button').on('click', function(){
+  var result = buildPresentation();
+  if (!result) return false;
+
+  var slides = result.slides;
+  var config = result.config;
+  var css = result.css;
+  var colorInverted = result.colorInverted;
 
   // Store in sessionStorage
   sessionStorage.setItem('paradocs_slides', slides);
@@ -308,12 +363,42 @@ $('#submit_button').on('click', function(){
   sessionStorage.setItem('paradocs_css', css);
   sessionStorage.setItem('paradocs_inverted', colorInverted ? 'true' : 'false');
 
+  // Save form settings for next visit
+  saveFormSettings(config);
+
   // Open deck page
   window.open(BASE_PATH + 'deck.html', '_blank');
 });
 
+$('#download_button').on('click', function(){
+  var result = buildPresentation();
+  if (!result) return false;
+
+  // Save form settings for next visit
+  saveFormSettings(result.config);
+
+  // Download standalone HTML
+  Exporter.download(result.slides, result.config, result.css, result.colorInverted);
+});
+
+function saveFormSettings(config) {
+  autosave.saveSettings({
+    speech_lang: config.speech_lang,
+    speech_voice: config.speech_voice,
+    speech_rate: config.speech_rate,
+    font_size: String(config.font_size),
+    font_family: config.font_family,
+    accent_color: config.accent_color,
+    highlight_background_color: $('#highlight_background_color_selected').val() || '#4e79a7',
+    resolution: $('#resolution_selected').val() || '1280x800',
+    wallpaper: $('#wallpaper_selected').val() || 'sandpaper.png',
+    color_inverted: config.color_inverted
+  });
+}
+
 $("#reset_button").on('click', function(){
   editor.setValue('');
+  autosave.clear();
   $('#textarea_message').hide();
 });
 

@@ -153,6 +153,7 @@
 
   <div style='margin-bottom: 1em;'>
     <span id='submit_button' class="file_reset btn btn-primary">Convert Text</span>&nbsp;
+    <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> Download HTML</span>&nbsp;
     <span id='reset_button' class="file_reset btn btn-light">Clear Text</span>
   </div>
 
@@ -328,6 +329,8 @@
       document.getElementById('documentation-content').innerHTML = html;
     });
   </script>
+  <script src="./js/autosave.js"></script>
+  <script src="./js/exporter.js"></script>
   <script src="./js/parser.js"></script>
   <script src="./js/helper.js"></script>
   <script src="./js/upload.js"></script>

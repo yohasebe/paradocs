@@ -356,3 +356,15 @@ The color of the modified mouse pointer is determined by the selection for the "
 #### Automatic Presentation
 
 Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.
+
+#### Auto-Save
+
+Your input text and form settings are automatically saved to the browser's local storage as you type. When you revisit the page, your previous work is restored automatically. Click the **Clear Text** button to clear both the editor and the saved data.
+
+#### Download HTML
+
+Click the **Download HTML** button to export your presentation as a standalone HTML file. The file includes all slide content, configuration, and styles embedded directly, so it can be opened in any browser without needing to access the Paradocs website. External library dependencies (jQuery, Reveal.js, etc.) are loaded via CDN.
+
+#### Dark Mode (Inverted Colors)
+
+Check the **Invert Colors** checkbox to switch to dark mode. All presentation elements — including sticky notes, annotation popups, markers, slide numbers, and navigation controls — adapt their colors for comfortable viewing on dark backgrounds.

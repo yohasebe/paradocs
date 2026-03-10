@@ -4,9 +4,12 @@
   "description": "Paragraph-oriented text presentation system",
   "private": true,
   "scripts": {
-    "build:docs": "node scripts/build-docs.js"
+    "build:docs": "node scripts/build-docs.js",
+    "test": "jest"
   },
   "devDependencies": {
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "marked": "^15.0.0"
   }
 }
