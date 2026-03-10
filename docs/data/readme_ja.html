@@ -10,4 +10,21 @@ Paradocs では1枚のスライドに1つのパラグラフを表示すること
 <p><span class='marker'>Paradocsには 多言語の音声読み上げ機能があります。</span>Google Chrome、Mozilla Firefox、Apple Safari、Microsoft EdgeといったブラウザのWeb Speech APIを用いており、コンピュータにインストールされている複数の言語から1つ選んで、プレゼン中の好きなときにセンテンスを読み上げさせることができます。</p>
 <p>作成したプレゼンは、ユーザー自身による口頭での発表に使うことができます。<span class='marker'>あるいは、全体を自動でプレゼンさせることもできます。</span>画面右上の魔法の杖アイコンをクリックしてください。現在のスライドの次の断片から発表全体の最終の断片まで、テキストの読み上げや動画再生などが次々と自動で実行されます。</p>
 <p>Paradocsの多くの機能は、Hakim El Hattab さんが開発したプレゼン用スライド作成ライブラリ <a href="https://revealjs.com">Reveal.js</a>に依存しています（MIT License）。素晴らしいライブラリを提供していただき感謝します。背景の美しい壁紙は <a href='https://www.transparenttextures.com/'>Transparent Textures</a> で提供されているものを使っています。</p>
-<p>Paradocsは<a href="https://yohasebe.com">長谷部陽一郎</a>が開発しました。入力されたテキストデータは、プレゼンに変換され、ユーザーのブラウザに送られた後、サーバーに保存されることはありません。</p>
+<p>Paradocsは<a href="https://yohasebe.com">長谷部陽一郎</a>が開発しました。テキストの変換処理はすべてブラウザ内で完結しており、サーバーにデータが送信されることはありません。</p>
+<h2>アーキテクチャ</h2>
+<p>Paradocsはサーバーサイドの依存がない完全な静的サイトです。テキストからスライドへの変換はクライアントサイドJavaScriptでブラウザ内で実行されます。</p>
+<ul>
+<li><strong>入力ページ</strong> (<code>docs/index.html</code>, <code>docs/ja/index.html</code>) — Aceエディタによるテキスト入力、設定フォーム、クライアントサイドでの変換処理</li>
+<li><strong>プレゼンページ</strong> (<code>docs/deck.html</code>) — Reveal.jsベースのスライドビューア、<code>sessionStorage</code>からデータを読み込み</li>
+<li><strong>パーサー</strong> (<code>docs/js/parser.js</code>) — Paradocs独自のテキスト形式をReveal.js HTMLに変換</li>
+<li><strong>CSSジェネレータ</strong> (<code>docs/js/helper.js</code>) — 設定からプレゼン用スタイルを生成</li>
+<li><strong>ドキュメントビルダー</strong> (<code>scripts/build-docs.js</code>) — MarkdownドキュメントをHTMLフラグメントに変換するNode.jsスクリプト</li>
+</ul>
+<h3>主要ライブラリ（CDN経由）</h3>
+<p>jQuery 3.7.1, jQuery UI 1.14.1, Bootstrap 5.3.8, Reveal.js 5.2.1, Ace Editor 1.36.5, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7</p>
+<h3>開発</h3>
+<pre><code class="language-bash">npm install            # 開発用依存のインストール（marked）
+npm run build:docs     # docs/data/ のドキュメントフラグメントを再生成
+</code></pre>
+<h3>デプロイ</h3>
+<p>GitHub Pages の <code>docs/</code> フォルダから配信します。<code>master</code>ブランチにプッシュし、GitHub Pages の設定で<code>docs/</code>ディレクトリを指定してください。</p>

@@ -12,4 +12,29 @@ The presentation can be used by the user to give an oral presentation. <span cla
 
 Many of the features of Paradocs rely on the presentation slide creation library [Reveal.js](https://revealjs.com) developed by Hakim El Hattab. I am truly grateful to him and his collaborators for this wonderful library.  The beautiful background wallpaper is provided by <a href='https://www.transparenttextures.com/'>Transparent Textures</a>.
 
-Paradocs was developed by [Yoichiro Hasebe](https://yohasebe.com). The text data entered into this system is converted into a presentation and sent back to the user's browser, but is not stored on the server.
+Paradocs was developed by [Yoichiro Hasebe](https://yohasebe.com). All text processing is done entirely in the browser — no data is sent to any server.
+
+## Architecture
+
+Paradocs is a fully static site with no server-side dependencies. The text-to-slides conversion is done entirely in the browser using client-side JavaScript.
+
+- **Input page** (`docs/index.html`, `docs/ja/index.html`) — Ace editor for text input, configuration form, client-side parsing
+- **Presentation page** (`docs/deck.html`) — Reveal.js-based slide viewer, reads data from `sessionStorage`
+- **Parser** (`docs/js/parser.js`) — Converts Paradocs custom text format to Reveal.js HTML
+- **CSS generator** (`docs/js/helper.js`) — Generates presentation styles from configuration
+- **Doc builder** (`scripts/build-docs.js`) — Node.js script that converts Markdown documentation to HTML fragments
+
+### Key libraries (via CDN)
+
+jQuery 3.7.1, jQuery UI 1.14.1, Bootstrap 5.3.8, Reveal.js 5.2.1, Ace Editor 1.36.5, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7
+
+### Development
+
+```bash
+npm install            # Install dev dependencies (marked)
+npm run build:docs     # Rebuild documentation fragments in docs/data/
+```
+
+### Deployment
+
+The site is served from the `docs/` folder via GitHub Pages. Push to `master` and configure GitHub Pages to serve from the `docs/` directory.

@@ -89,7 +89,12 @@
         document.getElementById('slides-container').innerHTML = slidesHtml;
 
         // Parse config
-        pconf = JSON.parse(configJson);
+        try {
+          pconf = JSON.parse(configJson);
+        } catch (e) {
+          document.body.innerHTML = '<div style="text-align:center;padding:2em;"><h2>Invalid configuration data.</h2><p>Please go back and convert your text again.</p></div>';
+          return;
+        }
 
         // Apply inverted class if needed
         if (inverted === 'true') {

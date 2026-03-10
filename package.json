@@ -1,6 +1,7 @@
 {
   "name": "paradocs",
   "version": "0.8.0",
+  "description": "Paragraph-oriented text presentation system",
   "private": true,
   "scripts": {
     "build:docs": "node scripts/build-docs.js"

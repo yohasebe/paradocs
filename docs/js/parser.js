@@ -139,8 +139,6 @@ class Parser {
     const prefix = config.prefix || '';
     this.poster = prefix + 'img/loading.gif';
 
-    // Ensure marked is configured
-    configureMarked();
   }
 
   /**
@@ -427,7 +425,8 @@ class Parser {
               // Replace note placeholders (global)
               renderedSentences = renderedSentences.replace(/ data-note='(\d+?)'>/g, (match, id) => {
                 const nid = parseInt(id, 10);
-                return ` data-note='${notes[nid].text}' data-notetype='${notes[nid].type}'>`;
+                const safeText = notes[nid].text.replace(/'/g, '&#39;');
+                return ` data-note='${safeText}' data-notetype='${notes[nid].type}'>`;
               });
               if (noFrag) {
                 renderedSentences = processQuiz(renderedSentences);
@@ -461,7 +460,8 @@ class Parser {
               // Replace note placeholders
               renderedSentences = renderedSentences.replace(/data-note='(\d+)'>/g, (match, id) => {
                 const nid = parseInt(id, 10);
-                return ` data-note='${notes[nid].text}' data-notetype='${notes[nid].type}'>`;
+                const safeText = notes[nid].text.replace(/'/g, '&#39;');
+                return ` data-note='${safeText}' data-notetype='${notes[nid].type}'>`;
               });
               if (noFrag) {
                 renderedSentences = processQuiz(renderedSentences);
@@ -504,6 +504,9 @@ class Parser {
       .replace(/'/g, '&#039;');
   }
 }
+
+// Configure marked once at load time
+configureMarked();
 
 // Export globally
 window.Parser = Parser;
