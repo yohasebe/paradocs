@@ -107,4 +107,129 @@ class TestApp < Minitest::Test
     # Font Awesome 6 icon classes
     assert_match(/fa-solid/, body)
   end
+
+  # --- Security tests ---
+
+  def test_wallpaper_whitelist_rejects_invalid
+    post '/deck', {
+      text: "----\nTest\n----",
+      speech_voice: "", speech_lang: "en-US", speech_rate: "1.0",
+      font_size: "40", font_family: "sans", accent_color: "#e15759",
+      highlight_background_color: "#4e79a7", text_background: nil,
+      resolution: "1280x800", wallpaper: "../../../etc/passwd"
+    }
+    assert_equal 200, last_response.status
+    refute_includes last_response.body, "etc/passwd"
+  end
+
+  def test_wallpaper_whitelist_accepts_valid
+    post '/deck', {
+      text: "----\nTest\n----",
+      speech_voice: "", speech_lang: "en-US", speech_rate: "1.0",
+      font_size: "40", font_family: "sans", accent_color: "#e15759",
+      highlight_background_color: "#4e79a7", text_background: nil,
+      resolution: "1280x800", wallpaper: "sandpaper.png"
+    }
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "sandpaper.png"
+  end
+
+  def test_invalid_accent_color_uses_default
+    post '/deck', {
+      text: "----\nTest\n----",
+      speech_voice: "", speech_lang: "en-US", speech_rate: "1.0",
+      font_size: "40", font_family: "sans",
+      accent_color: "javascript:alert(1)",
+      highlight_background_color: "#4e79a7", text_background: nil,
+      resolution: "1280x800", wallpaper: "none"
+    }
+    assert_equal 200, last_response.status
+    refute_includes last_response.body, "javascript:alert"
+  end
+
+  def test_invalid_highlight_color_uses_default
+    post '/deck', {
+      text: "----\nTest\n----",
+      speech_voice: "", speech_lang: "en-US", speech_rate: "1.0",
+      font_size: "40", font_family: "sans", accent_color: "#e15759",
+      highlight_background_color: "'; background: url(evil)",
+      text_background: nil,
+      resolution: "1280x800", wallpaper: "none"
+    }
+    assert_equal 200, last_response.status
+    refute_includes last_response.body, "url(evil)"
+  end
+
+  def test_valid_hex_colors_accepted
+    post '/deck', {
+      text: "----\nTest\n----",
+      speech_voice: "", speech_lang: "en-US", speech_rate: "1.0",
+      font_size: "40", font_family: "sans",
+      accent_color: "#ff0000",
+      highlight_background_color: "#00ff00",
+      text_background: nil,
+      resolution: "1280x800", wallpaper: "none"
+    }
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "#ff0000"
+    assert_includes last_response.body, "#00ff00"
+  end
+
+  # --- GA and social widget removal ---
+
+  def test_no_google_analytics_in_layout
+    get '/'
+    body = last_response.body
+    refute_includes body, "google-analytics"
+    refute_includes body, "GoogleAnalyticsObject"
+    refute_includes body, "UA-644847"
+  end
+
+  def test_no_social_widgets_in_layout
+    get '/'
+    body = last_response.body
+    refute_includes body, "twitter-share-button"
+    refute_includes body, "fb-like"
+    refute_includes body, "facebook-jssdk"
+    refute_includes body, "platform.twitter.com"
+  end
+
+  # --- Language switching ---
+
+  def test_english_page_navbar_links
+    get '/'
+    body = last_response.body
+    assert_includes body, 'Use Paradocs'
+    assert_includes body, 'Documentation'
+  end
+
+  def test_japanese_page_navbar_links
+    get '/ja'
+    body = last_response.body
+    assert_includes body, '使ってみる'
+    assert_includes body, '詳しい仕様'
+  end
+
+  # --- Edge cases ---
+
+  def test_get_deck_redirects_without_params
+    get '/deck'
+    assert_equal 302, last_response.status
+  end
+
+  def test_post_deck_redirects_without_params
+    post '/deck'
+    assert_equal 302, last_response.status
+  end
+
+  def test_footer_year_updated
+    get '/'
+    assert_includes last_response.body, '2018-2026'
+    refute_includes last_response.body, '2018-2020'
+  end
+
+  def test_no_navbar_light_class
+    get '/'
+    refute_includes last_response.body, 'navbar-light'
+  end
 end

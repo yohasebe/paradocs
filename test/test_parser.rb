@@ -160,6 +160,108 @@ class TestParser < Minitest::Test
     assert_includes result, "quiz"
     assert_includes result, "curly brackets"
   end
+
+  # --- Additional block types ---
+
+  def test_blockquote
+    text = "----\n> This is a quote.\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "<blockquote"
+    assert_includes result, "This is a quote."
+  end
+
+  def test_deck_separator
+    text = "====\n----\nDeck 1 Slide\n----\n====\n----\nDeck 2 Slide\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "Deck 1 Slide"
+    assert_includes result, "Deck 2 Slide"
+    # Two deck sections (outer) + inner slide sections
+    outer_sections = result.scan(/<section class='deck'/).length
+    assert_equal 1, outer_sections
+  end
+
+  def test_youtube_short_url
+    text = "----\nyoutube: https://youtu.be/xyz789\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "iframe"
+    assert_includes result, "xyz789"
+  end
+
+  def test_youtube_embed_url
+    text = "----\nyoutube: https://www.youtube.com/embed/embed123\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "iframe"
+    assert_includes result, "embed123"
+  end
+
+  def test_multiple_paragraphs_in_slide
+    text = "----\nFirst paragraph.\n\nSecond paragraph.\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "First paragraph."
+    assert_includes result, "Second paragraph."
+    # Each paragraph gets a div.text wrapper
+    assert_operator result.scan(/class='text'/).length, :>=, 2
+  end
+
+  def test_image_in_multi_paragraph_slide
+    text = "----\nSome text\n\nimg: https://example.com/photo.png\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    # When image is not the only paragraph, it becomes a link
+    assert_includes result, "fa-solid fa-image"
+    assert_includes result, "https://example.com/photo.png"
+  end
+
+  def test_video_in_multi_paragraph_slide
+    text = "----\nSome text\n\nvideo: https://example.com/vid.mp4\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "fa-solid fa-download"
+    assert_includes result, "https://example.com/vid.mp4"
+  end
+
+  def test_colon_to_sec_conversion
+    parser = Parser.new("----\ntest\n----")
+    assert_equal "90", parser.colon_to_sec("1:30")
+    assert_equal "3661", parser.colon_to_sec("1:1:1")
+    assert_equal "42", parser.colon_to_sec("42")
+  end
+
+  def test_empty_text
+    text = ""
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "<section class='deck'>"
+    assert_includes result, "</section>"
+    # No inner sections when text is empty
+    assert_equal 0, result.scan(/<section data-header/).length
+  end
+
+  def test_crlf_normalization
+    text = "----\r\nHello CRLF\r\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "Hello CRLF"
+  end
+
+  def test_underline_markup
+    text = "----\nThis has _underlined_ text.\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "<u>underlined</u>"
+  end
+
+  def test_highlight_markup
+    text = "----\nThis has ==highlighted== text.\n----"
+    parser = Parser.new(text)
+    result = parser.parse
+    assert_includes result, "<mark>highlighted</mark>"
+  end
 end
 
 class TestHelper < Minitest::Test
@@ -207,5 +309,55 @@ class TestHelper < Minitest::Test
     result = process_quiz("Hello {world} end")
     assert_includes result, "fragment quiz"
     assert_includes result, "world"
+  end
+
+  def test_create_css_fun
+    conf = {
+      "wallpaper" => "none",
+      "font_size" => 40,
+      "font_family" => "fun",
+      "accent_color" => "#e15759",
+      "highlight_color" => "#4e79a7",
+      "highlight_background_color" => "transparent",
+      "progress_color" => "#4e79a7",
+      "note_background_color" => "#F4F1BB",
+      "note_marker_color" => "#FFD700",
+      "note_color" => "#303030",
+      "height" => 800,
+      "line_height" => 1.4,
+    }
+    css = create_css(conf)
+    assert_includes css, "Comic Sans MS"
+  end
+
+  def test_create_css_with_wallpaper
+    conf = {
+      "wallpaper" => "url(/paradocs/img/wallpaper/sandpaper.png)",
+      "font_size" => 40,
+      "font_family" => "sans",
+      "accent_color" => "#e15759",
+      "highlight_color" => "#4e79a7",
+      "highlight_background_color" => "transparent",
+      "progress_color" => "#4e79a7",
+      "note_background_color" => "#F4F1BB",
+      "note_marker_color" => "#FFD700",
+      "note_color" => "#303030",
+      "height" => 800,
+      "line_height" => 1.4,
+    }
+    css = create_css(conf)
+    assert_includes css, "sandpaper.png"
+  end
+
+  def test_process_quiz_multiple_blanks
+    result = process_quiz("The {cat} sat on the {mat}.")
+    assert_equal 2, result.scan(/fragment quiz'/).length
+    assert_includes result, "cat"
+    assert_includes result, "mat"
+  end
+
+  def test_process_quiz_no_blanks
+    result = process_quiz("No blanks here.")
+    assert_equal "No blanks here.", result
   end
 end
