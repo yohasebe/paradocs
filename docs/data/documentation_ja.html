@@ -1,0 +1,273 @@
+<h2>詳しい仕様</h2>
+<div id="bindings" class="anchor"></div>
+
+<hr>
+<h3>1. キー・バインディング</h3>
+<p>プレゼン中の様々な機能はマウスを用いて実行できますが、キーボードを使った操作も可能です。</p>
+<table class="table table-sm table-striped">
+<thead>
+<tr>
+<th>キー</th>
+<th>機能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>↓</code></td>
+<td><strong>次</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>↑</code></td>
+<td><strong>前</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>j</code></td>
+<td><strong>次</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td><strong>前</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>SPACE</code></td>
+<td><strong>次</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>SHIFT+SPACE</code></td>
+<td><strong>前</strong> のアイテムに移動</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td><strong>合成音声</strong>の開始/停止; <strong>動画・音声</strong>の開始/停止（YouTube 動画を含む）; <strong>ポップアップ画像</strong>の拡大/縮小</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td><strong>自動プレゼンテーション</strong>の開始/停止</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td><strong>ブラックアウト</strong>（暗転）の開始/停止</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td><strong>フルスクリーン・モード</strong>の開始</td>
+</tr>
+<tr>
+<td><code>ESC</code></td>
+<td><strong>オーバービュー・モード</strong>の開始; <strong>フルスクリーン・モード</strong>の終了</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td><strong>スティッキー・ノート</strong>の表示/非表示</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td><strong>レーザー風マウスポインター</strong>の使用/不使用</td>
+</tr>
+<tr>
+<td><code>SHIFT+TAB</code></td>
+<td><strong>スティッキー・ノート</strong>の編集を終了（フォーカスを外す）</td>
+</tr>
+<tr>
+<td><code>g</code></td>
+<td><strong>Google検索画面</strong>を新しいタブで開いて選択中の文字列を検索</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p><strong>便利な使い方</strong> </p>
+<blockquote>
+<p><a href="https://www.logitech.com/en-us/presenters">Logitech Wireless Presenter R400/R800</a> というプレゼン用ポインターデバイスはおすすめです。Paradocs でのプレゼン中のアイテム間の移動や、音声合成・動画・音声の開始/停止に、物理ボタンを使うことができます。</p>
+</blockquote>
+<div id="concepts" class="anchor"></div>
+
+<hr>
+<h3>2. いくつかの基本的概念</h3>
+<p><strong>センテンス（sentence）</strong> </p>
+<p>スライド上ではパラグラフ内の隣り合った要素として扱われます。スライド上で次々とハイライトされていきます。センテンスを記述する際には単一の改行<code>↩</code>によって区切ります。ただし、自動センテンス分割機能を使うと、用いている言語に応じて（英語、日本語、etc.）、自動でセンテンスの分割が行われます。自動センテンス分割を行う際には、テキストの頭に<code>!!</code>を付けます。</p>
+<p><strong>パラグラフ（paragraph）</strong></p>
+<p>複数のセンテンスから構成されるブロックのことをパラグラフと呼びます。1行1センテンスで記述していきます。</p>
+<p><strong>ブロック（block）</strong></p>
+<p>ブロックは2つ以上の連続した改行<code>↩↩</code>によって区切られます。1つのブロックは複数の要素を持つことができますが、複数のセンテンスによって構成されたブロックをパラグラフと呼びます。</p>
+<p><strong>スライド（slide）</strong></p>
+<p>スライドは「ページ」と呼ぶこともできます。スライドは4つ以上のハイフンと改行（<code>----↩</code> または <code>- - - -↩</code>）で区切ります。1つのスライドは複数のブロックを持つことができます。</p>
+<h4>パラグラフの記述</h4>
+<p>センテンスを改行しながら縦に記述していくとパラグラフ（ブロック）になります。</p>
+<pre><code class="language-text">----
+Sentence #1 
+Sentence #2  
+Sentence #3 
+----
+</code></pre>
+<p>自動センテンス分割機能を使うと、上記は下のように書くことができます。</p>
+<pre><code class="language-text">----
+!! Sentence #1 Sentence #2 Sentence #3
+----
+</code></pre>
+<p>自動センテンス分割を行うには、テキストの頭に<code>!!</code>を付けます。また、各センテンスの最後には文区切りの記号（英語ならピリオド、日本語なら句点など）が付いている必要があります。</p>
+<h4>複数ブロックの記述</h4>
+<p>ブロックはパラグラフ（段落）に対応します。ただし、Paradocsでは「1スライドにつき1ブロック」を推奨します。</p>
+<pre><code class="language-text">----
+Block #1
+Block #2  
+
+Block #2 
+Block #2 
+----
+</code></pre>
+<h4>複数スライドの記述</h4>
+<p>スライドは「ページ」に対応します。1つのスライドに複数のブロックを含められます。</p>
+<pre><code class="language-text">----
+Slide #1
+----
+Slide #2
+----
+Slide #3
+----
+</code></pre>
+<div id="blocks" class="anchor"></div>
+
+<hr>
+<h3>3. ブロックの種類</h3>
+<p>ここでは様々な種類のブロックについて示します。</p>
+<h4>見出し</h4>
+<p>異なるレベルの見出しを付けることができます。見出しは選択したアクセント・カラーで表示されます。</p>
+<pre><code class="language-text">----
+# Heading 1 
+
+## Heading 2 
+
+### Heading 3 
+----
+</code></pre>
+<h4>通常のパラグラフ</h4>
+<p>パラグラフは1行1センテンスで記述します。</p>
+<pre><code class="language-text">This is regular paragraph. 
+Sentences in static text are highlighted when focused. 
+They are printed in grey when not focused. 
+</code></pre>
+<p>通常のパラグラフでは、キーを押すことでセンテンスごとにハイライトが移動します。スライドに収まりきらないときには自動でスクロールされます。</p>
+<h4>静的なパラグラフ</h4>
+<p>静的なパラグラフを作成するには、パラグラフを構成する各センテンスの行頭に垂直バー記号とスペースを配置します。</p>
+<pre><code class="language-text">| This is static paragraph. 
+| Sentences in static text are not highlighted 
+| They are always printed in black. 
+</code></pre>
+<p>または</p>
+<pre><code class="language-text">| This is static paragraph. 
+  Sentences in static text are not highlighted 
+  They are always printed in black. 
+</code></pre>
+<p>静的なパラグラフでは、センテンスごとのハイライト移動がオフになります。スライドに収まらないときにも自動でスクロールされないので注意が必要です。</p>
+<h4>順序なしリスト</h4>
+<p>いわゆる箇条書きの書式です。アスタリスクの後にスペースが必要です。スライドに収まりきらないときには自動でスクロールされます。</p>
+<pre><code class="language-text">* Unordered list item 1
+* Unordered list item 2 
+* Unordered list item 3 
+</code></pre>
+<h4>順序付きリスト</h4>
+<p>番号付きの箇条書きの書式です。番号の後にスペースが必要です。スライドに収まりきらないときには自動でスクロールされます。</p>
+<pre><code class="language-text">1. Ordered list item 1
+2. Ordered list item 2
+3. Ordered list item 3
+
+a. Ordered list item 1
+b. Ordered list item 2
+c. Ordered list item 3
+</code></pre>
+<p><strong>注：</strong> 箇条書きの最初の番号を指定することはできません。</p>
+<h4>番号付きブロック</h4>
+<p>任意の番号を付けたブロックを作成することができます。問題集の公式や問題を提示するようなときに便利です。</p>
+<pre><code class="language-text">365. The number in a numbered block will be printed only once; 
+     the left-hand side of the text can have multiple lines 
+     the lines are aligned nicely
+</code></pre>
+<p><strong>注：</strong> 上記の例で2行目以降の左側のスペースは重要です。</p>
+<div id="decoration" class="anchor"></div>
+
+<hr>
+<h3>4. 文字装飾とノート</h3>
+<p>ここでは文字装飾と、本文の近くに付加的に表示するノート（注記テキスト）の作成方法を説明します。</p>
+<h4>文字装飾</h4>
+<p>太字、斜字、下線、ハイライトが使用可能です。</p>
+<pre><code class="language-text">斜字:       orange *strawberry* apple
+太字:       orange **strawberry** apple
+下線:       orange _strawberry_ apple
+ハイライト: orange ==strawberry== apple
+</code></pre>
+<h4>ノートとポップアップ画像</h4>
+<p>ノートは波カッコと<code>note</code>コマンドを用いて作成します。文字によるノートのほか、画像のURLを指定してポップアップさせることができます。</p>
+<pre><code class="language-text">This is part of main text. {note: これは注です}
+This is also part of main text. {note: これも注です}
+You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
+</code></pre>
+<p><strong>注：</strong> ノートとポップアップ画像は「通常のパラグラフ」と「順序なし／順序付きリスト」で利用可能です。なお、自動センテンス分割機能を用いる場合は、ノートとポップアップ画像を表示できません。波括弧<code>{ }</code>とその中のテキストは削除されます。</p>
+<p><strong>便利な使い方</strong> </p>
+<blockquote>
+<p>自分で作成した図形などを埋め込みたい場合、<a href="https://docs.google.com/drawings">Google Drawings</a>で作成して <code>ファイル</code> <code>ウェブに公開</code> で取得したPNG画像のリンクを貼り付けることができます。フローチャートやガントチャートなどのダイアグラムを埋め込みたい場合は、<a href="https://mermaid-js.github.io/mermaid-live-editor">Mermaid Live Editor</a>の <code>Link to SVG</code> でSVGのリンクを取得して貼り付けることができます。</p>
+</blockquote>
+<h4>クイズ</h4>
+<p>最初は聴衆から隠しておいて、適当なタイミングで答を示すようなクイズを記述することができます。</p>
+<pre><code class="language-text">| In a static context, words and phrases in {curly brackets}
+| will be rendered as {quize items} overlayed by an opaque box.
+</code></pre>
+<p><strong>注：</strong> クイズを記述する際には、静的なパラグラフもしくは静的な順序つき／順序なしリストを用いる必要があります。</p>
+<div id="embedding" class="anchor"></div>
+
+<hr>
+<h3>5. メディア・ファイルの埋め込み</h3>
+<p>画像、動画、音声などをスライドに埋め込むことができます。</p>
+<h4>画像の埋め込み</h4>
+<p>ウェブ上にアップロードされたPNGやJPGなどのファイルURLを用いて画像を指定します。画像はスライド全体に可能な限りで拡大表示されます。</p>
+<pre><code class="language-text">image: url_to_your_image_file.png
+</code></pre>
+<p>または</p>
+<pre><code class="language-text">img: url_to_your_image_file.png
+</code></pre>
+<p><strong>注：</strong> 画像を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、画像自体は表示されず、画像へのリンクが用いられます。</p>
+<h4>YouTube 動画の埋め込み</h4>
+<p>YouTubeのURLを用いて動画を指定します。</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
+</code></pre>
+<p>または</p>
+<pre><code class="language-text">yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
+</code></pre>
+<p>youtube動画のURLには開始時点と終了時点を指定することができます。その際には <code>&amp;start=x&amp;end=y</code> の形式でオプションをURLに追加します。動画全体の中でスライドで再生するセグメントは動画の始まりからの経過秒数で指定します。下記の指定では動画の12分27秒（<code>x=747</code>）から12分55秒（<code>x=775</code>）までを再生します。</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&amp;start=747&amp;end=775
+</code></pre>
+<p>もっと直感的な <code>時間:分:秒</code> の形式で指定することもできます。</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&amp;start=12:27&amp;end=12:55
+</code></pre>
+<p><strong>注：</strong> YouTube 動画を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、動画自体は表示されず、動画へのリンクが用いられます。</p>
+<h4>MP4 動画の埋め込み</h4>
+<p>ウェブ上にアップロードされたMP4形式ファイルのURLを用いて動画を指定します。</p>
+<pre><code class="language-text">video: url_to_your_video_file.mp4
+</code></pre>
+<p>MP4動画のURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、動画の最初からの経過秒数で表すことに注意してください。下記の指定では動画の最初（<code>x=0</code>）から5秒後（<code>x=5</code>）までを再生します。</p>
+<pre><code class="language-text">video: url_to_your_video_file.mp4#t=0,5
+</code></pre>
+<p><strong>注：</strong> MP4動画を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、動画自体は表示されず、動画へのリンクが用いられます。</p>
+<h4>MP3 音声の埋め込み</h4>
+<p>ウェブ上にアップロードされたMP3形式ファイルのURLを用いて音声を指定します。</p>
+<pre><code class="language-text">audio: url_to_your_audio_file_1.mp3
+
+audio: url_to_your_audio_file_2.mp3
+</code></pre>
+<p>MP3音声ファイルのURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、動画の最初からの経過秒数で表すことに注意してください。下記の指定では音声の最初（<code>x=0</code>）から5秒後（<code>x=5</code>）までを再生します。</p>
+<pre><code class="language-text">video: url_to_your_video_file.mp4#t=0,5
+</code></pre>
+<p><strong>注：</strong> 1つのスライドの中で音声ファイルのブロックを複数記述することが可能です。スライドに収まりきらないときには自動でスクロールされます。</p>
+<div id="additional" class="anchor"></div>
+
+<h3>6. その他の機能</h3>
+<h4>テキストの音声合成</h4>
+<p>通常のパラグラフ内のセンテンスはブラウザから利用可能な音声合成エンジンで音声を再生することができます。使用可能な言語と音声のバリエーションは OS とブラウザによって異なります。</p>
+<p>音声合成が可能なときには、プレゼン画面の左上にスピーカーのアイコン現れます。このアイコンをクリックするか、もしくはキーボードの <code>.</code> キーを打鍵すると音声が再生されます。もう一度クリック／打鍵すると再生を途中で停止することができます。</p>
+<h4>スティッキー・ノート</h4>
+<p>プレゼン中に思いついた内容をスティッキー・ノートに書いて聴衆に示すことができます。</p>
+<p>プレゼン画面左上の「紙切れ」アイコンをクリックするとスティッキー・ノートの表示／非表示を切り替えられます。スティッキー・ノートの内容はスライドが切り替わってもそのまま保持されます。</p>
+<h4>レーザーポインター</h4>
+<p>プレゼン中のマウスポインターの形状をレーザーポインター風に切り替えることができます。プレゼン画面左上の●アイコンをクリックしてください。</p>
+<p>レーザー風にしたときのポインターの色は設定画面で指定したアクセント・カラーと同じになります。</p>
+<h4>自動プレゼン機能</h4>
+<p>画面左上の魔法の杖アイコンをクリックしてください。現在のスライドの次の断片から発表全体の最終の断片まで、テキストの読み上げや動画再生などが次々と自動で実行されます。</p>

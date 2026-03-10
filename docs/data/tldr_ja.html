@@ -1,0 +1,6 @@
+<div class="tldr text-center">
+<b>これは何？</b><br />
+<span class='highlighted'>1行1センテンスのプレーンテキストを、いい感じのプレゼン・スライドに変換します。</span>
+<br />
+手っ取り早く試してみたい人は、<a href='#use'><b>使ってみる</b></a> のセクションに行って、<b>プレゼンに変換</b> のボタンを押してみてください。<br />モダンなウェブ・ブラウザでは<b>自動プレゼン機能</b>が利用可能になりました。<a href='https://www.youtube.com/watch?v=NB9RirpzsYQ'>[解説動画]</a>
+</div>

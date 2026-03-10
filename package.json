@@ -1,0 +1,11 @@
+{
+  "name": "paradocs",
+  "version": "0.8.0",
+  "private": true,
+  "scripts": {
+    "build:docs": "node scripts/build-docs.js"
+  },
+  "devDependencies": {
+    "marked": "^15.0.0"
+  }
+}

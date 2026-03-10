@@ -4,3 +4,5 @@ log/
 *.swp
 *.swo
 *~
+FUTURE_IDEAS.md
+node_modules/

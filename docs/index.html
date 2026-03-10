@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Paradocs: A Paragraph-Oriented Document Presentation System">
+    <meta name="author" content="Yoichiro Hasebe">
+
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:site"        content="@yohasebe" />
+    <meta property="og:image"         content="https://yohasebe.com/paradocs/img/paradocs.png" />
+
+    <meta property="og:url"           content="https://yohasebe.com/paradocs/" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="Paradocs" />
+    <meta property="og:description"   content="A Paragraph-Oriented Document Presentation System" />
+    <meta property="og:image"         content="https://yohasebe.com/paradocs/img/paradocs.png" />
+
+    <link rel="shortcut icon" href="./ico/favicon.ico">
+    <title>Paradocs: Paragraph-Oriented Document Presentation System</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="./ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./ico/favicon-16x16.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link href="./css/upload.css" rel="stylesheet">
+  </head>
+
+  <body>
+  <div id="wrap">
+  <div id='top' style='visibility:hidden;' subdir='./'></div>
+
+    <nav class="navbar fixed-top navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="./">Paradocs</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="./">English</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./ja/">日本語</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link emphasized" href="#use">
+                <span class='emphasized'>Use Paradocs</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Documentation
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#bindings">Key Bindings</a>
+                <a class="dropdown-item" href="#concepts">Basic Concepts</a>
+                <a class="dropdown-item" href="#blocks">Types of Blocks</a>
+                <a class="dropdown-item" href="#decoration">Decoration and Annotation</a>
+                <a class="dropdown-item" href="#embedding">Embedding Media Files</a>
+                <a class="dropdown-item" href="#additional">Additional Features</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid logo-container">
+      <div class='text-center'>
+        <div>
+          <span id="logo">
+            <img src="./img/paradocs.png" />
+            <a href="./">Paradocs </a>
+          </span>
+        </div>
+        <div><span class="slogan"> A Paragraph-Oriented Document Presentation System</span></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="8000">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="./img/linguistics.gif" alt="">
+          </div>
+          <div class="carousel-item">
+            <img src="./img/quiz.gif" alt="">
+          </div>
+          <div class="carousel-item">
+            <img src="./img/speech.gif" alt="">
+          </div>
+        </div>
+        <div class='carousel-outer left'>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="fa-solid fa-chevron-left" aria-hidden="true" style='color: #555;'></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+        </div>
+        <div class='carousel-outer right'>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="fa-solid fa-chevron-right" aria-hidden="true" style='color: #555;'></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class='row'>
+        <div class="col-sm-12 md">
+          <div class="more-margin">
+            <div id="tldr-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class='row'>
+        <div class="col-sm-12">
+          <div class="more-margin">
+            <div id="use" class="anchor"></div>
+
+<form role="form" enctype="multipart/form-data" target="new">
+
+  <div id='data_controller'>
+    <div class='md'>
+      <h2>Use Paradocs</h2>
+
+    </div>
+    <div>
+      <span class='form-label' style='width:100%'>Text Input (syntax highlighting enabled)</span>
+    </div>
+
+    <div id='input-textarea' class="ui-widget-content" style='height:480px; border:solid 1px lightgray;'></div>
+    <div class='text-end'>
+      <sub>
+        Textarea is vertically resizable
+      </sub>
+    </div>
+  </div>
+
+  <div style='margin-bottom:20px; '><span class='text-warning' id='textarea_message'></span></div>
+
+  <div style='margin-bottom: 1em;'>
+    <span id='submit_button' class="file_reset btn btn-primary">Convert Text</span>&nbsp;
+    <span id='reset_button' class="file_reset btn btn-light">Clear Text</span>
+  </div>
+
+  <div id='lang_controller' style='display: none;'>
+    <span class='form-label'>Speech Language</span>
+    <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
+  </div>
+
+  <div class="row" style='margin:0;'>
+    <div id='voice_controller' style='display: none;'>
+      <span class='form-label'>Speech Voice</span>
+      <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>
+    </div>
+    <div id='rate_controller' style='display: none; margin-left:10px;'>
+      <span class='form-label'>Speech Rate</span>
+      <select class="form-control inline-form" id='rate_selected' name='speech_rate'></select>
+      <span class='text-warning' id='rate_disabled_message'>Rate is not changeable for the voice currently selected.</span>
+    </div>
+  </div>
+
+  <div id='resolution_controller'>
+    <span class='form-label'>Screen Resolution</span>
+    <select class="form-control inline-form" id='resolution_selected' name='resolution'>
+      <option value="800x600">SVGA (800x600)</option>
+      <option value="1280x800" selected='selected'>WXGA (1280x800)</option>
+      <option value="1920x1080">Full-HD (1920x1080)</option>
+    </select>
+  </div>
+
+  <div id='fontfamily_controller'>
+    <span class='form-label'>Font Family</span>
+    <select class="form-control inline-form" id='font_family_selected' name='font_family'>
+      <option value="sans" selected='selected'>Sans Serif</option>
+      <option value="serif">Serif</option>
+      <option value="fun">Fun</option>
+    </select>
+  </div>
+
+  <div id='font_controller'>
+    <span class='form-label'>Font Size</span>
+    <select class="form-control inline-form" id='font_size_selected' name='font_size'>
+      <option value="80">Huge</option>
+      <option value="70">XLarge</option>
+      <option value="60">Larger</option>
+      <option value="50">Large</option>
+      <option value="40" selected='selected'>Medium</option>
+      <option value="30">Small</option>
+      <option value="20">Smaller</option>
+      <option value="10">Tiny</option>
+    </select>
+  </div>
+
+  <div id='wallpaper_controller'>
+    <span class='form-label'>Background Wallpaper</span>
+    <select class="form-control inline-form" id='wallpaper_selected' name='wallpaper'>
+      <option value="sandpaper.png" selected='selected'>sandpaper</option>
+      <option value="project-paper.png">project-paper</option>
+      <option value="bedge-grunge.png">bedge-grunge</option>
+      <option value="absurdity.png">absurdity</option>
+      <option value="fabric-plaid.png">fabric-plaid</option>
+      <option value="bright-squares.png">bright-squares</option>
+      <option value="inspiration-geometry.png">inspiration-geometry</option>
+      <option value="gray-floral.png">gray-floral</option>
+      <option value="gplay.png">gplay</option>
+      <option value="food.png">food</option>
+      <option value="arches.png">arches</option>
+      <option value="none">none</option>
+    </select>
+  </div>
+
+  <div id='accent_color_controller'>
+    <span class='form-label'>Accent Color</span>
+    <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
+      <option value="#e15759" selected='selected'><span class='color: #e15759;'>Red</span></option>
+      <option value="#4e79a7"><span class='color: #4e79a7;'>Blue</span></option>
+      <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
+      <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
+      <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
+      <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
+      <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
+      <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
+      <option value="#464646"><span class='color: #464646;'>Gray</span></option>
+    </select>
+    <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Accent Color</span>
+  </div>
+
+  <div id='highlight_background_color_controller'>
+    <span class='form-label'>Highlight Color</span>
+    <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
+      <option value="#e15759"><span class='color: #e15759;'>Red</span></option>
+      <option value="#4e79a7" selected='selected'><span class='color: #4e79a7;'>Blue</span></option>
+      <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
+      <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
+      <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
+      <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
+      <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
+      <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
+      <option value="#464646"><span class='color: #464646;'>Black</span></option>
+    </select>
+    <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Highlight Color</span>
+  </div>
+
+  <div id="text_background_controller">
+    <span class='form-label'>Invert Colors</span>
+    <input id="text_background" type="checkbox" name="text_background" value="text_background">
+  </div>
+
+</form>
+<div class="alert alert-warning"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="container-fluid">
+      <div class='row'>
+        <div class="col-sm-12 md">
+          <div class="more-margin">
+            <div id="readme-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="container-fluid">
+      <div class='row'>
+        <div class="col-sm-12 md">
+          <div class="more-margin">
+            <div id="documentation-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <div id="footer">
+    <p class='text-center text-muted' style='margin-bottom:0; padding: 1em;'>
+      Paradocs [Version 0.8.0]<br />
+      <b>Yoichiro Hasebe 2018-2026</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a> |
+    </p>
+  </div>
+
+  <div id="to-top" class="scroll-top ctrl-wrapper">
+    <span class="ctrl-inner">
+      <span class="fa-solid fa-chevron-up"></span>
+    </span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.36.5/src-min-noconflict/ace.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.4/marked.min.js"></script>
+  <script>
+    var default_lang = 'en-US';
+    var BASE_PATH = './';
+
+    // Load documentation HTML fragments
+    fetch(BASE_PATH + 'data/tldr.html').then(function(r) { return r.text(); }).then(function(html) {
+      document.getElementById('tldr-content').innerHTML = html;
+    });
+    fetch(BASE_PATH + 'data/readme.html').then(function(r) { return r.text(); }).then(function(html) {
+      document.getElementById('readme-content').innerHTML = html;
+    });
+    fetch(BASE_PATH + 'data/documentation.html').then(function(r) { return r.text(); }).then(function(html) {
+      document.getElementById('documentation-content').innerHTML = html;
+    });
+  </script>
+  <script src="./js/parser.js"></script>
+  <script src="./js/helper.js"></script>
+  <script src="./js/upload.js"></script>
+  </body>
+</html>

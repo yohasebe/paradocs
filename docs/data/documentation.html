@@ -1,0 +1,273 @@
+<h2>Documentation</h2>
+<div id="bindings" class="anchor"></div>
+
+<h3>1. Key Bindings</h3>
+<p>Many available during the presentation can be performed using the mouse, but can also be operated using the keyboard.</p>
+<table class="table table-sm table-striped">
+<thead>
+<tr>
+<th>Key</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>↓</code></td>
+<td>Move to  the <strong>next</strong> item</td>
+</tr>
+<tr>
+<td><code>↑</code></td>
+<td>Move back to the <strong>previous</strong> item</td>
+</tr>
+<tr>
+<td><code>j</code></td>
+<td>Move to  the <strong>next</strong> item</td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td>Move back to the <strong>previous</strong> item</td>
+</tr>
+<tr>
+<td><code>SPACE</code></td>
+<td>Move to  the <strong>next</strong> item</td>
+</tr>
+<tr>
+<td><code>SHIFT+SPACE</code></td>
+<td>Move back to the <strong>previous</strong> item</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>Play/Stop <strong>TTS read-aloud</strong>; Play/Stop <strong>video/audio clips</strong> (including YouTube videos); Enlarge/Shrink <strong>pop-up images</strong></td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>Play/Stop <strong>automatic presentation</strong></td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>Enter/Exit screen <strong>blackout</strong></td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td>Enter <strong>fullscreen-mode</strong></td>
+</tr>
+<tr>
+<td><code>ESC</code></td>
+<td>Enter <strong>overview-mode</strong>; Exit <strong>fullscreen-mode</strong></td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>Show/hide <strong>sticky note</strong></td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td>Enable/disable <strong>laser pointer</strong> mode</td>
+</tr>
+<tr>
+<td><code>SHIFT+TAB</code></td>
+<td>Finish editing (de-focus) <strong>sticky note</strong></td>
+</tr>
+<tr>
+<td><code>g</code></td>
+<td>Open <strong>Google</strong> in a new browser tab and search text string currently selected</td>
+</tr>
+</tbody>
+</table>
+<p><strong>TIPS</strong> </p>
+<blockquote>
+<p>I recommend <a href="https://www.logitech.com/en-us/presenters">Logitech Wireless Presenter R400/R800</a>, a presentation pointer device. It allows you to use the physical buttons to move between items while presenting in Paradocs and to start/stop text-to-speech, video, and audio.</p>
+</blockquote>
+<hr>
+<div id="concepts" class="anchor"></div>
+
+<h3>2. Basic Concepts</h3>
+<p><strong>Sentence</strong></p>
+<p>Sentences are separated by a single line break (<code>↩</code>). In a paragraph, they are treated as adjacent elements, each of which are highlighted one after the other.
+The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used (English, Japanese, etc.). To perform automatic sentence-segmentation, prefix the text with <code>!!</code> at the beginning of the text.</p>
+<p><strong>Paragraph</strong></p>
+<p>A block made up of multiple sentences is called a paragraph. A paragraph is represented by a block consisting of multiple lines, each of which has a single sentence.</p>
+<p><strong>Block</strong></p>
+<p>A block is separated by two or more consecutive line breaks <code>↩↩</code>; a single block can have more than one element. A block composed of multiple sentences is specifically called a paragraph.</p>
+<p><strong>Slide</strong></p>
+<p>A slide can also be called a &quot;page.&quot; Slides are separated by a single line break after four or more hyphens (<code>----↩</code> or<code>- - - -↩</code>). A single slide can have more than one block.</p>
+<h4>How to describe a paragraph</h4>
+<p>Multiple sentences are arranged vertically with a line break to form a paragraph.</p>
+<pre><code class="language-text">----
+Sentence #1 
+Sentence #2  
+Sentence #3 
+----
+</code></pre>
+<p>With the automatic sentence splitting feature, the above can be written as follows:</p>
+<pre><code class="language-text">----
+!! Sentence #1 Sentence #2 Sentence #3
+----
+</code></pre>
+<p>To perform automatic sentence splitting, prefix the text with <code>!!</code> at the beginning of the text. Also, each sentence must end with a sentence delimiter, such as a period or some other punctuation mark.</p>
+<h4>How to arrange multiple blocks in a slide</h4>
+<p>To place more than one block on a single slide, place a single line of space between blocks.</p>
+<pre><code class="language-text">----
+Block #1
+Block #2  
+
+Block #2 
+Block #2 
+----
+</code></pre>
+<h4>Create multiple slides (pages)</h4>
+<p>A slide can also be said to be a page. A single slide can contain multiple blocks.</p>
+<pre><code class="language-text">----
+Slide #1
+----
+Slide #2
+----
+Slide #3
+----
+</code></pre>
+<hr>
+<div id="blocks" class="anchor"></div>
+
+<h3>3. Types of Blocks</h3>
+<p>The following is a description of the various types of blocks.</p>
+<h4>Headings</h4>
+<p>You can create different levels of headings. The headings will be displayed in the selected accent color.</p>
+<pre><code class="language-text">----
+# Heading 1 
+
+## Heading 2 
+
+### Heading 3 
+----
+</code></pre>
+<h4>Regular Paragraphs</h4>
+<p>A regular paragraph is created by describing a block with one sentence per line.</p>
+<pre><code class="language-text">This is regular paragraph. 
+Sentences in static text are highlighted when focused. 
+They are printed in grey when not focused. 
+</code></pre>
+<p>In a normal paragraph, pressing a key will move the highlight from sentence to sentence.The slide frame automatically scrolls when the text cannot fit on it at the same time.</p>
+<h4>Static Paragraphs</h4>
+<p>To create a static paragraph, place a vertical bar sign and a space at the head of each sentence that makes up the paragraph.</p>
+<pre><code class="language-text">| This is static paragraph. 
+| Sentences in static text are not highlighted 
+| They are always printed in black. 
+</code></pre>
+<p>or</p>
+<pre><code class="language-text">| This is static paragraph. 
+  Sentences in static text are not highlighted 
+  They are always printed in black. 
+</code></pre>
+<p>When you are viewing a static paragraph, the per-sentence highlighting is turned off. It is important to note that a static paragraph does not automatically scroll when it does not fit on the slide.</p>
+<h4>Unordered Lists</h4>
+<p>This is the so-called bullet point format. To describe the elements of an unordered list, put an asterisk and a space at the beginning of each line.</p>
+<pre><code class="language-text">* Unordered list item 1
+* Unordered list item 2 
+* Unordered list item 3 
+</code></pre>
+<p>The list scrolls automatically when all the elements don&#39;t fit on the slide.</p>
+<h4>Ordered Lists</h4>
+<p>This is the format of a sequential list. To describe the elements of this type of list, put a number/letter, a period, and a space at the beginning of each line.</p>
+<pre><code class="language-text">1. Ordered list item 1
+2. Ordered list item 2
+3. Ordered list item 3
+
+a. Ordered list item 1
+b. Ordered list item 2
+c. Ordered list item 3
+</code></pre>
+<p>The list scrolls automatically when all the elements don&#39;t fit on the slide.</p>
+<p><strong>N.B.</strong> It is not possible to specify the first number/letter in the list.</p>
+<h4>Numbered Blocks</h4>
+<p>You can create a block with a specified number.  This is useful when you want to present formulas or exercises in your presentation.</p>
+<pre><code class="language-text">365. The number in a numbered block will be printed only once; 
+     the left-hand side of the text can have multiple lines 
+     the lines are aligned nicely
+</code></pre>
+<p><strong>N.B.</strong> The white spaces to the left of the second and subsequent lines in the above example are important.</p>
+<hr>
+<div id="decoration" class="anchor"></div>
+
+<h3>4. Decoration and Annotation</h3>
+<h4>Text Decoration</h4>
+<p>Text segments can be bolded, italicized, underlined, or highlighted.</p>
+<pre><code class="language-text">Italic:    orange *strawberry* apple
+Bold:      orange **strawberry** apple
+Underline: orange _strawberry_ apple
+Highlight: orange ==strawberry== apple
+</code></pre>
+<h4>Showing Notes and Pop-up Images</h4>
+<p>It is possible to display short text in notes that are separated from the body text. Notes are created using braces and the <code>note</code> command. In addition to the text notes, you can create an image popup by specifying the file URL with the <code>image</code> command.</p>
+<pre><code class="language-text">This is part of main text. {note: This is a note}
+This is also part of main text. {note: This is another note}
+You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
+</code></pre>
+<p><strong>N.B.</strong> Notes and pop-up images are available in &quot;regular paragraphs&quot; and &quot;unordered/ordered lists&quot; (not available in static paragraphs). You cannot display notes and pop-up images when the automatic sentence-segmentation function is used. The curly brackets <code>{ }</code> and the text inside will be ignored.</p>
+<h4>Quizzes</h4>
+<p>Using curly brackets and the <code>quiz</code> command, you can create a quiz in such a way that you initially keep the text hidden from your audience and reveal it at the appropriate time.</p>
+<pre><code class="language-text">| In a static context, words and phrases in {curly brackets}
+| will be rendered as {quize items} overlayed by an opaque box.
+</code></pre>
+<p><strong>N.B.</strong> When creating a quiz, you must use a static paragraph or a static ordered/unordered list.</p>
+<hr>
+<div id="embedding" class="anchor"></div>
+
+<h3>5. Embedding Media Files</h3>
+<p>You can embed images, videos, and audio into your slides.</p>
+<h4>Embed Images</h4>
+<p>You can specify the URL of an image file in PNG/JPG/GIF format uploaded on the web and display it on the slide. The image will be enlarged as much as possible.</p>
+<pre><code class="language-text">image: url_to_your_image_file.png
+</code></pre>
+<p>or</p>
+<pre><code class="language-text">img: url_to_your_image_file.png
+</code></pre>
+<p><strong>N.B.</strong> 
+To display an image on a slide, make sure that the above command is the only block on that slide. If multiple blocks are described, the images themselves are not displayed, but links to the images are used.</p>
+<p><strong>TIPS</strong> </p>
+<blockquote>
+<p>If you want to embed your own diagrams, you can use <a href="https://docs.google.com/drawings/u/0/create">Google Drawings</a> and can paste image links generated by its <code>Publish to the web</code> function. Or you can also use <a href="https://mermaid-js.github.io/mermaid-live-editor">Mermaid Live Editor</a> and get <code>Link to SVG</code> to embed business diagrams such as flowcharts or Gantt charts.</p>
+</blockquote>
+<h4>Embed YouTube Video</h4>
+<p>You can specify the URL of the YouTube video and display it on the slide. The video will be enlarged as much as possible.</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
+</code></pre>
+<p>or</p>
+<pre><code class="language-text">yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
+</code></pre>
+<p>You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the <code>&amp;start=x&amp;end=y</code> format. The following will play from 12 minutes 27 seconds (<code>x=747</code>) to 12 minutes 55 seconds (<code>x=775</code>) of the video.</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&amp;start=747&amp;end=775
+</code></pre>
+<p>You can also specify the start time and the end time by &quot;hour:min:sec&quot; notation, which may be easier for many users.</p>
+<pre><code class="language-text">youtube: https://www.youtube.com/watch?v=RKK7wGAYP6k&amp;start=12:27&amp;end=12:55
+</code></pre>
+<p><strong>N.B.</strong> To display a YouTube video on a slide, make sure that the above command is the only block on that slide. If multiple blocks are described, the videos themselves are not displayed, but links to the videos are used.</p>
+<h4>Embed MP4 Video</h4>
+<p>You can specify the URL of a video file in MP4 format uploaded on the web and display it on the slide. The video will be enlarged to the (nearly) entire slide page.</p>
+<pre><code class="language-text">video: url_to_your_video_file.mp4
+</code></pre>
+<p>You can specify the start and end points in the URL of the video. Note that each is represented by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the <code>#t=x,y</code> format. The following will play from the very beginning of the video (<code>x=0</code>) and stop it after 5 seconds (<code>y=5</code>).</p>
+<pre><code class="language-text">video: url_to_your_video_file.mp4#t=0,5
+</code></pre>
+<p><strong>N.B.</strong> To display an MP4 video on a slide, make sure that the above command is the only block on that slide. If multiple blocks are described, the videos themselves are not displayed, but links to the videos are used.</p>
+<h4>Embed MP3 Audio</h4>
+<p>You can specify the URLs of audio files in MP3 format uploaded on the web and display them on the slide. </p>
+<pre><code class="language-text">audio: url_to_your_audio_file.mp3
+</code></pre>
+<p>You can specify the start and end points in the URL of the mp3 video. Note that each is represented by the number of seconds that have elapsed since the beginning of the audio clip. Add the options to the URL in the <code>#t=x,y</code> format. The following will play from the very beginning of the audio clip (<code>x=0</code>) and stop it after 5 seconds (<code>y=5</code>).</p>
+<pre><code class="language-text">audio: url_to_your_audio_file.mp3#t=0,5
+</code></pre>
+<p><strong>N.B.</strong> It is possible to have multiple audio files in a single slide. The slide page automatically scrolls when all the blocks do not fit on the current viewport.</p>
+<div id="additional" class="anchor"></div>
+
+<hr>
+<h3>6. Additional Features</h3>
+<h4>Text-to-Speech</h4>
+<p>Sentences in regular paragraphs can be played back with a text-to-speech engine available in your browser. The available languages and audio variations vary by OS and browser.</p>
+<p>When TTS is available for highlighted content, a speaker icon appears in the upper right hand corner of the presentation screen. Click on this icon or press the <code>.</code> key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.</p>
+<h4>Sticky Note</h4>
+<p>You can show your audience what comes to mind during your presentation by writing it in a sticky note. </p>
+<p>You can show or hide the sticky note by clicking its icon at the top left of the presentation screen. The contents of the sticky note will be retained even if the slide changes.</p>
+<h4>Laser Pointer</h4>
+<p>You can change shape/color of your mouse cursor from the ordinary one to a laser-pointer-like colored dot. Click on ● at the top left of the screen to toggle modes.</p>
+<p>The color of the modified mouse pointer is determined by the selection for the &quot;accent color&quot; in the setting panel.</p>
+<h4>Automatic Presentation</h4>
+<p>Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.</p>
