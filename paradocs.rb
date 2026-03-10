@@ -9,16 +9,28 @@ require 'i18n_data'
 require 'parser'
 require 'helper'
 require 'json'
+require 'cgi'
 require 'pp'
 
 Encoding.default_external = 'utf-8'
 
 class CustomRenderer < Redcarpet::Render::HTML
   def image(link, title, alt_text)
-    if title =~ /([^=\s]+)=([^=\s]+)/
-      %(<a href="#{link}" target="_blank"><img src="#{link}" #{$1}="#{$2}" class=md-img' alt="#{alt_text}" /></a>)
+    safe_link = CGI.escapeHTML(link.to_s)
+    safe_alt = CGI.escapeHTML(alt_text.to_s)
+    safe_title = CGI.escapeHTML(title.to_s)
+    if safe_title =~ /([^=\s]+)=([^=\s]+)/
+      attr_name = $1
+      attr_val = $2
+      # Only allow safe HTML attributes
+      allowed_attrs = %w[width height style]
+      if allowed_attrs.include?(attr_name)
+        %(<a href="#{safe_link}" target="_blank"><img src="#{safe_link}" #{attr_name}="#{attr_val}" class='md-img' alt="#{safe_alt}" /></a>)
+      else
+        %(<a href="#{safe_link}" target="_blank"><img src="#{safe_link}" class='md-img' alt="#{safe_alt}" /></a>)
+      end
     else
-      %(<a href="#{link}" target="_blank"><img src="#{link}" title="#{title}" class='md-img' alt="#{alt_text}" /></a>)
+      %(<a href="#{safe_link}" target="_blank"><img src="#{safe_link}" title="#{safe_title}" class='md-img' alt="#{safe_alt}" /></a>)
     end
   end
   def table(header, body)
@@ -30,8 +42,6 @@ class CustomRenderer < Redcarpet::Render::HTML
 end
 
 $IMAGE_PATH = File.join(File.dirname(__FILE__), "public/img")
-
-$GOOGLE_CODE = File.read(File.join(File.dirname(__FILE__), "google_analytics_tracking_code"))
 
 markdown = Redcarpet::Markdown.new(CustomRenderer, autolink: true, fenced_code_blocks: true, with_toc_data: true, tables: true)
 
@@ -136,18 +146,12 @@ PD_KEYWORDS_JA = {
 DEFAULT_HEADER = ""
 DEFAULT_FOOTER = ""
 
-GOOGLE_CODE =<<EOD
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-644847-7', 'auto');
-  ga('send', 'pageview');
-
-</script>
-EOD
+# Allowed wallpaper filenames for security
+ALLOWED_WALLPAPERS = %w[
+  absurdity.png arches.png bedge-grunge.png bright-squares.png
+  fabric-plaid.png food.png gplay.png gray-floral.png
+  inspiration-geometry.png project-paper.png sandpaper.png
+].freeze
 
 CONFIG_FILE = File.expand_path(File.dirname(__FILE__) + "/paradocs.conf")
 CONFIG_JSON = File.read(CONFIG_FILE).gsub("\n", " ").gsub(/\s+/, " ")
@@ -163,12 +167,14 @@ Dir::glob(DECKS_PATH + "/*.{txt}").each do |file|
   DECKS[url] = File.expand_path(file) if url != ""
 end
 
-$current_lang = ""
-
 class Paradocs < Sinatra::Base
 
+  before do
+    @current_lang = ""
+  end
+
   get '/' do
-    $current_lang = ""
+    @current_lang = ""
     @readme_html = README_HTML
     @tldr_html = TLDR_HTML
     @document_html = DOCUMENT_HTML
@@ -179,7 +185,7 @@ class Paradocs < Sinatra::Base
   end
 
   get '/ja' do
-    $current_lang = "ja"
+    @current_lang = "ja"
     @readme_html = README_HTML_JA
     @tldr_html = TLDR_HTML_JA
     @document_html = DOCUMENT_HTML_JA
@@ -231,19 +237,28 @@ class Paradocs < Sinatra::Base
     config["font_size"]      = params[:font_size].to_i.to_s
     config["note_size"]      = params[:font_size].to_i.to_s
     config["font_family"]    = params[:font_family]
-    config["accent_color"]   = params[:accent_color]
+    accent_color = params[:accent_color].to_s
+    config["accent_color"]   = accent_color =~ /\A#[0-9a-fA-F]{3,8}\z/ ? accent_color : "#e15759"
     config["color_inverted"] = params[:text_background]
 
-    wallpaper = params[:wallpaper] == "none" ? "none" : "url(" + CONFIG["prefix"] + "img/wallpaper/" + params[:wallpaper] + ")"
+    wp = params[:wallpaper].to_s
+    wallpaper = if wp == "none" || !ALLOWED_WALLPAPERS.include?(wp)
+                  "none"
+                else
+                  "url(" + CONFIG["prefix"] + "img/wallpaper/" + wp + ")"
+                end
     config["wallpaper"] = wallpaper
 
+    raw_hl_color = params[:highlight_background_color].to_s
+    safe_hl_color = raw_hl_color =~ /\A#[0-9a-fA-F]{3,8}\z/ ? raw_hl_color : "#4e79a7"
+
     if config["color_inverted"]
-      highlight_background_color = params[:highlight_background_color]
+      highlight_background_color = safe_hl_color
       highlight_color = "#ffffff"
-      progress_color = params[:highlight_background_color]
+      progress_color = safe_hl_color
     else
       highlight_background_color = "transparent"
-      highlight_color = params[:highlight_background_color]
+      highlight_color = safe_hl_color
       progress_color = highlight_color
     end
 

@@ -30,14 +30,12 @@
     <link href="<%= PREFIX %>css/upload.<%= PARA_VERSION %>.min.css" rel="stylesheet">
   </head>
 
-  <%= $GOOGLE_CODE %>
-
   <body>
   <div id="wrap">
   <div id='top' style='visibility:hidden;' subdir='<%= PREFIX %>'></div>
 
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light ">
-      <a class="navbar-brand" href="<%= PREFIX %><%= $current_lang %>">Paradocs</a>
+    <nav class="navbar fixed-top navbar-expand-lg">
+      <a class="navbar-brand" href="<%= PREFIX %><%= @current_lang %>">Paradocs</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -80,7 +78,7 @@
         <div>
           <span id="logo">
             <img src="/paradocs/img/paradocs.png" />
-            <a href="<%= PREFIX %><%= $current_lang %>">Paradocs </a>
+            <a href="<%= PREFIX %><%= @current_lang %>">Paradocs </a>
           </span>
         </div>
         <div><span class="slogan"> <%= @keywords["slogan"] %></span></div>
@@ -148,35 +146,6 @@
       </div>
     </div>
 
-    <div class="container-fluid">
-      <div class='row'>
-        <div class="col-sm-12 md">
-          <div class="more-margin">
-            <div id="fb-root"></div> 
-            <script>
-              (function(d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s); js.id = id;
-                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9";
-                fjs.parentNode.insertBefore(js, fjs);
-              }(document, 'script', 'facebook-jssdk'));
-            </script>
-            <div class="social">
-              <div class="twitter-tweet-fb">
-                <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://yohasebe.com/paradocs" data-text="Paradocs: A Paragraph-Oriented Documentation Presentation System">Tweet</a> 
-              </div>
-              <div class="fb-like" data-href="https://yohasebe.com/paradocs" data-layout="button" data-action="like" data-size="small" data-show-faces="false" data-share="true">
-              </div>
-            </div>
-            <script>
-              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-            </script>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <hr />
 
     <div class="container-fluid">
@@ -196,7 +165,7 @@
   <div id="footer">
     <p class='text-center text-muted' style='margin-bottom:0; padding: 1em;'>
       Paradocs [Version <%= PARA_VERSION %>]<br />
-      <b>Yoichiro Hasebe 2018-2020</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a h href='https://yohasebe.com'>Web</a> |
+      <b>Yoichiro Hasebe 2018-2026</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a> |
     </p>
   </div>
 
