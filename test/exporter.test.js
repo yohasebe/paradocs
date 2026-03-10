@@ -17,72 +17,78 @@ describe('Exporter', () => {
     speech_rate: '1.0'
   };
   const sampleCSS = '<style>.reveal { font-size: 40px; }</style>';
+  const sampleScript = 'jQuery(function($){ Reveal.initialize({}); });';
 
   describe('generateHTML', () => {
     test('returns a string containing DOCTYPE', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toMatch(/^<!doctype html>/i);
     });
 
     test('contains slides HTML', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain(sampleSlides);
     });
 
     test('contains config as embedded JSON', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain(JSON.stringify(sampleConfig));
     });
 
     test('contains generated CSS', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain(sampleCSS);
     });
 
     test('contains CDN references for Reveal.js', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('reveal.js');
       expect(html).toContain('reveal.css');
     });
 
     test('contains CDN references for jQuery', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('jquery');
     });
 
-    test('contains paradocs.js reference or inline', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
-      expect(html).toContain('paradocs');
+    test('inlines paradocs script content', () => {
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).toContain('Reveal.initialize');
+    });
+
+    test('does not reference external paradocs.js file', () => {
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).not.toContain('paradocs.js');
     });
 
     test('adds inverted class when inverted is true', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, true);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, true, sampleScript);
       expect(html).toContain('class="reveal inverted"');
     });
 
     test('does not add inverted class when inverted is false', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('class="reveal"');
       expect(html).not.toContain('class="reveal inverted"');
     });
 
     test('does not reference sessionStorage', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).not.toContain('sessionStorage');
     });
 
     test('contains Font Awesome CSS', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('font-awesome');
     });
 
     test('contains Tippy.js', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('tippy');
     });
 
     test('contains UI elements (switches, gadgets)', () => {
-      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
       expect(html).toContain('id="gadgets"');
       expect(html).toContain('id="sticky_icon"');
       expect(html).toContain('id="speaker_icon"');
@@ -91,7 +97,7 @@ describe('Exporter', () => {
 
     test('escapes script-breaking sequences in slides', () => {
       var maliciousSlides = '<section>test</scr' + 'ipt><script>alert(1)</script></section>';
-      var html = Exporter.generateHTML(maliciousSlides, sampleConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(maliciousSlides, sampleConfig, sampleCSS, false, sampleScript);
       // The embedded data should not break out of the script tag
       expect(html).not.toMatch(/<\/script>\s*<script>alert/);
     });
@@ -100,7 +106,7 @@ describe('Exporter', () => {
       var maliciousConfig = Object.assign({}, sampleConfig, {
         speech_voice: 'test</scr' + 'ipt><script>alert(1)'
       });
-      var html = Exporter.generateHTML(sampleSlides, maliciousConfig, sampleCSS, false);
+      var html = Exporter.generateHTML(sampleSlides, maliciousConfig, sampleCSS, false, sampleScript);
       expect(html).not.toMatch(/<\/script>\s*<script>alert/);
     });
   });

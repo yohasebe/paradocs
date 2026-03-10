@@ -24,10 +24,11 @@
   /**
    * Generate a complete standalone HTML string.
    */
-  Exporter.generateHTML = function (slidesHtml, config, cssText, inverted) {
+  Exporter.generateHTML = function (slidesHtml, config, cssText, inverted, paradocsScript) {
     var configJson = safeEmbed(JSON.stringify(config));
     var safeSlidesHtml = safeEmbed(slidesHtml);
     var safeCssText = safeEmbed(cssText);
+    var safeParadocsScript = paradocsScript ? safeEmbed(paradocsScript) : '';
     var invertedClass = inverted ? ' inverted' : '';
 
     return '<!doctype html>\n' +
@@ -83,7 +84,7 @@
       '    <script>\n' +
       '      var pconf = ' + configJson + ';\n' +
       '    <\/script>\n' +
-      '    <script src="https://cdn.jsdelivr.net/gh/yohasebe/paradocs@master/docs/js/paradocs.js"><\/script>\n' +
+      '    <script>\n' + safeParadocsScript + '\n<\/script>\n' +
       '  </body>\n' +
       '</html>\n';
   };
@@ -101,18 +102,29 @@
 
   /**
    * Trigger a download of the standalone HTML (browser only).
+   * Fetches paradocs.js and inlines it into the exported file.
+   * basePath should be './' or '../' depending on the page.
    */
-  Exporter.download = function (slidesHtml, config, cssText, inverted) {
-    var html = Exporter.generateHTML(slidesHtml, config, cssText, inverted);
-    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = Exporter.generateFilename();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  Exporter.download = function (slidesHtml, config, cssText, inverted, basePath) {
+    var scriptUrl = (basePath || './') + 'js/paradocs.js';
+    fetch(scriptUrl)
+      .then(function (r) { return r.text(); })
+      .then(function (paradocsScript) {
+        var html = Exporter.generateHTML(slidesHtml, config, cssText, inverted, paradocsScript);
+        var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = Exporter.generateFilename();
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(function (err) {
+        console.error('Failed to fetch paradocs.js for export:', err);
+        alert('Export failed: could not load presentation script.');
+      });
   };
 
   // ---- export ----

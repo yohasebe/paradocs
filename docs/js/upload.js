@@ -378,7 +378,7 @@ $('#download_button').on('click', function(){
   saveFormSettings(result.config);
 
   // Download standalone HTML
-  Exporter.download(result.slides, result.config, result.css, result.colorInverted);
+  Exporter.download(result.slides, result.config, result.css, result.colorInverted, BASE_PATH);
 });
 
 function saveFormSettings(config) {
