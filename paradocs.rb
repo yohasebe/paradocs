@@ -41,8 +41,6 @@ class CustomRenderer < Redcarpet::Render::HTML
   end
 end
 
-$IMAGE_PATH = File.join(File.dirname(__FILE__), "public/img")
-
 markdown = Redcarpet::Markdown.new(CustomRenderer, autolink: true, fenced_code_blocks: true, with_toc_data: true, tables: true)
 
 SAMPLE_TEXT_PATH = File.dirname(__FILE__) + "/decks/sample.txt"
@@ -143,9 +141,6 @@ PD_KEYWORDS_JA = {
   "wallpaper" => "背景の壁紙",
 }
 
-DEFAULT_HEADER = ""
-DEFAULT_FOOTER = ""
-
 # Allowed wallpaper filenames for security
 ALLOWED_WALLPAPERS = %w[
   absurdity.png arches.png bedge-grunge.png bright-squares.png
@@ -158,14 +153,6 @@ CONFIG_JSON = File.read(CONFIG_FILE).gsub("\n", " ").gsub(/\s+/, " ")
 CONFIG = JSON.parse(CONFIG_JSON)
 PREFIX = CONFIG["prefix"]
 PARA_VERSION = CONFIG["para_version"]
-
-DECKS_PATH = File.expand_path(File.dirname(__FILE__) + "/decks")
-DECKS = {}
-
-Dir::glob(DECKS_PATH + "/*.{txt}").each do |file|
-  url = File.basename(file, ".*")
-  DECKS[url] = File.expand_path(file) if url != ""
-end
 
 class Paradocs < Sinatra::Base
 
@@ -195,11 +182,6 @@ class Paradocs < Sinatra::Base
     erb :upload
   end
 
-  # get '/img/:imgfile' do
-  #   send_file(File.join($IMAGE_PATH, params['imgfile']))
-  # end
-
-
   get '/lctags' do
     languages = I18nData.languages
     countries = I18nData.countries
@@ -224,7 +206,7 @@ class Paradocs < Sinatra::Base
       content_type file[:type]
       tempfile = file[:tempfile]
       text = File.read(tempfile)
-      File.delete tempfile.path
+      File.delete(tempfile.path) rescue nil
     else
       text = params[:text]
     end
@@ -266,7 +248,8 @@ class Paradocs < Sinatra::Base
     config["highlight_color"] = highlight_color
     config["progress_color"] = progress_color
 
-    resolution = params[:resolution]
+    allowed_resolutions = %w[800x600 1280x800 1920x1080]
+    resolution = allowed_resolutions.include?(params[:resolution]) ? params[:resolution] : "1280x800"
     config["width"], config["height"] = resolution.split("x").map{|r|r.to_i}
 
     @slides = parser.parse()

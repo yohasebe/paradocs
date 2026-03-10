@@ -77,7 +77,7 @@
           document.body.appendChild(punch_script);
         }
 
-        pconf = JSON.parse('<%= @config %>');
+        pconf = JSON.parse('<%= @config.gsub("'", "\\\\'").gsub("</", "<\\/") %>');
       });
     </script>
 

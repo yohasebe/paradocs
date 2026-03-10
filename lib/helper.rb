@@ -169,10 +169,10 @@ body{
   text-shadow:-1px 1px 2px rgba(0,0,0,0.25);
 }
 
-.reveal .slides section div.text .fragment.visible.current-fragment a, 
-        .slides section div.text .fragment.visible.current-fragment a:link, 
-        .slides section div.text .fragment.visible.current-fragmentdiv.text a:hover, 
-        .slides section div.text .fragment.visible.current-fragmentdiv.text a:visited {
+.reveal .slides section div.text .fragment.visible.current-fragment a,
+        .slides section div.text .fragment.visible.current-fragment a:link,
+        .slides section div.text .fragment.visible.current-fragment div.text a:hover,
+        .slides section div.text .fragment.visible.current-fragment div.text a:visited {
   color: #{conf["highlight_color"]};
   text-shadow:-1px 1px 2px rgba(0,0,0,0.25);
 }
@@ -293,7 +293,7 @@ div.gadgets div.sticky{
 }
 
 .gadgets div.imagenote .enlarge span{
-  position: absolute
+  position: absolute;
   top:0;
   left:0;
   width: 1em;
@@ -554,7 +554,7 @@ div.list-table table{
   border: none;
 }
 
-div.div.list-table tr{
+div.list-table tr{
 }
 
 div.list-table td {
@@ -582,14 +582,11 @@ div.list-table td {
 
 .reveal li.fragment.visible.current-fragment:before {
   color: white;
+  border-color: #F45B69;
 }
 
 .reveal li span{
   position: relative; left: 20px;
-}
-
-.reveal li.fragment.visible.current-fragment:before {
-  border-color: #F45B69;
 }
 
 .reveal sup{

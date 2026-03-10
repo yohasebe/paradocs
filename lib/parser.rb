@@ -59,7 +59,7 @@ class Parser
       else 
         return text
       end
-    rescue => e
+    rescue
       return text
     end
   end
@@ -123,8 +123,6 @@ class Parser
             no_frag = true
           end
          
-          last_paragraph = true if i == paragraphs.size - 1
-
           # センテンスは\nで分割される
           sentences = paragraph.split("\n")
 
@@ -221,7 +219,7 @@ class Parser
               alpha = "•"
               if !start_from
                 start_from = alpha
-                spans << "<table align='left'><tbody><tr><td>#{alpha}</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"
+                spans << "<table style='margin-right: auto;'><tbody><tr><td>#{alpha}</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"
               else
                 spans << "<tr><td>#{alpha}</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"
               end
@@ -234,7 +232,7 @@ class Parser
 
               if !start_from
                 start_from = alpha
-                spans << "<table align='left'><tbody><tr><td>#{alpha}.</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"
+                spans << "<table style='margin-right: auto;'><tbody><tr><td>#{alpha}.</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"
               elsif start_from != alpha
                 start_from = alpha
                 spans << "<tr><td>#{alpha}.</td><td><span class='#{class_str}' data-note='#{note_id}'>#{sentence}</span></td></tr>"

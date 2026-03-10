@@ -1,6 +1,7 @@
 $LOAD_PATH << File.dirname(__FILE__)
 
 require 'json'
+require 'fileutils'
 require 'rake/testtask'
 
 Rake::TestTask.new(:test) do |t|
@@ -27,7 +28,7 @@ task :minify do
     ext = File.extname(f)
     subpath = File.expand_path(path + f + '/../') + '/'
     # 古いファイルは削除
-    `rm -rf #{subpath}#{base}.*.min#{ext}`
+    Dir.glob("#{subpath}#{base}.*.min#{ext}").each { |old| FileUtils.rm_f(old) }
     if ext == ".js" || ext == ".css"
       filename = base + "." + PARA_VERSION + ".min" + ext
     end

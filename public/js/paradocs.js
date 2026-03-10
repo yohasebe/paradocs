@@ -747,7 +747,9 @@ jQuery(function($){
     var notetype = $current_fragment.attr('data-notetype');
 
     if(notetype === "img" || notetype === "image"){
-      var img = $("<img src='" + note + "' />");
+      var imgElem = document.createElement("img");
+      if(/^https?:\/\//i.test(note)) { imgElem.src = note; }
+      var img = $(imgElem);
       $div_imagenote.data("enlarged", false);
       img.on("load",function(){
         var iWidth = $(this).width();
@@ -777,8 +779,9 @@ jQuery(function($){
         enlarge_image();
       });
     } else if(notetype === "note") {
-      var textnote = "<span>" + note + "</span>";
-      $div_note.hide().html(textnote).show()
+      var noteSpan = document.createElement("span");
+      noteSpan.textContent = note;
+      $div_note.hide().empty().append(noteSpan).show()
       $div_imagenote.hide();
     } else {
       $div_note.hide();
@@ -788,7 +791,7 @@ jQuery(function($){
 
   ///// Things need to be done when a slide is shown
   function flip_page(event){
-    $current_fragment = $('.current_fragment');
+    $current_fragment = $('.current-fragment');
     hideSpeaker();
     $div_imagenote.stop().hide();
     $div_note.stop().hide();
@@ -1180,10 +1183,8 @@ jQuery(function($){
     playMedia(defer);
     defer.promise().then(function(){
       playAll(false);
-    }, function(e){
-      console.log(e);
+    }, function(){
       stopPlayAll();
-      alert("Press the icon once again if you're ready for the automatic presentation")
     });
     return true;
   }
