@@ -1,40 +1,140 @@
-<div id="overview" class="anchor"></div>
+<p align="center">
+  <img src="docs/img/paradocs.png" alt="Paradocs" width="120">
+</p>
 
-## Overview 
+<h1 align="center">Paradocs</h1>
 
-<span class='marker'>**Paradocs** (<a href="https://yohasebe.com/paradocs">https://yohasebe.com/paradocs</a>) is a paragraph-oriented text presentation system.</span> It is suitable for presenting a large piece of text, typically paragraph by paragraph, while making comments and explanations. With Paradocs, each press of a key or button highlights one sentence after another. This allows the audience to know which particular sentence the presenter is focusing on at the moment.
+<p align="center">
+  <strong>Paragraph-Oriented Document Presentation System</strong><br>
+  <a href="https://yohasebe.github.io/paradocs">https://yohasebe.github.io/paradocs</a>
+</p>
 
-The creator of Paradocs originally developed it for personal use in an ESL reading class at the university he works at. In reading classes, both teachers and students tend to spend most of their time looking down, which, he thought, was a sad thing. <span class='marker'>With Paradocs, you can easily prepare presentations for use in class by simply formatting the original text into a "one sentence per line" format.</span> You can use it in conjunction with a remote meeting app such as Zoom to conduct online classes.
+---
 
-<span class='marker'>Paradocs has multi-lingual text-to-speech (TTS) capability,</span> which uses the Web Speech API of browsers such as Google Chrome, Mozilla Firefox, Apple Safari, and Microsoft Edge, allowing you to choose one of the multiple languages installed on your computer and have the sentence read out for you and your audience whenever you want during your presentation.
+**Paradocs** is a browser-based presentation tool designed for presenting text documents sentence by sentence. Each key press highlights the next sentence, letting the audience follow exactly where the presenter is focusing. Originally developed for ESL reading classes, it is well-suited for any scenario where you walk through text in a structured way.
 
-The presentation can be used by the user to give an oral presentation. <span class='marker'>Or, you can have the whole thing presented automatically.</span> Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text reading, video playback, etc. will be performed automatically, one after another.
+All processing runs entirely in the browser — no server, no account, no data sent anywhere.
 
-Many of the features of Paradocs rely on the presentation slide creation library [Reveal.js](https://revealjs.com) developed by Hakim El Hattab. I am truly grateful to him and his collaborators for this wonderful library.  The beautiful background wallpaper is provided by <a href='https://www.transparenttextures.com/'>Transparent Textures</a>.
+<p align="center">
+  <img src="docs/img/paradocs.gif" alt="Paradocs demo" width="720">
+</p>
 
-Paradocs was developed by [Yoichiro Hasebe](https://yohasebe.com). All text processing is done entirely in the browser — no data is sent to any server.
+## Features
+
+- **Sentence-by-sentence navigation** — Highlight one sentence at a time with keyboard or mouse
+- **Text-to-Speech (TTS)** — Read aloud the current sentence with word-level highlighting
+- **Automatic presentation** — Auto-advance through all slides with TTS playback
+- **Multiple block types** — Headings, paragraphs, static text, ordered/unordered lists, numbered blocks, blockquotes, and tables
+- **Media embedding** — Images, YouTube videos, MP4 video, and MP3 audio
+- **Quiz features** — Inline fill-in-the-blank quizzes and multiple-choice quizzes (MCQ) with retry
+- **Notes and pop-up images** — Annotate sentences with tooltips and image popups
+- **Text decoration** — Bold, italic, underline, and highlight with Markdown-compatible syntax
+- **Dark mode** — Inverted color scheme for all presentation elements
+- **Auto-save** — Text and settings saved to browser local storage automatically
+- **HTML export** — Download a standalone HTML file for offline use
+- **URL sharing** — Share a direct link to a specific slide and fragment
+- **Laser pointer** — Visual pointer mode for emphasis during presentations
+- **Sticky notes** — Freeform notes visible during presentation
+- **Multi-language** — English and Japanese UI; TTS supports all browser-installed languages
+
+## How It Works
+
+<p align="center">
+  <img src="docs/img/text.png" alt="Input and output" width="640">
+</p>
+
+Write your text with one sentence per line. Separate slides with `----`. That's it.
+
+<p align="center">
+  <img src="docs/img/blocks.png" alt="Block types" width="640">
+</p>
+
+For details, see the [full documentation](https://yohasebe.github.io/paradocs) (accessible from the app's Documentation tab).
+
+## Quick Start
+
+1. Open [https://yohasebe.github.io/paradocs](https://yohasebe.github.io/paradocs)
+2. Type or paste your text (or use the sample text)
+3. Adjust settings (font, colors, language, etc.)
+4. Click **Convert Text**
+5. Navigate with arrow keys, `j`/`k`, or space bar
+
+### Key Bindings
+
+| Key | Function |
+|:----|:---------|
+| `↓` / `j` / `SPACE` | Next item |
+| `↑` / `k` / `SHIFT+SPACE` | Previous item |
+| `.` | Play/stop TTS, video, or audio |
+| `a` | Toggle automatic presentation |
+| `f` | Fullscreen |
+| `s` | Show/hide sticky note |
+| `p` | Toggle laser pointer |
+| `/` | Screen blackout |
+| `ESC` | Overview mode |
+
+## Text Format Example
+
+```text
+----
+# Introduction
+
+This is the first sentence.
+This is the second sentence.
+Each line becomes a **highlighted fragment**.
+
+| This is static text.
+| It won't be highlighted sentence by sentence.
+
+* Bullet point one
+* Bullet point two
+
+| {mcq: What color is the sky?
+|   a) Green
+|   *b) Blue
+|   c) Red
+| }
+
+| Name  | Score |
+|-------|-------|
+| Alice | 95    |
+| Bob   | 87    |
+----
+```
 
 ## Architecture
 
-Paradocs is a fully static site with no server-side dependencies. The text-to-slides conversion is done entirely in the browser using client-side JavaScript.
+Paradocs is a fully static site — no server-side dependencies.
 
-- **Input page** (`docs/index.html`, `docs/ja/index.html`) — Ace editor for text input, configuration form, client-side parsing
-- **Presentation page** (`docs/deck.html`) — Reveal.js-based slide viewer, reads data from `sessionStorage`
-- **Parser** (`docs/js/parser.js`) — Converts Paradocs custom text format to Reveal.js HTML
-- **CSS generator** (`docs/js/helper.js`) — Generates presentation styles from configuration
-- **Doc builder** (`scripts/build-docs.js`) — Node.js script that converts Markdown documentation to HTML fragments
+| Component | File | Role |
+|:----------|:-----|:-----|
+| Input page | `docs/index.html`, `docs/ja/index.html` | Text editor and configuration form |
+| Presentation | `docs/deck.html` | Reveal.js slide viewer |
+| Parser | `docs/js/parser.js` | Converts text format to slide HTML |
+| CSS generator | `docs/js/helper.js` | Generates presentation styles |
+| TTS highlight | `docs/js/tts-highlight.js` | Word-level highlight during TTS |
+| Exporter | `docs/js/exporter.js` | Standalone HTML export |
 
-### Key libraries (via CDN)
+### Key Libraries (via CDN)
 
-jQuery 3.7.1, jQuery UI 1.14.1, Bootstrap 5.3.8, Reveal.js 5.2.1, Ace Editor 1.36.5, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7
+jQuery 3.7.1, jQuery UI 1.14.1, Reveal.js 5.2.1, Ace Editor 1.36.5, Bootstrap 5.3.8, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7
 
-### Development
+## Development
 
 ```bash
-npm install            # Install dev dependencies (marked)
-npm run build:docs     # Rebuild documentation fragments in docs/data/
+npm install            # Install dev dependencies
+npm test               # Run tests (110 tests)
+npm run build:docs     # Rebuild documentation HTML fragments
 ```
 
-### Deployment
+## Deployment
 
 The site is served from the `docs/` folder via GitHub Pages. Push to `master` and configure GitHub Pages to serve from the `docs/` directory.
+
+## License
+
+MIT
+
+## Author
+
+[Yoichiro Hasebe](https://yohasebe.com)
