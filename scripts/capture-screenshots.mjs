@@ -26,6 +26,17 @@ async function main() {
     await page.click('#submit_button');
     const popup = await popupPromise;
     await delay(5000);
+    // Intercept requests to redirect external image URLs to local server
+    await popup.setRequestInterception(true);
+    popup.on('request', (req) => {
+      const url = req.url();
+      if (url.includes('yohasebe.com/paradocs/')) {
+        const localUrl = url.replace(/https?:\/\/[^/]*\/paradocs\//, `${BASE_URL}/`);
+        req.continue({ url: localUrl });
+      } else {
+        req.continue();
+      }
+    });
     return { parent: page, popup };
   }
 
@@ -135,7 +146,29 @@ async function main() {
       }
     }
 
-    // Frames 11-13: Fill-in-the-blank Quiz - all 3 items (v=13)
+    // Frame 11: Pop-up Image (v=12)
+    // v=12: 3 sentences, each with a popup image
+    // Use keyboard navigation so fragmentshown event fires and image popup appears
+    {
+      await goToFragment(popup, 12, -1);  // navigate to slide, no fragments
+      // Advance to fragment 0 (first image: Mona Lisa)
+      await popup.keyboard.press('j');
+      await delay(500);
+      // Wait for network to idle (image load from external URL)
+      await popup.waitForNetworkIdle({ idleTime: 2000, timeout: 10000 }).catch(() => {});
+      await delay(500);
+      // Click the enlarge button twice to make image bigger for screenshot
+      for (let i = 0; i < 2; i++) {
+        await popup.evaluate(() => {
+          const enlarge = document.querySelector('.gadgets div.imagenote div.enlarge');
+          if (enlarge) enlarge.click();
+        });
+        await delay(300);
+      }
+      await capture(popup, framesDir, n++);
+    }
+
+    // Frames 12-14: Fill-in-the-blank Quiz - all 3 items (v=13)
     // v=13: heading + 1 intro sentence + 3 quiz items
     // Quiz items are the last 3 fragments
     {

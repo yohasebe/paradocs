@@ -74,16 +74,15 @@ span.slogan{
  text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
 }
 
-div#carouselExampleControls {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  margin-left: 15px;
-  margin-right: 15px;
-  background-color: lightgray;
+div.demo-gif {
+  padding: 20px 15px;
+  text-align: center;
 }
 
-div.carousel-inner {
-  background-color: lightgray;
+div.demo-gif img {
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 #footer {
@@ -208,17 +207,6 @@ div#rate_controller {
   border: solid 1px lightgray;
 }
 
-.carousel-item {
-  height: 250px;
-}
-
-.carousel-item img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;   /* position: absolute; */
-    max-height: 120%;
-    max-width:100%;
-}
 
 .ctrl-wrapper {
     position: fixed;
