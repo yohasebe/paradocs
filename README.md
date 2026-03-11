@@ -11,9 +11,11 @@
 
 ---
 
-**Paradocs** is a browser-based presentation tool designed for presenting text documents sentence by sentence. Each key press highlights the next sentence, letting the audience follow exactly where the presenter is focusing. Originally developed for ESL reading classes, it is well-suited for any scenario where you walk through text in a structured way.
+**Paradocs** is a browser-based presentation tool that lets you present text documents sentence by sentence. Each key press highlights the next sentence, so the audience always knows exactly where the presenter is focusing.
 
-All processing runs entirely in the browser — no server, no account, no data sent anywhere.
+Originally developed for ESL reading classes, it is well-suited for any scenario where you walk through text in a structured way — language lessons, reading seminars, document reviews, and more.
+
+All processing runs entirely in the browser. No server, no account, no data sent anywhere.
 
 <p align="center">
   <img src="docs/img/paradocs.gif" alt="Paradocs demo" width="720">
@@ -21,50 +23,50 @@ All processing runs entirely in the browser — no server, no account, no data s
 
 ## Features
 
-- **Sentence-by-sentence navigation** — Highlight one sentence at a time with keyboard or mouse
-- **Text-to-Speech (TTS)** — Read aloud the current sentence with word-level highlighting
-- **Automatic presentation** — Auto-advance through all slides with TTS playback
-- **Multiple block types** — Headings, paragraphs, static text, ordered/unordered lists, numbered blocks, blockquotes, and tables
+- **Sentence-by-sentence highlighting** — Navigate through text one sentence at a time
+- **Text-to-Speech** — Read sentences aloud with word-level highlighting
+- **Automatic presentation** — Auto-advance through all slides with TTS
+- **Rich content** — Headings, lists, tables, blockquotes, static text, and numbered blocks
 - **Media embedding** — Images, YouTube videos, MP4 video, and MP3 audio
-- **Quiz features** — Inline fill-in-the-blank quizzes and multiple-choice quizzes (MCQ) with retry
-- **Notes and pop-up images** — Annotate sentences with tooltips and image popups
-- **Text decoration** — Bold, italic, underline, and highlight with Markdown-compatible syntax
-- **Dark mode** — Inverted color scheme for all presentation elements
-- **Auto-save** — Text and settings saved to browser local storage automatically
-- **HTML export** — Download a standalone HTML file for offline use
-- **URL sharing** — Share a direct link to a specific slide and fragment
-- **Laser pointer** — Visual pointer mode for emphasis during presentations
-- **Sticky notes** — Freeform notes visible during presentation
-- **Multi-language** — English and Japanese UI; TTS supports all browser-installed languages
+- **Quizzes** — Fill-in-the-blank and multiple-choice quizzes with retry
+- **Notes and pop-ups** — Tooltips and image popups on any sentence
+- **Text decoration** — Bold, italic, underline, and highlight (Markdown-compatible)
+- **Dark mode** — Inverted color scheme for comfortable viewing
+- **Auto-save** — Your text and settings are saved automatically
+- **HTML export** — Download as a standalone HTML file for offline use
+- **Laser pointer and sticky notes** — Tools for live presentations
+- **Multi-language UI** — English and Japanese
+
+## Quick Start
+
+1. Open **[https://yohasebe.github.io/paradocs](https://yohasebe.github.io/paradocs)**
+2. Type or paste your text (or load the sample)
+3. Adjust settings if needed (font, colors, TTS language, etc.)
+4. Click **Convert Text**
+5. Present! Use arrow keys or space bar to advance
 
 ## How It Works
+
+Write your text with **one sentence per line**. Separate slides with `----`.
 
 <p align="center">
   <img src="docs/img/text.png" alt="Input and output" width="640">
 </p>
 
-Write your text with one sentence per line. Separate slides with `----`. That's it.
+Various block types are available:
 
 <p align="center">
   <img src="docs/img/blocks.png" alt="Block types" width="640">
 </p>
 
-For details, see the [full documentation](https://yohasebe.github.io/paradocs) (accessible from the app's Documentation tab).
+For the full format reference and all features, see the **Documentation** tab in the app.
 
-## Quick Start
-
-1. Open [https://yohasebe.github.io/paradocs](https://yohasebe.github.io/paradocs)
-2. Type or paste your text (or use the sample text)
-3. Adjust settings (font, colors, language, etc.)
-4. Click **Convert Text**
-5. Navigate with arrow keys, `j`/`k`, or space bar
-
-### Key Bindings
+## Key Bindings
 
 | Key | Function |
 |:----|:---------|
-| `↓` / `j` / `SPACE` | Next item |
-| `↑` / `k` / `SHIFT+SPACE` | Previous item |
+| `↓` `j` `SPACE` | Next item |
+| `↑` `k` `SHIFT+SPACE` | Previous item |
 | `.` | Play/stop TTS, video, or audio |
 | `a` | Toggle automatic presentation |
 | `f` | Fullscreen |
@@ -73,63 +75,17 @@ For details, see the [full documentation](https://yohasebe.github.io/paradocs) (
 | `/` | Screen blackout |
 | `ESC` | Overview mode |
 
-## Text Format Example
+> **Tip:** A wireless presenter like [Logitech R400/R800](https://www.logitech.com/en-us/presenters) works great with Paradocs — use its physical buttons to navigate and control TTS.
 
-```text
-----
-# Introduction
+## For Developers
 
-This is the first sentence.
-This is the second sentence.
-Each line becomes a **highlighted fragment**.
-
-| This is static text.
-| It won't be highlighted sentence by sentence.
-
-* Bullet point one
-* Bullet point two
-
-| {mcq: What color is the sky?
-|   a) Green
-|   *b) Blue
-|   c) Red
-| }
-
-| Name  | Score |
-|-------|-------|
-| Alice | 95    |
-| Bob   | 87    |
-----
-```
-
-## Architecture
-
-Paradocs is a fully static site — no server-side dependencies.
-
-| Component | File | Role |
-|:----------|:-----|:-----|
-| Input page | `docs/index.html`, `docs/ja/index.html` | Text editor and configuration form |
-| Presentation | `docs/deck.html` | Reveal.js slide viewer |
-| Parser | `docs/js/parser.js` | Converts text format to slide HTML |
-| CSS generator | `docs/js/helper.js` | Generates presentation styles |
-| TTS highlight | `docs/js/tts-highlight.js` | Word-level highlight during TTS |
-| Exporter | `docs/js/exporter.js` | Standalone HTML export |
-
-### Key Libraries (via CDN)
-
-jQuery 3.7.1, jQuery UI 1.14.1, Reveal.js 5.2.1, Ace Editor 1.36.5, Bootstrap 5.3.8, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7
-
-## Development
+Paradocs is a fully static site built with [Reveal.js](https://revealjs.com). See the `docs/` directory for the source. Contributions are welcome.
 
 ```bash
-npm install            # Install dev dependencies
-npm test               # Run tests (110 tests)
-npm run build:docs     # Rebuild documentation HTML fragments
+npm install          # Install dev dependencies
+npm test             # Run tests
+npm run build:docs   # Rebuild documentation fragments
 ```
-
-## Deployment
-
-The site is served from the `docs/` folder via GitHub Pages. Push to `master` and configure GitHub Pages to serve from the `docs/` directory.
 
 ## License
 
