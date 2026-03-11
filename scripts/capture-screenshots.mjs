@@ -10,7 +10,7 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 async function main() {
   const browser = await puppeteer.launch({
     headless: true,
-    defaultViewport: { width: 1280, height: 800, deviceScaleFactor: 2 }
+    defaultViewport: { width: 1920, height: 1080, deviceScaleFactor: 2 }
   });
 
   async function openPresentation() {
