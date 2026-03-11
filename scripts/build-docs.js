@@ -13,6 +13,12 @@ const FILES = [
   { src: 'overview_ja.md',      out: 'readme_ja.html' },
   { src: 'documentation.md',    out: 'documentation.html' },
   { src: 'documentation_ja.md', out: 'documentation_ja.html' },
+  { src: 'tldr_zh.md',             out: 'tldr_zh.html' },
+  { src: 'overview_zh.md',         out: 'readme_zh.html' },
+  { src: 'documentation_zh.md',    out: 'documentation_zh.html' },
+  { src: 'tldr_ko.md',             out: 'tldr_ko.html' },
+  { src: 'overview_ko.md',         out: 'readme_ko.html' },
+  { src: 'documentation_ko.md',    out: 'documentation_ko.html' },
 ];
 
 // Custom renderer

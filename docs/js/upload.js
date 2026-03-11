@@ -117,7 +117,8 @@ editor.renderer.setOption('showGutter', false);
 editor.setAutoScrollEditorIntoView(true);
 
 //////////////////// Auto-save setup ///////////////
-var autosave = new AutoSave('paradocs_' + (default_lang === 'ja-JP' ? 'ja_' : 'en_'));
+var langKey = { 'ja-JP': 'ja_', 'zh-CN': 'zh_', 'ko-KR': 'ko_' }[default_lang] || 'en_';
+var autosave = new AutoSave('paradocs_' + langKey);
 
 //////////////////// Load saved or sample text ///////////////
 if (autosave.hasSavedData()) {
@@ -150,7 +151,8 @@ if (autosave.hasSavedData()) {
     });
   }
 } else {
-  fetch(BASE_PATH + 'data/sample' + (default_lang === 'ja-JP' ? '_ja' : '') + '.txt')
+  var sampleSuffix = { 'ja-JP': '_ja', 'zh-CN': '_zh', 'ko-KR': '_ko' }[default_lang] || '';
+  fetch(BASE_PATH + 'data/sample' + sampleSuffix + '.txt')
     .then(function(r) { return r.text(); })
     .then(function(text) {
       editor.setValue(text, -1);

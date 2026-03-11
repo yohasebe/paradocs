@@ -1,0 +1,15 @@
+<div id="overview" class="anchor"></div>
+
+## 개요
+
+<span class='marker'>**Paradocs**는 단락 중심 텍스트 프레젠테이션 시스템입니다.</span> 대량의 텍스트를 단락별로 제시하면서 코멘트와 설명을 곁들이는 용도에 적합합니다. Paradocs에서는 키나 버튼을 한 번 누를 때마다 문장이 차례로 하이라이트됩니다. 이를 통해 청중은 발표자가 현재 어떤 문장에 주목하고 있는지 파악할 수 있습니다.
+
+Paradocs 개발자는 본래 자신이 재직 중인 대학의 ESL 리딩 수업에서 개인적으로 사용하기 위해 이 시스템을 개발했습니다. 리딩 수업에서는 교사와 학생 모두 대부분의 시간을 고개를 숙인 채 보내는 경향이 있는데, 이것은 안타까운 일이라고 생각했습니다. <span class='marker'>Paradocs를 사용하면 원문 텍스트를 "한 줄에 한 문장" 형식으로 정리하는 것만으로 수업용 프레젠테이션을 쉽게 준비할 수 있습니다.</span> Zoom과 같은 원격 회의 앱과 함께 사용하여 온라인 수업에도 활용할 수 있습니다.
+
+<span class='marker'>Paradocs에는 다국어 텍스트 음성 변환(TTS) 기능이 있습니다.</span> Google Chrome, Mozilla Firefox, Apple Safari, Microsoft Edge 등의 브라우저에서 제공하는 Web Speech API를 사용하며, 컴퓨터에 설치된 여러 언어 중 하나를 선택하여 프레젠테이션 중 원하는 때에 문장을 읽어줄 수 있습니다.
+
+작성한 프레젠테이션은 사용자가 직접 구두로 발표하는 데 사용할 수 있습니다. <span class='marker'>또는 전체를 자동으로 프레젠테이션할 수도 있습니다.</span> 화면 왼쪽 상단의 마법 지팡이 아이콘을 클릭하세요. 현재 슬라이드의 다음 프래그먼트부터 전체 프레젠테이션의 마지막 프래그먼트까지 텍스트 읽기, 동영상 재생 등이 자동으로 차례대로 실행됩니다.
+
+Paradocs의 많은 기능은 Hakim El Hattab이 개발한 프레젠테이션 슬라이드 제작 라이브러리 [Reveal.js](https://revealjs.com)에 의존하고 있습니다. 이 훌륭한 라이브러리를 제공해 주신 개발자와 기여자 여러분께 진심으로 감사드립니다. 아름다운 배경 벽지는 <a href='https://www.transparenttextures.com/'>Transparent Textures</a>에서 제공하고 있습니다.
+
+Paradocs는 [Yoichiro Hasebe](https://yohasebe.com)가 개발했습니다. 모든 텍스트 처리는 브라우저 내에서 완전히 수행되며, 어떠한 데이터도 서버로 전송되지 않습니다.
