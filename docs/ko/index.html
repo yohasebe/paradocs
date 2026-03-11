@@ -50,7 +50,7 @@
                 <li><a class="dropdown-item" href="../">English</a></li>
                 <li><a class="dropdown-item" href="../ja/">日本語</a></li>
                 <li><a class="dropdown-item" href="../zh/">中文</a></li>
-                <li><a class="dropdown-item" href="./">한국어</a></li>
+                <li><a class="dropdown-item" href="../ko/">한국어</a></li>
               </ul>
             </li>
             <li class="nav-item">
@@ -307,16 +307,26 @@
     var default_lang = 'ko-KR';
     var BASE_PATH = '../';
 
-    // Load documentation HTML fragments (Korean versions)
-    fetch(BASE_PATH + 'data/tldr_ko.html').then(function(r) { return r.text(); }).then(function(html) {
-      document.getElementById('tldr-content').innerHTML = html;
-    });
-    fetch(BASE_PATH + 'data/readme_ko.html').then(function(r) { return r.text(); }).then(function(html) {
-      document.getElementById('readme-content').innerHTML = html;
-    });
-    fetch(BASE_PATH + 'data/documentation_ko.html').then(function(r) { return r.text(); }).then(function(html) {
-      document.getElementById('documentation-content').innerHTML = html;
-    });
+    // Load documentation HTML fragments safely
+    function safeLoadHTML(url, elementId) {
+      fetch(url)
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.text();
+        })
+        .then(function(html) {
+          // Strip script tags for safety
+          var safe = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+          document.getElementById(elementId).innerHTML = safe;
+        })
+        .catch(function(err) {
+          console.warn('Failed to load ' + url + ': ' + err.message);
+        });
+    }
+
+    safeLoadHTML(BASE_PATH + 'data/tldr_ko.html', 'tldr-content');
+    safeLoadHTML(BASE_PATH + 'data/readme_ko.html', 'readme-content');
+    safeLoadHTML(BASE_PATH + 'data/documentation_ko.html', 'documentation-content');
   </script>
   <script src="../js/autosave.js"></script>
   <script src="../js/exporter.js"></script>

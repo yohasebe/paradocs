@@ -18,7 +18,7 @@ Originally developed for ESL reading classes, it is well-suited for any scenario
 All processing runs entirely in the browser. No server, no account, no data sent anywhere.
 
 <p align="center">
-  <img src="docs/img/paradocs.gif" alt="Paradocs demo" width="720">
+  <img src="docs/img/paradocs-demo.gif" alt="Paradocs demo" width="720">
 </p>
 
 ## Features
@@ -35,7 +35,7 @@ All processing runs entirely in the browser. No server, no account, no data sent
 - **Auto-save** — Your text and settings are saved automatically
 - **HTML export** — Download as a standalone HTML file for offline use
 - **Laser pointer and sticky notes** — Tools for live presentations
-- **Multi-language UI** — English and Japanese
+- **Multi-language UI** — English, Japanese, Chinese, and Korean
 
 ## Quick Start
 
@@ -85,6 +85,8 @@ Paradocs is a fully static site built with [Reveal.js](https://revealjs.com). Se
 npm install          # Install dev dependencies
 npm test             # Run tests
 npm run build:docs   # Rebuild documentation fragments
+npm run build:pages  # Rebuild language pages from template
+npm run build        # Run both
 ```
 
 ## License

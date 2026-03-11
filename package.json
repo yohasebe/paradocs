@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "build:docs": "node scripts/build-docs.js",
+    "build:pages": "node scripts/build-pages.js",
+    "build": "node scripts/build-docs.js && node scripts/build-pages.js",
     "test": "jest"
   },
   "devDependencies": {

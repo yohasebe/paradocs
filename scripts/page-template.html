@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{html_lang}}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Paradocs: A Paragraph-Oriented Document Presentation System">
+    <meta name="description" content="{{meta_description}}">
     <meta name="author" content="Yoichiro Hasebe">
 
     <meta name="twitter:card"        content="summary" />
@@ -13,25 +13,25 @@
     <meta property="og:url"           content="https://yohasebe.com/paradocs/" />
     <meta property="og:type"          content="website" />
     <meta property="og:title"         content="Paradocs" />
-    <meta property="og:description"   content="A Paragraph-Oriented Document Presentation System" />
+    <meta property="og:description"   content="{{og_description}}" />
     <meta property="og:image"         content="https://yohasebe.com/paradocs/img/paradocs.png" />
 
-    <link rel="shortcut icon" href="./ico/favicon.ico">
-    <title>Paradocs: Paragraph-Oriented Document Presentation System</title>
+    <link rel="shortcut icon" href="{{base_path}}ico/favicon.ico">
+    <title>{{title}}</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="./ico/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./ico/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./ico/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{base_path}}ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{base_path}}ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{base_path}}ico/favicon-16x16.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css" integrity="sha384-zR/jkclV8JzpZv6ONtyAg2c/SJQRL8k3ZYyDf2O9XGHO16FV9l6/kEdN4IGkspLj" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href="./css/upload.css" rel="stylesheet">
+    <link href="{{base_path}}css/upload.css" rel="stylesheet">
   </head>
 
   <body>
   <div id="wrap">
-  <div id='top' style='visibility:hidden;' subdir='./'></div>
+  <div id='top' style='visibility:hidden;' subdir='{{base_path}}'></div>
 
     <nav class="navbar fixed-top navbar-expand-lg">
       <div class="container-fluid">
@@ -44,34 +44,34 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-globe"></i> English
+                <i class="fa-solid fa-globe"></i> {{current_lang_label}}
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="./">English</a></li>
-                <li><a class="dropdown-item" href="./ja/">日本語</a></li>
-                <li><a class="dropdown-item" href="./zh/">中文</a></li>
-                <li><a class="dropdown-item" href="./ko/">한국어</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}">English</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}ja/">日本語</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}zh/">中文</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}ko/">한국어</a></li>
               </ul>
             </li>
             <li class="nav-item">
               <a class="nav-link emphasized" href="#use">
-                <span class='emphasized'>Use Paradocs</span>
+                <span class='emphasized'>{{nav_use}}</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#overview">Overview</a>
+              <a class="nav-link" href="#overview">{{nav_overview}}</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Documentation
+                {{nav_docs}}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#bindings">Key Bindings</a>
-                <a class="dropdown-item" href="#concepts">Basic Concepts</a>
-                <a class="dropdown-item" href="#blocks">Types of Blocks</a>
-                <a class="dropdown-item" href="#decoration">Decoration and Annotation</a>
-                <a class="dropdown-item" href="#embedding">Embedding Media Files</a>
-                <a class="dropdown-item" href="#additional">Additional Features</a>
+                <a class="dropdown-item" href="#bindings">{{nav_bindings}}</a>
+                <a class="dropdown-item" href="#concepts">{{nav_concepts}}</a>
+                <a class="dropdown-item" href="#blocks">{{nav_blocks}}</a>
+                <a class="dropdown-item" href="#decoration">{{nav_decoration}}</a>
+                <a class="dropdown-item" href="#embedding">{{nav_embedding}}</a>
+                <a class="dropdown-item" href="#additional">{{nav_additional}}</a>
               </div>
             </li>
           </ul>
@@ -88,17 +88,17 @@
       <div class='text-center'>
         <div>
           <span id="logo">
-            <img src="./img/paradocs.png" />
+            <img src="{{base_path}}img/paradocs.png" />
             <a href="./">Paradocs </a>
           </span>
         </div>
-        <div><span class="slogan"> A Paragraph-Oriented Document Presentation System</span></div>
+        <div><span class="slogan"> {{slogan}}</span></div>
       </div>
     </div>
 
     <div class="container">
       <div class="demo-gif">
-        <img src="./img/paradocs.gif" alt="Paradocs demo">
+        <img src="{{base_path}}img/paradocs.gif" alt="Paradocs demo">
       </div>
     </div>
 
@@ -122,18 +122,18 @@
 
   <div id='data_controller'>
     <div class='md'>
-      <h2>Use Paradocs</h2>
+      <h2>{{h2_use}}</h2>
 
     </div>
     <div>
-      <span class='form-label' style='width:100%'>Text Input (syntax highlighting enabled)</span>
+      <span class='form-label' style='width:100%'>{{label_text_input}}</span>
     </div>
 
     <div id='input-textarea' class="ui-widget-content" style='height:480px; border:solid 1px lightgray;'></div>
     <div class='text-end'>
       <sub>
         <span id="char_counter" style="margin-right: 1em; color: #999;"></span>
-        Textarea is vertically resizable
+        {{label_textarea_resize}}
       </sub>
     </div>
   </div>
@@ -141,30 +141,30 @@
   <div style='margin-bottom:20px; '><span class='text-warning' id='textarea_message'></span></div>
 
   <div style='margin-bottom: 1em;'>
-    <span id='submit_button' class="file_reset btn btn-primary">Convert Text</span>&nbsp;
-    <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> Download HTML</span>&nbsp;
-    <span id='reset_button' class="file_reset btn btn-light">Clear Text</span>
+    <span id='submit_button' class="file_reset btn btn-primary">{{btn_convert}}</span>&nbsp;
+    <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> {{btn_download}}</span>&nbsp;
+    <span id='reset_button' class="file_reset btn btn-light">{{btn_clear}}</span>
   </div>
 
   <div id='lang_controller' style='display: none;'>
-    <span class='form-label'>Speech Language</span>
+    <span class='form-label'>{{label_speech_lang}}</span>
     <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
   </div>
 
   <div class="row" style='margin:0;'>
     <div id='voice_controller' style='display: none;'>
-      <span class='form-label'>Speech Voice</span>
+      <span class='form-label'>{{label_speech_voice}}</span>
       <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>
     </div>
     <div id='rate_controller' style='display: none; margin-left:10px;'>
-      <span class='form-label'>Speech Rate</span>
+      <span class='form-label'>{{label_speech_rate}}</span>
       <select class="form-control inline-form" id='rate_selected' name='speech_rate'></select>
-      <span class='text-warning' id='rate_disabled_message'>Rate is not changeable for the voice currently selected.</span>
+      <span class='text-warning' id='rate_disabled_message'>{{label_rate_disabled}}</span>
     </div>
   </div>
 
   <div id='resolution_controller'>
-    <span class='form-label'>Screen Resolution</span>
+    <span class='form-label'>{{label_resolution}}</span>
     <select class="form-control inline-form" id='resolution_selected' name='resolution'>
       <option value="800x600">SVGA (800x600)</option>
       <option value="1280x800" selected='selected'>WXGA (1280x800)</option>
@@ -173,7 +173,7 @@
   </div>
 
   <div id='fontfamily_controller'>
-    <span class='form-label'>Font Family</span>
+    <span class='form-label'>{{label_font_family}}</span>
     <select class="form-control inline-form" id='font_family_selected' name='font_family'>
       <option value="sans" selected='selected'>Sans Serif</option>
       <option value="serif">Serif</option>
@@ -182,7 +182,7 @@
   </div>
 
   <div id='font_controller'>
-    <span class='form-label'>Font Size</span>
+    <span class='form-label'>{{label_font_size}}</span>
     <select class="form-control inline-form" id='font_size_selected' name='font_size'>
       <option value="80">Huge</option>
       <option value="70">XLarge</option>
@@ -196,7 +196,7 @@
   </div>
 
   <div id='wallpaper_controller'>
-    <span class='form-label'>Background Wallpaper</span>
+    <span class='form-label'>{{label_wallpaper}}</span>
     <select class="form-control inline-form" id='wallpaper_selected' name='wallpaper'>
       <option value="sandpaper.png" selected='selected'>sandpaper</option>
       <option value="project-paper.png">project-paper</option>
@@ -214,7 +214,7 @@
   </div>
 
   <div id='accent_color_controller'>
-    <span class='form-label'>Accent Color</span>
+    <span class='form-label'>{{label_accent_color}}</span>
     <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
       <option value="#e15759" selected='selected'><span class='color: #e15759;'>Red</span></option>
       <option value="#4e79a7"><span class='color: #4e79a7;'>Blue</span></option>
@@ -230,7 +230,7 @@
   </div>
 
   <div id='highlight_background_color_controller'>
-    <span class='form-label'>Highlight Color</span>
+    <span class='form-label'>{{label_highlight_color}}</span>
     <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
       <option value="#e15759"><span class='color: #e15759;'>Red</span></option>
       <option value="#4e79a7" selected='selected'><span class='color: #4e79a7;'>Blue</span></option>
@@ -246,7 +246,7 @@
   </div>
 
   <div id="text_background_controller">
-    <span class='form-label'>Invert Colors</span>
+    <span class='form-label'>{{label_invert_colors}}</span>
     <input id="text_background" type="checkbox" name="text_background" value="text_background">
   </div>
 
@@ -287,7 +287,7 @@
   <br />
   <div id="footer">
     <p class='text-center text-muted' style='margin-bottom:0; padding: 1em;'>
-      Paradocs [Version 0.8.0]<br />
+      Paradocs [Version {{version}}]<br />
       <b>Yoichiro Hasebe 2018-2026</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a> |
     </p>
   </div>
@@ -304,8 +304,8 @@
   <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.36.5/src-min-noconflict/ace.js" integrity="sha384-QU7d+axY0TxOMR9uCXjWz6BNu9DAMSXb8y4Aoxhoo2EBAJpa/ojisnoFf1K29/uo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@15.0.4/marked.min.js" integrity="sha384-2NndlFAl0twi2nmu3w9mixodZFiN2fbxlakcYJF86bn1JeS1VB87/XqA7cqymzS+" crossorigin="anonymous"></script>
   <script>
-    var default_lang = 'en-US';
-    var BASE_PATH = './';
+    var default_lang = '{{default_lang}}';
+    var BASE_PATH = '{{base_path}}';
 
     // Load documentation HTML fragments safely
     function safeLoadHTML(url, elementId) {
@@ -324,14 +324,14 @@
         });
     }
 
-    safeLoadHTML(BASE_PATH + 'data/tldr.html', 'tldr-content');
-    safeLoadHTML(BASE_PATH + 'data/readme.html', 'readme-content');
-    safeLoadHTML(BASE_PATH + 'data/documentation.html', 'documentation-content');
+    safeLoadHTML(BASE_PATH + 'data/tldr{{data_suffix}}.html', 'tldr-content');
+    safeLoadHTML(BASE_PATH + 'data/readme{{data_suffix}}.html', 'readme-content');
+    safeLoadHTML(BASE_PATH + 'data/documentation{{data_suffix}}.html', 'documentation-content');
   </script>
-  <script src="./js/autosave.js"></script>
-  <script src="./js/exporter.js"></script>
-  <script src="./js/parser.js"></script>
-  <script src="./js/helper.js"></script>
-  <script src="./js/upload.js"></script>
+  <script src="{{base_path}}js/autosave.js"></script>
+  <script src="{{base_path}}js/exporter.js"></script>
+  <script src="{{base_path}}js/parser.js"></script>
+  <script src="{{base_path}}js/helper.js"></script>
+  <script src="{{base_path}}js/upload.js"></script>
   </body>
 </html>
