@@ -85,39 +85,34 @@ async function main() {
     let n = 1;
 
     // Frame 1: Title slide
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
 
-    // Frame 2: Paragraph - first sentence (slide 1)
-    await goToSlide(popup, 1, 1);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    // Frames 2-5: Paragraph - all 4 sentences highlighted one by one (slide 1)
+    await goToSlide(popup, 1, 0);
+    for (let s = 0; s < 4; s++) {
+      await popup.keyboard.press('j');
+      await delay(300);
+      await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
+    }
 
-    // Frame 3: Paragraph - last sentence (sentence 4)
-    await popup.keyboard.press('j');
-    await delay(150);
-    await popup.keyboard.press('j');
-    await delay(150);
-    await popup.keyboard.press('j');
-    await delay(300);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
-
-    // Frame 4: List - first item (slide 5)
+    // Frame 6: List - first item (slide 5)
     await goToSlide(popup, 5, 4);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
 
-    // Frame 5: List - last item
+    // Frame 7: List - last item
     await popup.keyboard.press('j');
     await delay(150);
     await popup.keyboard.press('j');
     await delay(300);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
 
-    // Frame 6: Table (slide 8)
+    // Frame 8: Table (slide 8)
     await goToSlide(popup, 8, 2);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
 
-    // Frame 7: MCQ quiz (slide 14)
+    // Frame 9: MCQ quiz (slide 14)
     await goToSlide(popup, 14, 2);
-    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+    await popup.screenshot({ path: path.join(framesDir, `frame-${String(n++).padStart(2,'0')}.png`) });
 
     console.log(`  -> ${n - 1} GIF frames saved`);
     await popup.close();
