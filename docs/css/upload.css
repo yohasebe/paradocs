@@ -80,7 +80,7 @@ div.demo-gif {
 }
 
 div.demo-gif img {
-  max-width: 100%;
+  max-width: 50%;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
