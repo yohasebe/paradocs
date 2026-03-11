@@ -26,7 +26,7 @@ All processing runs entirely in the browser. No server, no account, no data sent
 - **Sentence-by-sentence highlighting** — Navigate through text one sentence at a time
 - **Text-to-Speech** — Read sentences aloud with word-level highlighting
 - **Automatic presentation** — Auto-advance through all slides with TTS
-- **Rich content** — Headings, lists, tables, blockquotes, static text, and numbered blocks
+- **Rich content** — Headings, lists, tables, static text, and numbered blocks
 - **Media embedding** — Images, YouTube videos, MP4 video, and MP3 audio
 - **Quizzes** — Fill-in-the-blank and multiple-choice quizzes with retry
 - **Notes and pop-ups** — Tooltips and image popups on any sentence
@@ -77,9 +77,15 @@ For the full format reference and all features, see the **Documentation** tab in
 
 > **Tip:** A wireless presenter like [Logitech R400/R800](https://www.logitech.com/en-us/presenters) works great with Paradocs — use its physical buttons to navigate and control TTS.
 
+## Background
+
+I started building Paradocs in **2018** for my ESL reading classes. In a typical reading class, both the teacher and students spend most of their time looking down at printed text — I wanted to change that by projecting the text on screen and walking through it sentence by sentence.
+
+Since then, it has evolved from a server-based tool into a **fully client-side application** — all processing now runs in the browser with no server dependency. The presentation engine is powered by [Reveal.js](https://revealjs.com) by Hakim El Hattab. Background wallpapers are from [Transparent Textures](https://www.transparenttextures.com/).
+
 ## For Developers
 
-Paradocs is a fully static site built with [Reveal.js](https://revealjs.com). See the `docs/` directory for the source. Contributions are welcome.
+Paradocs is a fully static site. See the `docs/` directory for the source. Contributions are welcome.
 
 ```bash
 npm install          # Install dev dependencies

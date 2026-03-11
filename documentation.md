@@ -9,11 +9,11 @@ Many operations available during the presentation can be performed using the mou
 
 | Key                       | Function                                                                       |
 |:--------------------------|:-------------------------------------------------------------------------------|
-| `↓`                      | Move to  the **next** item                                                     |
+| `↓`                      | Move to the **next** item                                                     |
 | `↑`                      | Move back to the **previous** item                                             |
-| `j`                       | Move to  the **next** item                                                     |
+| `j`                       | Move to the **next** item                                                     |
 | `k`                       | Move back to the **previous** item                                             |
-| `SPACE`                   | Move to  the **next** item                                                     |
+| `SPACE`                   | Move to the **next** item                                                     |
 | `SHIFT+SPACE`             | Move back to the **previous** item                                             |
 | `.`                       | Play/Stop **TTS read-aloud**; Play/Stop **video/audio clips** (including YouTube videos); Enlarge/Shrink **pop-up images** |
 | `a`                       | Play/Stop **automatic presentation**                                           |
@@ -38,7 +38,7 @@ Many operations available during the presentation can be performed using the mou
 **Sentence**
 
 Sentences are separated by a single line break (`↩`). In a paragraph, they are treated as adjacent elements, each of which are highlighted one after the other.
-The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used (English, Japanese, etc.). To perform automatic sentence-segmentation, prefix the text with `!!` at the beginning of the text.
+The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used. To perform automatic sentence-segmentation, prefix the text with `!!` at the beginning of the text.
 
 **Paragraph**
 
@@ -81,11 +81,11 @@ To place more than one block on a single slide, place a single line of space bet
 
 ```text
 ----
-Block #1
-Block #2  
+Block #1 Sentence #1
+Block #1 Sentence #2
 
-Block #2 
-Block #2 
+Block #2 Sentence #1
+Block #2 Sentence #2
 ----
 ```
 
@@ -365,7 +365,7 @@ You can specify the URLs of audio files in MP3 format uploaded on the web and di
 audio: url_to_your_audio_file.mp3
 ```
 
-You can specify the start and end points in the URL of the mp3 video. Note that each is represented by the number of seconds that have elapsed since the beginning of the audio clip. Add the options to the URL in the `#t=x,y` format. The following will play from the very beginning of the audio clip (`x=0`) and stop it after 5 seconds (`y=5`).
+You can specify the start and end points in the URL of the mp3 audio. Note that each is represented by the number of seconds that have elapsed since the beginning of the audio clip. Add the options to the URL in the `#t=x,y` format. The following will play from the very beginning of the audio clip (`x=0`) and stop it after 5 seconds (`y=5`).
 
 ```text
 audio: url_to_your_audio_file.mp3#t=0,5

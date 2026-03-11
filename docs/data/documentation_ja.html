@@ -84,7 +84,7 @@
 <hr>
 <h3>2. いくつかの基本的概念</h3>
 <p><strong>センテンス（sentence）</strong> </p>
-<p>スライド上ではパラグラフ内の隣り合った要素として扱われます。スライド上で次々とハイライトされていきます。センテンスを記述する際には単一の改行<code>↩</code>によって区切ります。ただし、自動センテンス分割機能を使うと、用いている言語に応じて（英語、日本語、etc.）、自動でセンテンスの分割が行われます。自動センテンス分割を行う際には、テキストの頭に<code>!!</code>を付けます。</p>
+<p>スライド上ではパラグラフ内の隣り合った要素として扱われます。スライド上で次々とハイライトされていきます。センテンスを記述する際には単一の改行<code>↩</code>によって区切ります。ただし、自動センテンス分割機能を使うと、用いている言語に応じて自動でセンテンスの分割が行われます。自動センテンス分割を行う際には、テキストの頭に<code>!!</code>を付けます。</p>
 <p><strong>パラグラフ（paragraph）</strong></p>
 <p>複数のセンテンスから構成されるブロックのことをパラグラフと呼びます。1行1センテンスで記述していきます。</p>
 <p><strong>ブロック（block）</strong></p>
@@ -108,11 +108,11 @@ Sentence #3
 <h4>複数ブロックの記述</h4>
 <p>ブロックはパラグラフ（段落）に対応します。ただし、Paradocsでは「1スライドにつき1ブロック」を推奨します。</p>
 <pre><code class="language-text">----
-Block #1
-Block #2  
+Block #1 Sentence #1
+Block #1 Sentence #2
 
-Block #2 
-Block #2 
+Block #2 Sentence #1
+Block #2 Sentence #2
 ----
 </code></pre>
 <h4>複数スライドの記述</h4>
@@ -324,7 +324,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <p>ウェブ上にアップロードされたMP4形式ファイルのURLを用いて動画を指定します。</p>
 <pre><code class="language-text">video: url_to_your_video_file.mp4
 </code></pre>
-<p>MP4動画のURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、動画の最初からの経過秒数で表すことに注意してください。下記の指定では動画の最初（<code>x=0</code>）から5秒後（<code>x=5</code>）までを再生します。</p>
+<p>MP4動画のURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、動画の最初からの経過秒数で表すことに注意してください。下記の指定では動画の最初（<code>x=0</code>）から5秒後（<code>y=5</code>）までを再生します。</p>
 <pre><code class="language-text">video: url_to_your_video_file.mp4#t=0,5
 </code></pre>
 <p><strong>注：</strong> MP4動画を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、動画自体は表示されず、動画へのリンクが用いられます。</p>
@@ -334,7 +334,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 
 audio: url_to_your_audio_file_2.mp3
 </code></pre>
-<p>MP3音声ファイルのURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、動画の最初からの経過秒数で表すことに注意してください。下記の指定では音声の最初（<code>x=0</code>）から5秒後（<code>x=5</code>）までを再生します。</p>
+<p>MP3音声ファイルのURLには開始時点と終了時点を指定することができます。その際には <code>#t=x,y</code> の形式でオプションをURLに追加します。それぞれ、音声の最初からの経過秒数で表すことに注意してください。下記の指定では音声の最初（<code>x=0</code>）から5秒後（<code>y=5</code>）までを再生します。</p>
 <pre><code class="language-text">audio: url_to_your_audio_file.mp3#t=0,5
 </code></pre>
 <p><strong>注：</strong> 1つのスライドの中で音声ファイルのブロックを複数記述することが可能です。スライドに収まりきらないときには自動でスクロールされます。</p>

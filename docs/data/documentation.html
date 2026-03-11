@@ -13,7 +13,7 @@
 <tbody>
 <tr>
 <td><code>↓</code></td>
-<td>Move to  the <strong>next</strong> item</td>
+<td>Move to the <strong>next</strong> item</td>
 </tr>
 <tr>
 <td><code>↑</code></td>
@@ -21,7 +21,7 @@
 </tr>
 <tr>
 <td><code>j</code></td>
-<td>Move to  the <strong>next</strong> item</td>
+<td>Move to the <strong>next</strong> item</td>
 </tr>
 <tr>
 <td><code>k</code></td>
@@ -29,7 +29,7 @@
 </tr>
 <tr>
 <td><code>SPACE</code></td>
-<td>Move to  the <strong>next</strong> item</td>
+<td>Move to the <strong>next</strong> item</td>
 </tr>
 <tr>
 <td><code>SHIFT+SPACE</code></td>
@@ -83,7 +83,7 @@
 <h3>2. Basic Concepts</h3>
 <p><strong>Sentence</strong></p>
 <p>Sentences are separated by a single line break (<code>↩</code>). In a paragraph, they are treated as adjacent elements, each of which are highlighted one after the other.
-The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used (English, Japanese, etc.). To perform automatic sentence-segmentation, prefix the text with <code>!!</code> at the beginning of the text.</p>
+The automatic sentence-segmentation feature allows you to automatically split the text into sentences according to the language used. To perform automatic sentence-segmentation, prefix the text with <code>!!</code> at the beginning of the text.</p>
 <p><strong>Paragraph</strong></p>
 <p>A block made up of multiple sentences is called a paragraph. A paragraph is represented by a block consisting of multiple lines, each of which has a single sentence.</p>
 <p><strong>Block</strong></p>
@@ -107,11 +107,11 @@ Sentence #3
 <h4>How to arrange multiple blocks in a slide</h4>
 <p>To place more than one block on a single slide, place a single line of space between blocks.</p>
 <pre><code class="language-text">----
-Block #1
-Block #2  
+Block #1 Sentence #1
+Block #1 Sentence #2
 
-Block #2 
-Block #2 
+Block #2 Sentence #1
+Block #2 Sentence #2
 ----
 </code></pre>
 <h4>Create multiple slides (pages)</h4>
@@ -333,7 +333,7 @@ To display an image on a slide, make sure that the above command is the only blo
 <p>You can specify the URLs of audio files in MP3 format uploaded on the web and display them on the slide. </p>
 <pre><code class="language-text">audio: url_to_your_audio_file.mp3
 </code></pre>
-<p>You can specify the start and end points in the URL of the mp3 video. Note that each is represented by the number of seconds that have elapsed since the beginning of the audio clip. Add the options to the URL in the <code>#t=x,y</code> format. The following will play from the very beginning of the audio clip (<code>x=0</code>) and stop it after 5 seconds (<code>y=5</code>).</p>
+<p>You can specify the start and end points in the URL of the mp3 audio. Note that each is represented by the number of seconds that have elapsed since the beginning of the audio clip. Add the options to the URL in the <code>#t=x,y</code> format. The following will play from the very beginning of the audio clip (<code>x=0</code>) and stop it after 5 seconds (<code>y=5</code>).</p>
 <pre><code class="language-text">audio: url_to_your_audio_file.mp3#t=0,5
 </code></pre>
 <p><strong>N.B.</strong> It is possible to have multiple audio files in a single slide. The slide page automatically scrolls when all the blocks do not fit on the current viewport.</p>
