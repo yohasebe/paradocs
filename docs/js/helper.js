@@ -783,6 +783,7 @@ textarea::selection{
   border-collapse: collapse;
   margin: 0.5em auto;
   font-size: 0.85em;
+  border: 1px solid #ccc;
 }
 
 .reveal div.text table th,
@@ -795,6 +796,10 @@ textarea::selection{
 .reveal div.text table th {
   background-color: rgba(0,0,0,0.05);
   font-weight: bold;
+}
+
+.reveal.inverted div.text table {
+  border-color: #555;
 }
 
 .reveal.inverted div.text table th,
