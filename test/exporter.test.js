@@ -111,6 +111,67 @@ describe('Exporter', () => {
     });
   });
 
+  describe('convertYouTubeEmbeds', () => {
+    test('replaces YouTube iframe with a clickable link', () => {
+      var iframe = "<iframe class='fragment' width='100%' style='opacity: 1;' allow='autoplay' data-ytid='MMmOLN5zBLY' src='https://www.youtube.com/embed/MMmOLN5zBLY?enablejsapi=1&autoplay=0&start=30&end=60' id='yt0' data-ignore='true' ></iframe>";
+      var result = Exporter.convertYouTubeEmbeds(iframe);
+      expect(result).not.toContain('<iframe');
+      expect(result).toContain('https://www.youtube.com/watch?v=MMmOLN5zBLY');
+      expect(result).toContain('youtube-link');
+    });
+
+    test('preserves thumbnail image in link', () => {
+      var iframe = "<iframe class='fragment' data-ytid='MMmOLN5zBLY' src='https://www.youtube.com/embed/MMmOLN5zBLY?enablejsapi=1&autoplay=0' id='yt0' data-ignore='true' ></iframe>";
+      var result = Exporter.convertYouTubeEmbeds(iframe);
+      expect(result).toContain('img.youtube.com/vi/MMmOLN5zBLY');
+    });
+
+    test('preserves fragment class on wrapper', () => {
+      var iframe = "<iframe class='fragment' data-ytid='abc123' src='https://www.youtube.com/embed/abc123?enablejsapi=1&autoplay=0' id='yt0' data-ignore='true' ></iframe>";
+      var result = Exporter.convertYouTubeEmbeds(iframe);
+      expect(result).toContain('fragment');
+    });
+
+    test('handles multiple YouTube iframes', () => {
+      var html = "<section><iframe class='fragment' data-ytid='aaa' src='https://www.youtube.com/embed/aaa?enablejsapi=1' id='yt0' data-ignore='true' ></iframe></section>" +
+                 "<section><iframe class='fragment' data-ytid='bbb' src='https://www.youtube.com/embed/bbb?enablejsapi=1' id='yt1' data-ignore='true' ></iframe></section>";
+      var result = Exporter.convertYouTubeEmbeds(html);
+      expect(result).not.toContain('<iframe');
+      expect(result).toContain('watch?v=aaa');
+      expect(result).toContain('watch?v=bbb');
+    });
+
+    test('does not modify HTML without YouTube iframes', () => {
+      var html = "<section><span class='fragment'>Hello</span></section>";
+      var result = Exporter.convertYouTubeEmbeds(html);
+      expect(result).toBe(html);
+    });
+
+    test('generateHTML applies YouTube conversion', () => {
+      var slidesWithYT = "<section><iframe class='fragment' data-ytid='MMmOLN5zBLY' src='https://www.youtube.com/embed/MMmOLN5zBLY?enablejsapi=1&autoplay=0' id='yt0' data-ignore='true' ></iframe></section>";
+      var html = Exporter.generateHTML(slidesWithYT, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).not.toContain('<iframe');
+      expect(html).toContain('watch?v=MMmOLN5zBLY');
+    });
+  });
+
+  describe('ARIA labels in generated HTML', () => {
+    test('includes aria-label on sticky icon', () => {
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).toContain('aria-label="Toggle Sticky Note (s)"');
+    });
+
+    test('includes role="button" on control icons', () => {
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).toContain('role="button"');
+    });
+
+    test('includes tabindex on control icons', () => {
+      var html = Exporter.generateHTML(sampleSlides, sampleConfig, sampleCSS, false, sampleScript);
+      expect(html).toContain('tabindex="0"');
+    });
+  });
+
   describe('generateFilename', () => {
     test('returns a .html filename', () => {
       var name = Exporter.generateFilename();

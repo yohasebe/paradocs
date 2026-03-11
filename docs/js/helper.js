@@ -207,6 +207,13 @@ div.gadgets div.sticky{
   margin-right: 4px;
 }
 
+.gadgets div.sticky .sticky_counter {
+  float: right;
+  font-size: 0.5em;
+  color: #999;
+  margin-top: 2px;
+}
+
 .gadgets div.sticky div.edit_panel{
   text-align:right;
 }
@@ -514,6 +521,12 @@ div.gadgets div.sticky{
   margin-bottom: 0.5em;
   display: table;
   width: 90%;
+  border: none !important;
+  border-collapse: collapse;
+}
+.reveal ul, .reveal ul *,
+.reveal ol, .reveal ol * {
+  border: none !important;
 }
 
 .reveal ::selection {
@@ -534,12 +547,14 @@ div.gadgets div.sticky{
 .reveal ul li,
 .reveal ol li{
   display: table-row;
+  border: none;
 }
 
 .reveal ul li:before {
   display: inline-block !important;
   content: "\\2022";
   display: table-cell;
+  border: none;
   color: gray;
   opacity: 1;
 }
@@ -549,19 +564,27 @@ div.gadgets div.sticky{
   content: counter(ctr);
   counter-increment: ctr;
   display:table-cell;
+  border: none;
   color: gray;
   opacity: 1;
 }
 
-div.list-table table{
+.reveal ul li span,
+.reveal ol li span {
   border: none;
 }
 
-div.list-table tr{
+.reveal div.list-table table{
+  border: none !important;
+  border-collapse: collapse;
 }
 
-div.list-table td {
-  border: none;
+.reveal div.list-table tr{
+  border: none !important;
+}
+
+.reveal div.list-table td {
+  border: none !important;
   vertical-align: baseline;
   padding-right: 10px;
   padding-left: 0px;
@@ -752,6 +775,144 @@ textarea::selection{
 .reveal.inverted ul li:before,
 .reveal.inverted ol li:before {
   color: #888;
+}
+
+/* ---- Markdown tables ---- */
+
+.reveal div.text table {
+  border-collapse: collapse;
+  margin: 0.5em auto;
+  font-size: 0.85em;
+}
+
+.reveal div.text table th,
+.reveal div.text table td {
+  border: 1px solid #ccc;
+  padding: 0.3em 0.8em;
+  text-align: left;
+}
+
+.reveal div.text table th {
+  background-color: rgba(0,0,0,0.05);
+  font-weight: bold;
+}
+
+.reveal.inverted div.text table th,
+.reveal.inverted div.text table td {
+  border-color: #555;
+  color: #ccc;
+}
+
+.reveal.inverted div.text table th {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* ---- MCQ Quiz ---- */
+
+.mcq-quiz {
+  margin: 0.5em 0;
+  text-align: left;
+}
+
+.mcq-question {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: ${conf.accent_color};
+}
+
+.mcq-options {
+  margin-left: 0.5em;
+}
+
+.mcq-option {
+  cursor: pointer;
+  padding: 0.2em 0.5em;
+  margin: 0.2em 0;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.mcq-option:hover:not(.mcq-disabled) {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.mcq-label {
+  font-weight: bold;
+  margin-right: 0.3em;
+}
+
+.mcq-correct {
+  border-color: #59a14f !important;
+  background-color: rgba(89,161,79,0.15) !important;
+}
+
+.mcq-incorrect {
+  border-color: #e15759 !important;
+  background-color: rgba(225,87,89,0.15) !important;
+}
+
+.mcq-disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.mcq-feedback {
+  margin-top: 0.3em;
+  font-weight: bold;
+  font-size: 0.85em;
+}
+
+.mcq-correct-feedback {
+  color: #59a14f;
+}
+
+.mcq-incorrect-feedback {
+  color: #e15759;
+}
+
+.mcq-reset {
+  display: inline-block;
+  margin-top: 0.5em;
+  padding: 0.3em 0.8em;
+  font-size: 0.7em;
+  color: #707070;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #f5f5f5;
+}
+.mcq-reset:hover {
+  background: #e9e9e9;
+}
+
+.reveal.inverted .mcq-reset {
+  color: #ccc;
+  border-color: #555;
+  background: #333;
+}
+.reveal.inverted .mcq-reset:hover {
+  background: #444;
+}
+
+.reveal.inverted .mcq-option:hover:not(.mcq-disabled) {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.reveal.inverted .mcq-question {
+  color: ${conf.highlight_background_color};
+}
+
+/* ---- TTS Word Highlight ---- */
+
+.tts-word-highlight {
+  background-color: rgba(255, 200, 0, 0.4);
+  border-radius: 2px;
+  transition: background-color 0.15s;
+}
+
+.reveal.inverted .tts-word-highlight {
+  background-color: rgba(255, 200, 0, 0.25);
 }
 
 </style>`;

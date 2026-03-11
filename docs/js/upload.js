@@ -50,8 +50,33 @@ ace.define('ace/mode/custom_highlight_rules', [], function(require, exports, mod
           next: "start"
         },
         {
+          regex: /\{mcq:/,
+          token: "constant.language.escape",
+          next: "start"
+        },
+        {
           regex: /\{(?:note|image|img)\:.*?\}/,
           token: "variable",
+          next: "start"
+        },
+        {
+          regex: /\[[^\]]+\]\([^)]+\)/,
+          token: "string",
+          next: "start"
+        },
+        {
+          regex: /^\|[\s\-:]+\|$/,
+          token: "comment",
+          next: "start"
+        },
+        {
+          regex: /`[^`]+`/,
+          token: "string",
+          next: "start"
+        },
+        {
+          regex: /^```/,
+          token: "comment",
           next: "start"
         },
         {
@@ -92,7 +117,7 @@ editor.renderer.setOption('showGutter', false);
 editor.setAutoScrollEditorIntoView(true);
 
 //////////////////// Auto-save setup ///////////////
-var autosave = new AutoSave('paradocs_');
+var autosave = new AutoSave('paradocs_' + (default_lang === 'ja-JP' ? 'ja_' : 'en_'));
 
 //////////////////// Load saved or sample text ///////////////
 if (autosave.hasSavedData()) {
@@ -132,10 +157,27 @@ if (autosave.hasSavedData()) {
     });
 }
 
+// Character counter for editor
+var MAX_CHARS = 50000;
+function updateCharCounter() {
+  var len = editor.getValue().length;
+  var $counter = $('#char_counter');
+  $counter.text(len.toLocaleString() + ' / ' + MAX_CHARS.toLocaleString());
+  if (len > MAX_CHARS * 0.9) {
+    $counter.css('color', '#e15759');
+  } else {
+    $counter.css('color', '#999');
+  }
+}
+
 // Auto-save editor text on change (debounced)
 editor.session.on('change', function() {
   autosave.debouncedSaveText(editor.getValue());
+  updateCharCounter();
 });
+
+// Initial counter update
+$(function() { updateCharCounter(); });
 
 //////////////////// Speech setup ///////////////
 try{
@@ -349,36 +391,63 @@ function buildPresentation() {
 }
 
 $('#submit_button').on('click', function(){
-  var result = buildPresentation();
-  if (!result) return false;
+  var $btn = $(this);
+  var originalText = $btn.html();
+  $btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Converting...').addClass('disabled');
 
-  var slides = result.slides;
-  var config = result.config;
-  var css = result.css;
-  var colorInverted = result.colorInverted;
+  // Use setTimeout to allow UI update before synchronous parsing
+  setTimeout(function() {
+    var result = buildPresentation();
+    $btn.html(originalText).removeClass('disabled');
+    if (!result) return;
 
-  // Store in sessionStorage
-  sessionStorage.setItem('paradocs_slides', slides);
-  sessionStorage.setItem('paradocs_config', JSON.stringify(config));
-  sessionStorage.setItem('paradocs_css', css);
-  sessionStorage.setItem('paradocs_inverted', colorInverted ? 'true' : 'false');
+    var slides = result.slides;
+    var config = result.config;
+    var css = result.css;
+    var colorInverted = result.colorInverted;
 
-  // Save form settings for next visit
-  saveFormSettings(config);
+    // Store in sessionStorage (check size limit ~5MB)
+    try {
+      sessionStorage.setItem('paradocs_slides', slides);
+      sessionStorage.setItem('paradocs_config', JSON.stringify(config));
+      sessionStorage.setItem('paradocs_css', css);
+      sessionStorage.setItem('paradocs_inverted', colorInverted ? 'true' : 'false');
+    } catch (e) {
+      alert('Presentation data is too large for browser storage. Please reduce the text size.');
+      return;
+    }
 
-  // Open deck page
-  window.open(BASE_PATH + 'deck.html', '_blank');
+    // Save form settings for next visit
+    saveFormSettings(config);
+
+    // Open deck page
+    window.open(BASE_PATH + 'deck.html', '_blank');
+  }, 50);
 });
 
 $('#download_button').on('click', function(){
-  var result = buildPresentation();
-  if (!result) return false;
+  var $btn = $(this);
+  var originalText = $btn.html();
+  $btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Exporting...').addClass('disabled');
 
-  // Save form settings for next visit
-  saveFormSettings(result.config);
+  setTimeout(function() {
+    var result = buildPresentation();
+    if (!result) {
+      $btn.html(originalText).removeClass('disabled');
+      return;
+    }
 
-  // Download standalone HTML
-  Exporter.download(result.slides, result.config, result.css, result.colorInverted, BASE_PATH);
+    // Save form settings for next visit
+    saveFormSettings(result.config);
+
+    // Download standalone HTML
+    Exporter.download(result.slides, result.config, result.css, result.colorInverted, BASE_PATH);
+
+    // Restore button after a short delay (download is async)
+    setTimeout(function() {
+      $btn.html(originalText).removeClass('disabled');
+    }, 2000);
+  }, 50);
 });
 
 function saveFormSettings(config) {

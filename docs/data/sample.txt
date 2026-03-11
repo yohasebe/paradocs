@@ -15,7 +15,7 @@ This allows the audience to know which particular sentence the presenter is focu
 This is text in a regular paragraph.
 In a normal paragraph, pressing a key will move the highlight from sentence to sentence.
 Sentences in regular text are highlighted 🖍 when focused.
-They are printed in grey when not focused. 
+They are printed in grey when not focused.
 The slide frame automatically scrolls when the text cannot fit on it at the same time.
 
 ----
@@ -24,9 +24,9 @@ The slide frame automatically scrolls when the text cannot fit on it at the same
 Below is an example of a static paragraph.
 When creating a static paragraph, add a vertical bar symbol at the beginning of the line.
 
-| This is static paragraph. 
+| This is static paragraph.
 | Sentences in static text are not highlighted.
-| They are always printed in black. 
+| They are always printed in black.
 
 ----
 #### Unordered List
@@ -55,7 +55,19 @@ a. Alphabetical list item 1
 b. Alphabetical list item 2
 c. Alphabetical list item 3
 ----
-### Text Decoration and Creating Notes
+#### Table
+
+You can create tables using standard Markdown syntax.
+All lines must start and end with a pipe character.
+
+| Name  | Score | Grade |
+|-------|-------|-------|
+| Alice | 95    | A     |
+| Bob   | 87    | B+    |
+| Carol | 72    | C     |
+
+----
+### Text Decoration and Annotation
 ----
 #### Text Decoration
 
@@ -63,7 +75,7 @@ Text segments can be bolded, italicized, underlined, or highlighted.
 
 * This is *itallic*
 * This is **bold**
-* This is _underlined_ 
+* This is _underlined_
 * This is ==highlighted==
 ----
 #### Showing Notes
@@ -83,8 +95,21 @@ To enlarge the image, click on the plus button on top of the image. {image: http
 You can create a quiz 🙋 with which you initially keep the text hidden from your audience and reveal it at the appropriate time.
 
 | * In static text block, words and phrases in {curly brackets}
-| * are rendered with {overlaying box} elements 
+| * are rendered with {overlaying box} elements
 | * so that you can {create a quiz} for the audience
+----
+#### Multiple Choice Quiz
+
+You can create a clickable multiple choice quiz.
+Mark the correct answer with an asterisk before the option letter.
+
+| {mcq: What is the capital of France?
+|   a) London
+|   b) Berlin
+|   *c) Paris
+|   d) Rome
+| }
+
 ----
 ### Embedding Media Files
 ----
@@ -106,7 +131,7 @@ youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=30&end=60
 ----
 #### Embed MP3 Audio
 
-You can specify the URLs of audio files 🎵 in MP3 format uploaded on the web and display them on the slide. 
+You can specify the URLs of audio files 🎵 in MP3 format uploaded on the web and display them on the slide.
 It is possible to have multiple audio files in a single slide.
 The slide page automatically scrolls when all the blocks do not fit on the current viewport.
 ----
@@ -121,19 +146,23 @@ audio: https://www.yohasebe.com/paradocs/media/auditorium_applause.mp3#t=0,5
 ----
 ### Additional Features
 ----
-#### Text-to-Speech Reead-Aloud
+#### Text-to-Speech Read-Aloud
 
 Sentences in regular paragraphs can be played back with a text-to-speech engine 🗣 available in your browser.
 The available languages and audio variations vary by OS and browser.
 
 When TTS is available for highlighted content, a speaker icon 🔈 appears in the top left corner of the presentation screen.
-Click on this icon to play the TTS voice.
-You can stop playback by clicking the button again.
+Click on this icon or press the period key to play the TTS voice.
+During playback, the word currently being spoken is highlighted with a yellow background.
 
+----
+#### Automatic Sentence Splitting
+
+!! You can use the automatic sentence splitting feature. Just prefix the text with double exclamation marks. Each sentence must end with a period or other punctuation mark. Paradocs will split the text into separate sentences automatically.
 ----
 #### Sticky Note
 
-You can show your audience what comes to mind during your presentation by writing it in a sticky note. 
+You can show your audience what comes to mind during your presentation by writing it in a sticky note.
 
 You can show or hide the sticky note by clicking its icon 📃 at the top left corner of the presentation screen.
 The contents of the sticky note will be retained even if the slide changes.

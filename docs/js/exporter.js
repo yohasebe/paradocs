@@ -22,13 +22,41 @@
   var Exporter = {};
 
   /**
+   * Convert YouTube iframe embeds to clickable thumbnail links.
+   * Standalone HTML files opened via file:// cannot embed YouTube iframes
+   * because there is no HTTP referrer. This converts them to links that
+   * open YouTube in a new tab.
+   */
+  Exporter.convertYouTubeEmbeds = function (html) {
+    return html.replace(
+      /<iframe\s[^>]*data-ytid='([^']+)'[^>]*class='([^']*)'[^>]*><\/iframe>|<iframe\s[^>]*class='([^']*)'[^>]*data-ytid='([^']+)'[^>]*><\/iframe>/g,
+      function (match) {
+        var ytidMatch = match.match(/data-ytid='([^']+)'/);
+        var classMatch = match.match(/class='([^']*?)'/);
+        if (!ytidMatch) return match;
+        var ytid = ytidMatch[1];
+        var cls = classMatch ? classMatch[1] : '';
+        var watchUrl = 'https://www.youtube.com/watch?v=' + ytid;
+        var thumbUrl = 'https://img.youtube.com/vi/' + ytid + '/hqdefault.jpg';
+        return '<div class="' + cls + ' youtube-link" style="text-align:center; padding:2em;">' +
+          '<a href="' + watchUrl + '" target="_blank" style="text-decoration:none; color:inherit;">' +
+          '<img src="' + thumbUrl + '" style="max-width:80%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="YouTube Video"><br>' +
+          '<span style="font-size:1.2em; margin-top:0.5em; display:inline-block;">' +
+          '<i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Watch on YouTube</span>' +
+          '</a></div>';
+      }
+    );
+  };
+
+  /**
    * Generate a complete standalone HTML string.
    */
-  Exporter.generateHTML = function (slidesHtml, config, cssText, inverted, paradocsScript) {
+  Exporter.generateHTML = function (slidesHtml, config, cssText, inverted, paradocsScript, ttsHighlightScript) {
     var configJson = safeEmbed(JSON.stringify(config));
-    var safeSlidesHtml = safeEmbed(slidesHtml);
+    var safeSlidesHtml = safeEmbed(Exporter.convertYouTubeEmbeds(slidesHtml));
     var safeCssText = safeEmbed(cssText);
     var safeParadocsScript = paradocsScript ? safeEmbed(paradocsScript) : '';
+    var safeTtsScript = ttsHighlightScript ? safeEmbed(ttsHighlightScript) : '';
     var invertedClass = inverted ? ' inverted' : '';
 
     return '<!doctype html>\n' +
@@ -65,13 +93,13 @@
       '      </div>\n' +
       '      <div class="switches">\n' +
       '        <div id="left_switches">\n' +
-      '          <span class="left_switch"><span class="fa-regular fa-note-sticky" id="sticky_icon"></span></span>\n' +
-      '          <span class="left_switch"><span class="fa-solid fa-circle" id="pointer_icon"></span></span>\n' +
-      '          <span class="left_switch"><span class="fa-solid fa-wand-magic-sparkles" id="playall_icon"></span></span>\n' +
-      '          <span class="left_switch"><span class="fa-solid fa-volume-high" id="speaker_icon"></span></span>\n' +
+      '          <span class="left_switch"><span class="fa-regular fa-note-sticky" id="sticky_icon" role="button" aria-label="Toggle Sticky Note (s)" tabindex="0"></span></span>\n' +
+      '          <span class="left_switch"><span class="fa-solid fa-circle" id="pointer_icon" role="button" aria-label="Switch Pointer Shape/Color (p)" tabindex="0"></span></span>\n' +
+      '          <span class="left_switch"><span class="fa-solid fa-wand-magic-sparkles" id="playall_icon" role="button" aria-label="Start/Stop Automatic Presentation (a)" tabindex="0"></span></span>\n' +
+      '          <span class="left_switch"><span class="fa-solid fa-volume-high" id="speaker_icon" role="button" aria-label="Start/Stop Text-to-Speech (.)" tabindex="0"></span></span>\n' +
       '        </div>\n' +
       '        <div id="right_switches">\n' +
-      '          <span class="fa-solid fa-arrows-up-down" id="overview_icon"></span>\n' +
+      '          <span class="fa-solid fa-arrows-up-down" id="overview_icon" role="button" aria-label="Toggle Overview (ESC)" tabindex="0"></span>\n' +
       '        </div>\n' +
       '      </div>\n' +
       '    </div>\n' +
@@ -84,6 +112,7 @@
       '    <script>\n' +
       '      var pconf = ' + configJson + ';\n' +
       '    <\/script>\n' +
+      (safeTtsScript ? '    <script>\n' + safeTtsScript + '\n<\/script>\n' : '') +
       '    <script>\n' + safeParadocsScript + '\n<\/script>\n' +
       '  </body>\n' +
       '</html>\n';
@@ -138,15 +167,17 @@
    * basePath should be './' or '../' depending on the page.
    */
   Exporter.download = function (slidesHtml, config, cssText, inverted, basePath) {
-    var scriptUrl = (basePath || './') + 'js/paradocs.js';
+    var base = basePath || './';
     Promise.all([
-      fetch(scriptUrl).then(function (r) { return r.text(); }),
+      fetch(base + 'js/paradocs.js').then(function (r) { return r.text(); }),
+      fetch(base + 'js/tts-highlight.js').then(function (r) { return r.text(); }).catch(function () { return ''; }),
       inlineWallpaperInCSS(cssText)
     ])
       .then(function (results) {
         var paradocsScript = results[0];
-        var inlinedCss = results[1];
-        var html = Exporter.generateHTML(slidesHtml, config, inlinedCss, inverted, paradocsScript);
+        var ttsHighlightScript = results[1];
+        var inlinedCss = results[2];
+        var html = Exporter.generateHTML(slidesHtml, config, inlinedCss, inverted, paradocsScript, ttsHighlightScript);
         var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');

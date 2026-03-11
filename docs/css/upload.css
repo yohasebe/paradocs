@@ -4,7 +4,7 @@
 html,
 body {
   color: #707070;
-  font-size: 20px;
+  font-size: 17px;
   font-family: 'Lato', sans-serif;
   padding-top: 50px;
   background-color: #ffffff;
@@ -12,9 +12,14 @@ body {
   line-height: 180%;
 }
 
-a, a:hover {
+a {
   color: #4e79a7;
   font-weight: bold;
+  text-decoration: none;
+}
+a:hover {
+  color: #3d6490;
+  text-decoration: underline;
 }
 
 span.emphasized{
@@ -116,8 +121,25 @@ div.carousel-inner {
 span.form-label {
   display: inline-block;
   font-weight:bold;
-  width:160px;
+  width: 200px;
   font-size: 1.1em;
+  text-align: right;
+  padding-right: 1em;
+  vertical-align: middle;
+}
+
+div#lang_controller,
+div#voice_controller,
+div#rate_controller,
+div#resolution_controller,
+div#fontfamily_controller,
+div#font_controller,
+div#wallpaper_controller,
+div#accent_color_controller,
+div#highlight_background_color_controller,
+div#text_background_controller {
+  display: flex;
+  align-items: center;
 }
 
 div.alert {
@@ -129,9 +151,14 @@ span#rate_disabled_message, span#textarea_message {
   display:none;
 }
 
-div#lang_controller, div#rate_controller, div#voice_controller, div#font_controller, 
+div#lang_controller, div#rate_controller, div#voice_controller, div#font_controller,
 div#accent_color_controller, div#highlight_background_color_controller, div#resolution_controller, div#text_background_controller, div#wallpaper_controller, div#fontfamily_controller {
   margin-bottom: 10px;
+}
+
+div#voice_controller,
+div#rate_controller {
+  flex: none;
 }
 
 .md h1, .md h2, .md h3, .md h4, .md h5, .md h6,
@@ -347,4 +374,31 @@ pre {
 
 span.marker{
   background-color: #F5EDB9;
+}
+
+/* Button overrides to match page color scheme */
+#submit_button.btn-primary {
+  background-color: #4e79a7;
+  border-color: #4e79a7;
+}
+#submit_button.btn-primary:hover {
+  background-color: #3d6490;
+  border-color: #3d6490;
+}
+
+#download_button.btn-success {
+  background-color: #59a14f;
+  border-color: #59a14f;
+}
+#download_button.btn-success:hover {
+  background-color: #4a8a42;
+  border-color: #4a8a42;
+}
+
+#reset_button.btn-light {
+  color: #707070;
+  border-color: #ccc;
+}
+#reset_button.btn-light:hover {
+  background-color: #e9e9e9;
 }

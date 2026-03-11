@@ -73,6 +73,13 @@ jQuery(function($){
     theme: "light-border",
   });
 
+  // ARIA labels for accessibility
+  $('#sticky_icon').attr('aria-label', 'Toggle Sticky Note (s)').attr('role', 'button').attr('tabindex', '0');
+  $('#pointer_icon').attr('aria-label', 'Switch Pointer Shape/Color (p)').attr('role', 'button').attr('tabindex', '0');
+  $('#playall_icon').attr('aria-label', 'Start/Stop Automatic Presentation (a)').attr('role', 'button').attr('tabindex', '0');
+  $('#speaker_icon').attr('aria-label', 'Start/Stop Text-to-Speech (.)').attr('role', 'button').attr('tabindex', '0');
+  $('#overview_icon').attr('aria-label', 'Toggle Overview (ESC)').attr('role', 'button').attr('tabindex', '0');
+
   tippy("#sticky_icon", {
     content: "<span class='tooltip'><b>Toggle Sticky Note</b><br />Shortcut: <span class='shortcut'>s</span></span></span>"
   });
@@ -89,15 +96,8 @@ jQuery(function($){
     content: "<span class='tooltip'><b>Toggle Overview</b><br />Shortcut: <span class='shortcut'>ESC</span></span>"
   });
 
-  var ua = navigator.userAgent.toLowerCase();
-  var isMobile = false;
-  var isiPhone = (ua.indexOf('iphone') > -1);
-  var isiPad = (ua.indexOf('safari') > -1 && typeof document.ontouchstart !== 'undefined');
-  var isAndroid = (ua.indexOf('android') > -1) && (ua.indexOf('mobile') > -1);
-  var isAndroidTablet = (ua.indexOf('android') > -1) && (ua.indexOf('mobile') == -1);
-  if(isiPhone || isiPad || isAndroid || isAndroidTablet){
-    isMobile = true
-  }
+  // Feature-based mobile/touch detection (replaces fragile UA sniffing)
+  var isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   //////////////////// Things need to be done when document is ready ///////////////
   $(document).ready(function() {
@@ -123,12 +123,47 @@ jQuery(function($){
     adjust_sticky();
     prepareYoutube();
     initializeSpeechSynthesis();
+    initializeMCQ();
     get_punch_script();
   });
 
   /////////////// Initialize reveal.js ///////////////
 
   //////////////////// Functions ////////////////////
+
+  function initializeMCQ(){
+    $(document).on('click', '.mcq-option', function() {
+      var $option = $(this);
+      var $quiz = $option.closest('.mcq-quiz');
+
+      if ($quiz.attr('data-answered') === 'true') return;
+
+      $quiz.attr('data-answered', 'true');
+      $quiz.find('.mcq-option').addClass('mcq-disabled');
+
+      if ($option.attr('data-correct') === 'true') {
+        $option.addClass('mcq-correct');
+        $quiz.find('.mcq-feedback').text('\u2713 Correct!').addClass('mcq-correct-feedback').show();
+      } else {
+        $option.addClass('mcq-incorrect');
+        $quiz.find('.mcq-option[data-correct="true"]').addClass('mcq-correct');
+        $quiz.find('.mcq-feedback').text('\u2717 Incorrect').addClass('mcq-incorrect-feedback').show();
+      }
+      $quiz.find('.mcq-reset').show();
+    });
+
+    $(document).on('click', '.mcq-reset', function(e) {
+      e.stopPropagation();
+      var $quiz = $(this).closest('.mcq-quiz');
+      $quiz.removeAttr('data-answered');
+      $quiz.find('.mcq-option')
+        .removeClass('mcq-correct mcq-incorrect mcq-disabled');
+      $quiz.find('.mcq-feedback')
+        .text('').removeClass('mcq-correct-feedback mcq-incorrect-feedback').hide();
+      $(this).hide();
+    });
+  }
+
   function get_punch_script(){
     var tag = document.createElement("script");
     tag.src = "https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js";
@@ -320,6 +355,7 @@ jQuery(function($){
       progress: true,
       slideNumber: 'c/t',
       hash: true,
+      fragmentInURL: true,
       overview: true,
       navigationMode: "default",
       center: true,
@@ -606,7 +642,7 @@ jQuery(function($){
       hideSticky()
     });
 
-    $('div.sticky div[contentEditable]').on('blur keyup paste cut mouseup', function(e) {
+    $sticky_editor.on('input keyup paste cut', function(e) {
       adjust_sticky();
     });
 
@@ -683,7 +719,8 @@ jQuery(function($){
     var phrase = getSelectionText();
     var query = phrase.split(" ").join("+");
     var google_url = Reveal.getConfig().google;
-    google_url = google_url.replace(/\[q\]/g, query);
+    if (!google_url || !/^https?:\/\//i.test(google_url)) return;
+    google_url = google_url.replace(/\[q\]/g, encodeURIComponent(query));
     window.open(google_url);
   }
 
@@ -705,13 +742,22 @@ jQuery(function($){
   
   function adjust_sticky(sticky_editor){
     var maxStickyChar = 500;
-    var maxStickyLines = 12;
-    var currentText = $sticky_editor.text();
+    var currentText = $sticky_editor.val();
 
     if (currentText.length > maxStickyChar){
-      $sticky_editor.text(currentText.substring(0, maxStickyChar));
-      alert("A sticky note can contain a maximum of " + maxStickyChar + " characters");
+      $sticky_editor.val(currentText.substring(0, maxStickyChar));
+      currentText = $sticky_editor.val();
     }
+
+    // Update character counter
+    var remaining = maxStickyChar - currentText.length;
+    var $counter = $div_sticky.find('.sticky_counter');
+    if ($counter.length === 0) {
+      $counter = $('<span class="sticky_counter"></span>');
+      $edit_control.append($counter);
+    }
+    $counter.text(remaining);
+    $counter.css('color', remaining < 50 ? '#e15759' : '#999');
   }
 
   function adjust_media(){
@@ -821,43 +867,6 @@ jQuery(function($){
   function move_to_fragment(backward){
     hideSpeaker();
 
-    // var fragments = $current_fragment.closest('section').find('.fragment')
-    
-    // if($current_fragment.hasClass('quiz')){
-
-      // var idx = fragments.index($current_fragment);
-      // if (idx == 0 && fragments.length == 1){
-      //   var prev_fragment = $("<span class='fragment quiz'></span>");
-      //   var next_fragment = $("<span class='fragment quiz'></span>");
-      // } else if (idx == 0){
-      //   var prev_fragment = $("<span class='fragment quiz'></span>");
-      //   var next_fragment = $(fragments[1]);
-      // } else if (idx == fragments.length - 1) {
-      //   var prev_fragment = $(fragments[fragments.length - 2]);
-      //   var next_fragment = $("<span class='fragment quiz'></span>");
-      // } else {
-      //   var prev_fragment = $(fragments[idx - 1]);
-      //   var next_fragment = $(fragments[idx + 1]);
-      // }
-
-      // if(backward){
-      //   $current_fragment.css('color', 'transparent');
-      //   if(next_fragment.hasClass('quiz')){
-      //     next_fragment.css('color', 'lightgray');
-      //   }
-      // } else {
-      //   $current_fragment.css('color', 'transparent');
-      //   if(prev_fragment.hasClass('quiz')){
-      //     prev_fragment.css('color', '#303030');
-      //   }
-      // }  
-
-    // } else {
-    //   if(backward){
-    //     $('span.fragment.quiz').css('color', 'lightgray');
-    //   }
-    // }
-    
     if($current_fragment.text().length > 0 && $current_fragment[0].tagName == "SPAN"){
       showSpeaker();
     }
@@ -918,14 +927,38 @@ jQuery(function($){
     }
   }
 
-  function speak_article(phrase_array, utterance, defer) { 
+  function speak_article(phrase_array, utterance, defer) {
+    // Cancel any pending utterances to prevent memory buildup
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+    }
     $speaker_icon.addClass("playing");
+
+    // TTS word highlight: track cumulative offset across segments
+    var cumulativeOffset = 0;
+    var fragmentElem = $current_fragment[0];
+    var ttsAvailable = (typeof TTSHighlight !== 'undefined') && fragmentElem;
+
     for (var i = 0; i < phrase_array.length; i++){
       var sentence = phrase_array[i].replace(/^\s+|\s+$/g, '');
       if (sentence) {
         var new_utterance = createNewUtterance()
         new_utterance.text = phrase_array[i];
-        speechSynthesis.speak(new_utterance); 
+
+        // Attach word highlight via onboundary
+        if (ttsAvailable) {
+          (function(segOffset) {
+            new_utterance.onboundary = function(event) {
+              if (event.name === 'word') {
+                var charLen = event.charLength || 0;
+                TTSHighlight.highlightWord(fragmentElem, segOffset + event.charIndex, charLen);
+              }
+            };
+          })(cumulativeOffset);
+        }
+
+        speechSynthesis.speak(new_utterance);
+        cumulativeOffset += phrase_array[i].length;
       }
       if(i === phrase_array.length - 1){
         if(typeof defer != "undefined"){
@@ -933,6 +966,7 @@ jQuery(function($){
         } else {
           new_utterance.addEventListener('end', function(e){
             $speaker_icon.removeClass("playing");
+            if (ttsAvailable) { TTSHighlight.clearHighlight(fragmentElem); }
           });
         }
       }
@@ -945,6 +979,10 @@ jQuery(function($){
       speechSynthesis.cancel();
     }
     $speaker_icon.removeClass("playing");
+    // Clear TTS word highlight
+    if (typeof TTSHighlight !== 'undefined' && $current_fragment[0]) {
+      TTSHighlight.clearHighlight($current_fragment[0]);
+    }
   }
 
   ///// play speech sound
@@ -986,6 +1024,9 @@ jQuery(function($){
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
+    tag.onerror = function() {
+      console.warn('YouTube IFrame API failed to load. YouTube playback will not be available.');
+    };
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -1019,19 +1060,28 @@ jQuery(function($){
 
   ///// Play Youtube video  
   function playYoutube(cfragment, defer){
-    var yt_src = cfragment.data("src");
-    var yt_id = cfragment.data("ytid");
     var iframe_id = cfragment.attr("id");
-    
-    if(youtubePlaying){
-      ytplayers[iframe_id].pauseVideo();
-      youtubePlaying = false;
-    } else {
-      ytplayers[iframe_id].playVideo();
-      youtubePlaying = true;
-      if(typeof(defer) != "undefined"){
-        waitUntilFinished(ytplayers[iframe_id], "youtube", 0, defer);
+
+    if (!ytplayers[iframe_id]) {
+      console.warn('YouTube player not available for', iframe_id);
+      if (typeof defer !== "undefined") { defer.resolve(); }
+      return;
+    }
+
+    try {
+      if(youtubePlaying){
+        ytplayers[iframe_id].pauseVideo();
+        youtubePlaying = false;
+      } else {
+        ytplayers[iframe_id].playVideo();
+        youtubePlaying = true;
+        if(typeof(defer) != "undefined"){
+          waitUntilFinished(ytplayers[iframe_id], "youtube", 0, defer);
+        }
       }
+    } catch(e) {
+      console.warn('YouTube playback error:', e);
+      if (typeof defer !== "undefined") { defer.resolve(); }
     }
   }
 

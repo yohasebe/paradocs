@@ -2,7 +2,7 @@
 <div id="bindings" class="anchor"></div>
 
 <h3>1. Key Bindings</h3>
-<p>Many available during the presentation can be performed using the mouse, but can also be operated using the keyboard.</p>
+<p>Many operations available during the presentation can be performed using the mouse, but can also be operated using the keyboard.</p>
 <table class="table table-sm table-striped">
 <thead>
 <tr>
@@ -145,7 +145,7 @@ Slide #3
 Sentences in static text are highlighted when focused. 
 They are printed in grey when not focused. 
 </code></pre>
-<p>In a normal paragraph, pressing a key will move the highlight from sentence to sentence.The slide frame automatically scrolls when the text cannot fit on it at the same time.</p>
+<p>In a normal paragraph, pressing a key will move the highlight from sentence to sentence. The slide frame automatically scrolls when the text cannot fit on it at the same time.</p>
 <h4>Static Paragraphs</h4>
 <p>To create a static paragraph, place a vertical bar sign and a space at the head of each sentence that makes up the paragraph.</p>
 <pre><code class="language-text">| This is static paragraph. 
@@ -195,6 +195,69 @@ Bold:      orange **strawberry** apple
 Underline: orange _strawberry_ apple
 Highlight: orange ==strawberry== apple
 </code></pre>
+<h4>Markdown Compatibility</h4>
+<p>Paradocs supports a subset of Markdown syntax alongside its own formatting rules. The table below summarizes what is supported and how it differs from standard Markdown (GFM).</p>
+<table class="table table-sm table-striped">
+<thead>
+<tr>
+<th>Feature</th>
+<th>Paradocs Syntax</th>
+<th>Standard Markdown</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bold</td>
+<td><code>**text**</code></td>
+<td><code>**text**</code></td>
+<td>Same syntax</td>
+</tr>
+<tr>
+<td>Italic</td>
+<td><code>*text*</code></td>
+<td><code>*text*</code></td>
+<td>Same syntax</td>
+</tr>
+<tr>
+<td>Underline</td>
+<td><code>_text_</code></td>
+<td><code>_text_</code> (italic)</td>
+<td>Paradocs uses <code>_</code> for underline, not italic</td>
+</tr>
+<tr>
+<td>Highlight</td>
+<td><code>==text==</code></td>
+<td>N/A</td>
+<td>Paradocs extension</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>| col | col |</code></td>
+<td><code>| col | col |</code></td>
+<td>GFM-compatible; rendered via <a href="https://marked.js.org/">marked.js</a></td>
+</tr>
+<tr>
+<td>Headings</td>
+<td><code># Heading</code></td>
+<td><code># Heading</code></td>
+<td>Same syntax (levels 1-3)</td>
+</tr>
+<tr>
+<td>Unordered Lists</td>
+<td><code>* item</code></td>
+<td><code>* item</code></td>
+<td>Same syntax</td>
+</tr>
+<tr>
+<td>Ordered Lists</td>
+<td><code>1. item</code></td>
+<td><code>1. item</code></td>
+<td>Same syntax; also supports <code>a. item</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>N.B.</strong> Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, the following standard Markdown features are <strong>not supported</strong>: inline code (<code>`code`</code>), blockquotes (<code>&gt;</code>), images (<code>![alt](url)</code>), and nested lists. Use the dedicated Paradocs commands (<code>image:</code>, <code>video:</code>, etc.) for embedding media.</p>
 <h4>Showing Notes and Pop-up Images</h4>
 <p>It is possible to display short text in notes that are separated from the body text. Notes are created using braces and the <code>note</code> command. In addition to the text notes, you can create an image popup by specifying the file URL with the <code>image</code> command.</p>
 <pre><code class="language-text">This is part of main text. {note: This is a note}
@@ -205,9 +268,27 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <h4>Quizzes</h4>
 <p>Using curly brackets and the <code>quiz</code> command, you can create a quiz in such a way that you initially keep the text hidden from your audience and reveal it at the appropriate time.</p>
 <pre><code class="language-text">| In a static context, words and phrases in {curly brackets}
-| will be rendered as {quize items} overlayed by an opaque box.
+| will be rendered as {quiz items} overlayed by an opaque box.
 </code></pre>
 <p><strong>N.B.</strong> When creating a quiz, you must use a static paragraph or a static ordered/unordered list.</p>
+<h4>Multiple Choice Quiz (MCQ)</h4>
+<p>You can create a multiple choice quiz with options that the audience can click to answer. Place the MCQ block inside a static paragraph (lines starting with <code>|</code>).</p>
+<pre><code class="language-text">| {mcq: What is the capital of France?
+|   a) London
+|   b) Berlin
+|   *c) Paris
+|   d) Rome
+| }
+</code></pre>
+<p>Mark the correct answer with <code>*</code> before the option letter. When a user clicks an option, it is highlighted green (correct) or red (incorrect), and the correct answer is revealed. A <strong>Try Again</strong> button appears after answering, allowing the quiz to be reset and retried.</p>
+<h4>Tables</h4>
+<p>You can create tables using standard Markdown table syntax. All lines must start and end with <code>|</code>, and the second line must be a separator.</p>
+<pre><code class="language-text">| Name  | Score |
+|-------|-------|
+| Alice | 95    |
+| Bob   | 87    |
+</code></pre>
+<p><strong>N.B.</strong> Table rows starting and ending with <code>|</code> are distinguished from static paragraphs, which only have <code>|</code> at the start of each line.</p>
 <hr>
 <div id="embedding" class="anchor"></div>
 
@@ -233,7 +314,7 @@ To display an image on a slide, make sure that the above command is the only blo
 <p>or</p>
 <pre><code class="language-text">yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
 </code></pre>
-<p>You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the <code>&amp;start=x&amp;end=y</code> format. The following will play from 30 seconds (<code>x=30</code>) to 60 seconds (<code>x=60</code>) of the video.</p>
+<p>You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the <code>&amp;start=x&amp;end=y</code> format. The following will play from 30 seconds (<code>x=30</code>) to 60 seconds (<code>y=60</code>) of the video.</p>
 <pre><code class="language-text">youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&amp;start=30&amp;end=60
 </code></pre>
 <p>You can also specify the start time and the end time by &quot;hour:min:sec&quot; notation, which may be easier for many users.</p>
@@ -262,7 +343,9 @@ To display an image on a slide, make sure that the above command is the only blo
 <h3>6. Additional Features</h3>
 <h4>Text-to-Speech</h4>
 <p>Sentences in regular paragraphs can be played back with a text-to-speech engine available in your browser. The available languages and audio variations vary by OS and browser.</p>
-<p>When TTS is available for highlighted content, a speaker icon appears in the upper right hand corner of the presentation screen. Click on this icon or press the <code>.</code> key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.</p>
+<p>When TTS is available for highlighted content, a speaker icon appears in the upper left corner of the presentation screen. Click on this icon or press the <code>.</code> key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.</p>
+<p>During TTS playback, the word currently being spoken is highlighted with a yellow background. This word-level highlighting helps the audience follow along with the read-aloud text. The highlighting is automatically cleaned up when playback ends or is stopped.</p>
+<p><strong>N.B.</strong> Word-level highlighting depends on the browser&#39;s <code>onboundary</code> event support. It works well in Chrome and Edge but may not be available in all browsers.</p>
 <h4>Sticky Note</h4>
 <p>You can show your audience what comes to mind during your presentation by writing it in a sticky note. </p>
 <p>You can show or hide the sticky note by clicking its icon at the top left of the presentation screen. The contents of the sticky note will be retained even if the slide changes.</p>
@@ -270,10 +353,13 @@ To display an image on a slide, make sure that the above command is the only blo
 <p>You can change shape/color of your mouse cursor from the ordinary one to a laser-pointer-like colored dot. Click on ● at the top left of the screen to toggle modes.</p>
 <p>The color of the modified mouse pointer is determined by the selection for the &quot;accent color&quot; in the setting panel.</p>
 <h4>Automatic Presentation</h4>
-<p>Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.</p>
+<p>Click on the magic wand icon in the upper left corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.</p>
 <h4>Auto-Save</h4>
 <p>Your input text and form settings are automatically saved to the browser&#39;s local storage as you type. When you revisit the page, your previous work is restored automatically. Click the <strong>Clear Text</strong> button to clear both the editor and the saved data.</p>
 <h4>Download HTML</h4>
 <p>Click the <strong>Download HTML</strong> button to export your presentation as a standalone HTML file. The file includes all slide content, configuration, and styles embedded directly, so it can be opened in any browser without needing to access the Paradocs website. External library dependencies (jQuery, Reveal.js, etc.) are loaded via CDN.</p>
+<p><strong>N.B.</strong> YouTube video embeds are automatically converted to clickable thumbnail links in the exported file, because local HTML files cannot embed YouTube iframes due to browser security restrictions. Click the thumbnail to open the video on YouTube.</p>
+<h4>URL Sharing</h4>
+<p>The presentation URL updates automatically as you navigate through slides and fragments. You can share a specific position by copying the URL from the browser&#39;s address bar (e.g., <code>#/0/1/3</code>). When someone opens the shared URL, they will jump directly to that slide and fragment.</p>
 <h4>Dark Mode (Inverted Colors)</h4>
 <p>Check the <strong>Invert Colors</strong> checkbox to switch to dark mode. All presentation elements — including sticky notes, annotation popups, markers, slide numbers, and navigation controls — adapt their colors for comfortable viewing on dark backgrounds.</p>

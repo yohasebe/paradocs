@@ -103,6 +103,14 @@ function segmentSentences(text) {
 // Markdown rendering helper
 // ---------------------------------------------------------------------------
 
+/**
+ * Escape HTML angle brackets in user text before markdown processing.
+ * This prevents XSS while preserving all markdown syntax (**, *, _, ==, etc.).
+ */
+function sanitizeUserText(text) {
+  return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function renderMarkdown(text) {
   return marked.parse(text);
 }
@@ -117,9 +125,68 @@ function renderInlineMarkdown(text) {
 // ---------------------------------------------------------------------------
 
 function processQuiz(sentence) {
+  // Skip MCQ blocks — they use {mcq:...} syntax
+  if (/\{mcq:/i.test(sentence)) return sentence;
   return sentence.replace(/\{([^}]+)\}\s*/g,
     "</span> <span class='fragment quiz'>$1</span><span class='fragment quiz_dummy' style='margin: 0;'></span><span>&nbsp;"
   );
+}
+
+// ---------------------------------------------------------------------------
+// MCQ (Multiple Choice Quiz) processing
+// ---------------------------------------------------------------------------
+
+function processMCQ(text) {
+  return text.replace(/\{mcq:\s*(.+?)\n([\s\S]*?)\}/g, function(_match, question, optionsBlock) {
+    const options = parseMCQOptions(optionsBlock);
+    if (options.length === 0) return _match; // fallback: leave as-is
+    return buildMCQHtml(question.trim(), options);
+  });
+}
+
+function parseMCQOptions(block) {
+  const lines = block.trim().split('\n');
+  const options = [];
+  for (const line of lines) {
+    const cleaned = line.replace(/^\s*\|\s*/, '').trim();
+    if (!cleaned) continue;
+    const isCorrect = cleaned.startsWith('*');
+    const text = isCorrect ? cleaned.substring(1).trim() : cleaned;
+    const m = text.match(/^([a-zA-Z])\)\s*(.+)$/);
+    if (m) {
+      options.push({ label: m[1], text: m[2].trim(), correct: isCorrect });
+    }
+  }
+  return options;
+}
+
+function buildMCQHtml(question, options) {
+  let html = "<div class='mcq-quiz' data-answered='false'>\n";
+  html += "  <div class='mcq-question'>" + renderInlineMarkdown(sanitizeUserText(question)) + "</div>\n";
+  html += "  <div class='mcq-options'>\n";
+  for (const opt of options) {
+    html += "    <div class='mcq-option' data-correct=\"" + opt.correct + "\" data-label='" + sanitizeUserText(opt.label) + "'>";
+    html += "<span class='mcq-label'>" + sanitizeUserText(opt.label) + ")</span> " + renderInlineMarkdown(sanitizeUserText(opt.text));
+    html += "</div>\n";
+  }
+  html += "  </div>\n";
+  html += "  <div class='mcq-feedback' style='display:none;'></div>\n";
+  html += "  <div class='mcq-reset' style='display:none;' role='button' tabindex='0'>\u21bb Try Again</div>\n";
+  html += "</div>";
+  return html;
+}
+
+// ---------------------------------------------------------------------------
+// Markdown table detection
+// ---------------------------------------------------------------------------
+
+function isMarkdownTable(lines) {
+  if (lines.length < 2) return false;
+  // All lines must start and end with |
+  const allPiped = lines.every(l => /^\s*\|.*\|\s*$/.test(l));
+  if (!allPiped) return false;
+  // Second line must be a separator (|---|---|)
+  return /^\s*\|[\s\-:]+(\|[\s\-:]+)+\|\s*$/.test(lines[1]);
 }
 
 // ---------------------------------------------------------------------------
@@ -176,8 +243,8 @@ class Parser {
     this.output += "<section class='deck'>\n";
 
     decks.forEach((deck) => {
-      // Split by ---- (slide separator)
-      let slides = deck.split(/(?:- ?){4,}/m);
+      // Split by ---- (slide separator, must be on its own line)
+      let slides = deck.split(/^\s*(?:- ?){4,}\s*$/m);
       slides = slides.filter(sl => sl.trim().length > 0);
 
       slides.forEach((slide, j) => {
@@ -193,6 +260,14 @@ class Parser {
 
         paragraphs.forEach((paragraph) => {
           let noFrag = false;
+
+          // Markdown table: lines starting and ending with |, with separator row
+          const tableLines = paragraph.trim().split('\n');
+          if (isMarkdownTable(tableLines)) {
+            const tableHtml = renderMarkdown(sanitizeUserText(paragraph.trim())).trim();
+            this.output += "<div class='text'>\n" + tableHtml + '\n</div>\n';
+            return; // skip rest of paragraph processing
+          }
 
           // Fenced code block: convert ``` blocks to 4-space indented lines
           if (/^```/m.test(paragraph.trim())) {
@@ -211,6 +286,13 @@ class Parser {
           if (staticMatch) {
             paragraph = staticMatch[1].replace(/\n\|\s*/g, '\n');
             noFrag = true;
+
+            // MCQ quiz: check for {mcq:...} in static text
+            if (/\{mcq:/i.test(paragraph)) {
+              const mcqHtml = processMCQ(paragraph);
+              this.output += "<div class='text'>\n" + mcqHtml + '\n</div>\n';
+              return; // skip rest of paragraph processing
+            }
           }
 
           // Split into sentences by newline
@@ -258,7 +340,17 @@ class Parser {
             if (noteMatch) {
               sentence = noteMatch[1].trim();
               note.type = noteMatch[2].trim();
-              note.text = noteMatch[3].replace(/"/g, '&quot;').trim();
+              var noteText = noteMatch[3].trim();
+              // For image/img notes, validate URL protocol
+              if ((note.type === 'image' || note.type === 'img') && !/^https?:\/\//i.test(noteText)) {
+                noteText = '';  // discard non-http URLs
+              }
+              note.text = noteText
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
             }
 
             notes.push(note);
@@ -291,8 +383,8 @@ class Parser {
               spans.push(m[1] || '');
               numYtVideos += 1;
             }
-            // youtube/yt: youtu.be URL
-            else if ((m = sentence.match(/^(?:youtube|yt):\s*?https?:\/\/youtu\.be\/(.+)/))) {
+            // youtube/yt: youtu.be URL (capture video ID, not query params)
+            else if ((m = sentence.match(/^(?:youtube|yt):\s*?https?:\/\/youtu\.be\/([^?\s]+(?:\?.+)?)/))) {
               mode = 'yt';
               spans.push(m[1] || '');
               numYtVideos += 1;
@@ -310,7 +402,7 @@ class Parser {
             // unordered list: * item
             else if ((m = sentence.match(/^\* (.+)$/))) {
               const classStr = noFrag ? '' : 'fragment';
-              const rendered = renderInlineMarkdown(m[1]);
+              const rendered = renderInlineMarkdown(sanitizeUserText(m[1]));
               const alpha = '•';
               if (startFrom === null) {
                 startFrom = alpha;
@@ -324,7 +416,7 @@ class Parser {
             else if ((m = sentence.match(/^([^.])\. (.*)$/))) {
               const classStr = noFrag ? '' : 'fragment';
               const alpha = m[1];
-              const rendered = renderInlineMarkdown(m[2]);
+              const rendered = renderInlineMarkdown(sanitizeUserText(m[2]));
 
               if (startFrom === null) {
                 startFrom = alpha;
@@ -340,23 +432,23 @@ class Parser {
             }
             // blockquote
             else if (/^> /.test(sentence)) {
-              spans.push(sentence);
+              spans.push(sanitizeUserText(sentence));
               mode = 'bq';
             }
             // code block (4 spaces or tab)
             else if (/^(?:\t|\s{4,})/.test(sentence)) {
-              spans.push(sentence);
+              spans.push(sentence);  // code blocks are escaped via _escapeHtml later
               mode = 'cb';
             }
             // headings
             else if (/^#+/.test(sentence)) {
-              spans.push(sentence);
+              spans.push(sanitizeUserText(sentence));
               mode = 'hd';
             }
             // regular sentence
             else {
               const classStr = noFrag ? '' : 'fragment';
-              spans.push(`<span class='${classStr}' data-note='${noteId}'>${sentence}</span>`);
+              spans.push(`<span class='${classStr}' data-note='${noteId}'>${sanitizeUserText(sentence)}</span>`);
               mode = 'sp';
             }
           });
@@ -369,14 +461,18 @@ class Parser {
             case 'yt': {
               const params = spans.join('').trim().split(/[?&]/);
               const ytid = params[0];
+              // Validate YouTube ID: only alphanumeric, hyphens, underscores
+              if (!/^[a-zA-Z0-9_-]+$/.test(ytid)) {
+                renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Invalid YouTube video ID</span></p></div>`;
+                break;
+              }
               let ytUrl = `https://www.youtube.com/embed/${ytid}?enablejsapi=1&autoplay=0`;
               params.slice(1).forEach(param => {
                 const pm = param.match(/^(start|end)=([\d:]+)$/);
                 if (pm) {
                   ytUrl += `&${pm[1]}=${this.colonToSec(pm[2])}`;
-                } else {
-                  ytUrl += `&${param}`;
                 }
+                // Ignore unrecognized parameters to prevent injection
               });
 
               if (paragraphs.length === 1) {
@@ -390,8 +486,12 @@ class Parser {
             // Video
             case 'vi': {
               const vidUrl = spans.join('').trim();
+              if (!this._isValidMediaUrl(vidUrl.split('#')[0])) {
+                renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Invalid video URL: ${this._escapeHtml(vidUrl)}</span></p></div>`;
+                break;
+              }
               if (paragraphs.length === 1) {
-                renderedSentences = `<img class='${classStr}' src='${this.poster}' id='poster-${numMedia}' />\n`;
+                renderedSentences = `<img class='${classStr}' src='${this.poster}' id='poster-${numMedia}' alt='Video loading' />\n`;
                 renderedSentences += `<video class='${classStr}' src='${vidUrl}' preload='auto' id='md${numMedia}' controls style='display: none;' />\n`;
               } else {
                 renderedSentences = `<div class='text'><p><span class='${classStr}'><a target='_blank' href='${vidUrl}'> <i class='fa-solid fa-download'></i> <span>download to video</span></a></span></p></div>`;
@@ -402,6 +502,10 @@ class Parser {
             // Audio
             case 'au': {
               const audioUrl = spans.join('').trim();
+              if (!this._isValidMediaUrl(audioUrl.split('#')[0])) {
+                renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Invalid audio URL: ${this._escapeHtml(audioUrl)}</span></p></div>`;
+                break;
+              }
               const audio = `<audio class='${classStr}' src='${audioUrl}' preload='auto' id='md${numMedia}' controls />`;
               renderedSentences = `<div class='text'><p>${audio}</p></div>`;
               break;
@@ -410,8 +514,12 @@ class Parser {
             // Image
             case 'im': {
               const imgUrl = spans.join('').trim();
+              if (!this._isValidMediaUrl(imgUrl)) {
+                renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Invalid image URL: ${this._escapeHtml(imgUrl)}</span></p></div>`;
+                break;
+              }
               if (paragraphs.length === 1) {
-                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}'/>`;
+                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}' alt='Slide image'/>`;
               } else {
                 renderedSentences = `<div class='text'><p><span class='${classStr}'><a target='_blank' href='${imgUrl}'> <i class='fa-solid fa-image'></i> <span>click to show image</span></a></span></p></div>`;
               }
@@ -425,7 +533,7 @@ class Parser {
               // Replace note placeholders (global)
               renderedSentences = renderedSentences.replace(/ data-note='(\d+?)'>/g, (match, id) => {
                 const nid = parseInt(id, 10);
-                const safeText = notes[nid].text.replace(/'/g, '&#39;');
+                const safeText = notes[nid].text;
                 return ` data-note='${safeText}' data-notetype='${notes[nid].type}'>`;
               });
               if (noFrag) {
@@ -460,7 +568,7 @@ class Parser {
               // Replace note placeholders
               renderedSentences = renderedSentences.replace(/data-note='(\d+)'>/g, (match, id) => {
                 const nid = parseInt(id, 10);
-                const safeText = notes[nid].text.replace(/'/g, '&#39;');
+                const safeText = notes[nid].text;
                 return ` data-note='${safeText}' data-notetype='${notes[nid].type}'>`;
               });
               if (noFrag) {
@@ -490,6 +598,14 @@ class Parser {
 
     this.output += '</section>\n';
     return this.output;
+  }
+
+  /**
+   * Validate that a URL looks like a valid media URL.
+   */
+  _isValidMediaUrl(url) {
+    // Must start with http(s), no quotes or angle brackets (prevent attribute breakout)
+    return /^https?:\/\/[^\s'"<>]+$/i.test(url);
   }
 
   /**

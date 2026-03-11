@@ -130,4 +130,11 @@ describe('createCSS', () => {
       expect(css).toContain('.reveal.inverted ~ .additional .sticky_editor');
     });
   });
+
+  describe('sticky note counter', () => {
+    test('includes CSS for sticky_counter', () => {
+      const css = createCSS(baseConfig);
+      expect(css).toContain('.sticky_counter');
+    });
+  });
 });

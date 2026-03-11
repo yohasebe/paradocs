@@ -4,7 +4,7 @@
 
 ### 1. Key Bindings
 
-Many available during the presentation can be performed using the mouse, but can also be operated using the keyboard.
+Many operations available during the presentation can be performed using the mouse, but can also be operated using the keyboard.
 
 
 | Key                       | Function                                                                       |
@@ -135,7 +135,7 @@ Sentences in static text are highlighted when focused.
 They are printed in grey when not focused. 
 ```
 
-In a normal paragraph, pressing a key will move the highlight from sentence to sentence.The slide frame automatically scrolls when the text cannot fit on it at the same time.
+In a normal paragraph, pressing a key will move the highlight from sentence to sentence. The slide frame automatically scrolls when the text cannot fit on it at the same time.
 
 #### Static Paragraphs
 
@@ -216,6 +216,23 @@ Underline: orange _strawberry_ apple
 Highlight: orange ==strawberry== apple
 ```
 
+#### Markdown Compatibility
+
+Paradocs supports a subset of Markdown syntax alongside its own formatting rules. The table below summarizes what is supported and how it differs from standard Markdown (GFM).
+
+| Feature | Paradocs Syntax | Standard Markdown | Notes |
+|:--------|:----------------|:------------------|:------|
+| Bold | `**text**` | `**text**` | Same syntax |
+| Italic | `*text*` | `*text*` | Same syntax |
+| Underline | `_text_` | `_text_` (italic) | Paradocs uses `_` for underline, not italic |
+| Highlight | `==text==` | N/A | Paradocs extension |
+| Tables | `\| col \| col \|` | `\| col \| col \|` | GFM-compatible; rendered via [marked.js](https://marked.js.org/) |
+| Headings | `# Heading` | `# Heading` | Same syntax (levels 1-3) |
+| Unordered Lists | `* item` | `* item` | Same syntax |
+| Ordered Lists | `1. item` | `1. item` | Same syntax; also supports `a. item` |
+
+**N.B.** Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, the following standard Markdown features are **not supported**: inline code (`` `code` ``), blockquotes (`>`), images (`![alt](url)`), and nested lists. Use the dedicated Paradocs commands (`image:`, `video:`, etc.) for embedding media.
+
 #### Showing Notes and Pop-up Images
 
 It is possible to display short text in notes that are separated from the body text. Notes are created using braces and the `note` command. In addition to the text notes, you can create an image popup by specifying the file URL with the `image` command.
@@ -234,10 +251,38 @@ Using curly brackets and the `quiz` command, you can create a quiz in such a way
 
 ```text
 | In a static context, words and phrases in {curly brackets}
-| will be rendered as {quize items} overlayed by an opaque box.
+| will be rendered as {quiz items} overlayed by an opaque box.
 ```
 
 **N.B.** When creating a quiz, you must use a static paragraph or a static ordered/unordered list.
+
+#### Multiple Choice Quiz (MCQ)
+
+You can create a multiple choice quiz with options that the audience can click to answer. Place the MCQ block inside a static paragraph (lines starting with `|`).
+
+```text
+| {mcq: What is the capital of France?
+|   a) London
+|   b) Berlin
+|   *c) Paris
+|   d) Rome
+| }
+```
+
+Mark the correct answer with `*` before the option letter. When a user clicks an option, it is highlighted green (correct) or red (incorrect), and the correct answer is revealed. A **Try Again** button appears after answering, allowing the quiz to be reset and retried.
+
+#### Tables
+
+You can create tables using standard Markdown table syntax. All lines must start and end with `|`, and the second line must be a separator.
+
+```text
+| Name  | Score |
+|-------|-------|
+| Alice | 95    |
+| Bob   | 87    |
+```
+
+**N.B.** Table rows starting and ending with `|` are distinguished from static paragraphs, which only have `|` at the start of each line.
 
 ----
 
@@ -282,7 +327,7 @@ or
 yt: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
 ```
 
-You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the `&start=x&end=y` format. The following will play from 30 seconds (`x=30`) to 60 seconds (`x=60`) of the video.
+You can specify the start and end points in the URL of the youtube video. It is possible to specify them by the number of seconds that have elapsed since the beginning of the video. Add the options to the URL in the `&start=x&end=y` format. The following will play from 30 seconds (`x=30`) to 60 seconds (`y=60`) of the video.
 
 ```text
 youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=30&end=60
@@ -338,7 +383,11 @@ audio: url_to_your_audio_file.mp3#t=0,5
 
 Sentences in regular paragraphs can be played back with a text-to-speech engine available in your browser. The available languages and audio variations vary by OS and browser.
 
-When TTS is available for highlighted content, a speaker icon appears in the upper right hand corner of the presentation screen. Click on this icon or press the `.` key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.
+When TTS is available for highlighted content, a speaker icon appears in the upper left corner of the presentation screen. Click on this icon or press the `.` key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.
+
+During TTS playback, the word currently being spoken is highlighted with a yellow background. This word-level highlighting helps the audience follow along with the read-aloud text. The highlighting is automatically cleaned up when playback ends or is stopped.
+
+**N.B.** Word-level highlighting depends on the browser's `onboundary` event support. It works well in Chrome and Edge but may not be available in all browsers.
 
 #### Sticky Note
 
@@ -355,7 +404,7 @@ The color of the modified mouse pointer is determined by the selection for the "
 
 #### Automatic Presentation
 
-Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.
+Click on the magic wand icon in the upper left corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text read-aloud, video playback, etc. will be performed automatically, one after another.
 
 #### Auto-Save
 
@@ -364,6 +413,12 @@ Your input text and form settings are automatically saved to the browser's local
 #### Download HTML
 
 Click the **Download HTML** button to export your presentation as a standalone HTML file. The file includes all slide content, configuration, and styles embedded directly, so it can be opened in any browser without needing to access the Paradocs website. External library dependencies (jQuery, Reveal.js, etc.) are loaded via CDN.
+
+**N.B.** YouTube video embeds are automatically converted to clickable thumbnail links in the exported file, because local HTML files cannot embed YouTube iframes due to browser security restrictions. Click the thumbnail to open the video on YouTube.
+
+#### URL Sharing
+
+The presentation URL updates automatically as you navigate through slides and fragments. You can share a specific position by copying the URL from the browser's address bar (e.g., `#/0/1/3`). When someone opens the shared URL, they will jump directly to that slide and fragment.
 
 #### Dark Mode (Inverted Colors)
 
