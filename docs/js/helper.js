@@ -878,6 +878,7 @@ textarea::selection{
 
 .mcq-reset {
   display: inline-block;
+  float: right;
   margin-top: 0.5em;
   padding: 0.3em 0.8em;
   font-size: 0.7em;
