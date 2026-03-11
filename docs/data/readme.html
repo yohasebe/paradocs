@@ -1,26 +1,9 @@
 <div id="overview" class="anchor"></div>
 
 <h2>Overview</h2>
-<p><span class='marker'><strong>Paradocs</strong> (<a href="https://yohasebe.com/paradocs">https://yohasebe.com/paradocs</a>) is a paragraph-oriented text presentation system.</span> It is suitable for presenting a large piece of text, typically paragraph by paragraph, while making comments and explanations. With Paradocs, each press of a key or button highlights one sentence after another. This allows the audience to know which particular sentence the presenter is focusing on at the moment.</p>
+<p><span class='marker'><strong>Paradocs</strong> is a paragraph-oriented text presentation system.</span> It is suitable for presenting a large piece of text, typically paragraph by paragraph, while making comments and explanations. With Paradocs, each press of a key or button highlights one sentence after another. This allows the audience to know which particular sentence the presenter is focusing on at the moment.</p>
 <p>The creator of Paradocs originally developed it for personal use in an ESL reading class at the university he works at. In reading classes, both teachers and students tend to spend most of their time looking down, which, he thought, was a sad thing. <span class='marker'>With Paradocs, you can easily prepare presentations for use in class by simply formatting the original text into a &quot;one sentence per line&quot; format.</span> You can use it in conjunction with a remote meeting app such as Zoom to conduct online classes.</p>
 <p><span class='marker'>Paradocs has multi-lingual text-to-speech (TTS) capability,</span> which uses the Web Speech API of browsers such as Google Chrome, Mozilla Firefox, Apple Safari, and Microsoft Edge, allowing you to choose one of the multiple languages installed on your computer and have the sentence read out for you and your audience whenever you want during your presentation.</p>
-<p>The presentation can be used by the user to give an oral presentation. <span class='marker'>Or, you can have the whole thing presented automatically.</span> Click on the magic wand icon in the upper right hand corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text reading, video playback, etc. will be performed automatically, one after another.</p>
+<p>The presentation can be used by the user to give an oral presentation. <span class='marker'>Or, you can have the whole thing presented automatically.</span> Click on the magic wand icon in the upper left corner of the screen. From the next fragment of the current slide to the final fragment of the entire presentation, text reading, video playback, etc. will be performed automatically, one after another.</p>
 <p>Many of the features of Paradocs rely on the presentation slide creation library <a href="https://revealjs.com">Reveal.js</a> developed by Hakim El Hattab. I am truly grateful to him and his collaborators for this wonderful library.  The beautiful background wallpaper is provided by <a href='https://www.transparenttextures.com/'>Transparent Textures</a>.</p>
 <p>Paradocs was developed by <a href="https://yohasebe.com">Yoichiro Hasebe</a>. All text processing is done entirely in the browser — no data is sent to any server.</p>
-<h2>Architecture</h2>
-<p>Paradocs is a fully static site with no server-side dependencies. The text-to-slides conversion is done entirely in the browser using client-side JavaScript.</p>
-<ul>
-<li><strong>Input page</strong> (<code>docs/index.html</code>, <code>docs/ja/index.html</code>) — Ace editor for text input, configuration form, client-side parsing</li>
-<li><strong>Presentation page</strong> (<code>docs/deck.html</code>) — Reveal.js-based slide viewer, reads data from <code>sessionStorage</code></li>
-<li><strong>Parser</strong> (<code>docs/js/parser.js</code>) — Converts Paradocs custom text format to Reveal.js HTML</li>
-<li><strong>CSS generator</strong> (<code>docs/js/helper.js</code>) — Generates presentation styles from configuration</li>
-<li><strong>Doc builder</strong> (<code>scripts/build-docs.js</code>) — Node.js script that converts Markdown documentation to HTML fragments</li>
-</ul>
-<h3>Key libraries (via CDN)</h3>
-<p>jQuery 3.7.1, jQuery UI 1.14.1, Bootstrap 5.3.8, Reveal.js 5.2.1, Ace Editor 1.36.5, Font Awesome 6.7.2, marked 15.x, Tippy.js 6.3.7</p>
-<h3>Development</h3>
-<pre><code class="language-bash">npm install            # Install dev dependencies (marked)
-npm run build:docs     # Rebuild documentation fragments in docs/data/
-</code></pre>
-<h3>Deployment</h3>
-<p>The site is served from the <code>docs/</code> folder via GitHub Pages. Push to <code>master</code> and configure GitHub Pages to serve from the <code>docs/</code> directory.</p>

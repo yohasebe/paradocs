@@ -9,8 +9,8 @@ const OUT_DIR = path.join(ROOT, 'docs', 'data');
 const FILES = [
   { src: 'tldr.md',             out: 'tldr.html' },
   { src: 'tldr_ja.md',          out: 'tldr_ja.html' },
-  { src: 'readme.md',           out: 'readme.html' },
-  { src: 'readme_ja.md',        out: 'readme_ja.html' },
+  { src: 'overview.md',          out: 'readme.html' },
+  { src: 'overview_ja.md',      out: 'readme_ja.html' },
   { src: 'documentation.md',    out: 'documentation.html' },
   { src: 'documentation_ja.md', out: 'documentation_ja.html' },
 ];

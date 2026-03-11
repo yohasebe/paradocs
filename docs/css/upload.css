@@ -166,38 +166,38 @@ div#rate_controller {
   font-weight: bold;
   text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
   margin-top: 0em !important;
-  margin-bottom: 1em !important;
+  margin-bottom: 0.5em !important;
 }
 
 .md h2,
 .md .h2{
   display:inline-block;
-  margin-top:1.5em;
-  margin-bottom:1.5em;
+  margin-top: 1.2em !important;
+  margin-bottom: 0.6em !important;
   color: #4e79a7;
-  border-top: 5px solid lightgray;
-  border-bottom: 5px solid lightgray; 
+  border-top: 3px solid lightgray;
+  border-bottom: 3px solid lightgray;
 }
 
 .md h3,
 .md .h3 {
   display:inline-block;
-  margin-top:1.5em;
-  margin-bottom:1.5em;
+  margin-top: 1em !important;
+  margin-bottom: 0.4em !important;
   color: #59a14f;
-  border-bottom: 5px solid lightgray; 
+  border-bottom: 3px solid lightgray;
 }
 
 .md h4,
 .md .h4 {
-  margin-top:1.5em;
-  margin-bottom:1.5em;
+  margin-top: 0.8em !important;
+  margin-bottom: 0.3em !important;
 }
 
 .md h5,
 .md .h5 {
-  margin-top:1.5em;
-  margin-bottom:1.5em;
+  margin-top: 0.8em !important;
+  margin-bottom: 0.3em !important;
 }
 
 .md li {
@@ -358,8 +358,8 @@ nav a.navbar-brand {
 }
 
 hr {
-  margin-top: 2em;
-  margin-bottom: 2em;
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
 }
 
 div.more-margin {
