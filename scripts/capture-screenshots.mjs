@@ -77,7 +77,7 @@ async function main() {
     await parent.close();
   }
 
-  // --- 4. GIF frames (diverse slides) ---
+  // --- 4. GIF frames (first & last sentence of each slide) ---
   console.log('Capturing: GIF frames...');
   {
     const { parent, popup } = await openPresentation();
@@ -87,22 +87,35 @@ async function main() {
     // Frame 1: Title slide
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
 
-    // Frame 2-3: Paragraph highlighting (slide 1, sentences 2-3)
-    await goToSlide(popup, 1, 2);
+    // Frame 2: Paragraph - first sentence (slide 1)
+    await goToSlide(popup, 1, 1);
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+
+    // Frame 3: Paragraph - last sentence (sentence 4)
+    await popup.keyboard.press('j');
+    await delay(150);
+    await popup.keyboard.press('j');
+    await delay(150);
     await popup.keyboard.press('j');
     await delay(300);
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
 
-    // Frame 4: Unordered list (slide 5)
-    await goToSlide(popup, 5, 5);
+    // Frame 4: List - first item (slide 5)
+    await goToSlide(popup, 5, 4);
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
 
-    // Frame 5: Table (slide 8)
+    // Frame 5: List - last item
+    await popup.keyboard.press('j');
+    await delay(150);
+    await popup.keyboard.press('j');
+    await delay(300);
+    await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
+
+    // Frame 6: Table (slide 8)
     await goToSlide(popup, 8, 2);
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
 
-    // Frame 6: MCQ quiz (slide 14)
+    // Frame 7: MCQ quiz (slide 14)
     await goToSlide(popup, 14, 2);
     await popup.screenshot({ path: path.join(framesDir, `frame-0${n++}.png`) });
 
