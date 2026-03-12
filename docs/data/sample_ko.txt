@@ -86,9 +86,9 @@ Markdown 표준 구문으로 표를 만들 수 있습니다.
 ----
 #### 팝업 이미지
 
-설명용 미니 이미지 🖼 를 추가할 수도 있습니다. {image: https://yohasebe.com/paradocs/img/sample/monalisa.jpg}
-이미지는 적절한 크기로 조정되며 마우스로 드래그할 수 있습니다. {image: https://yohasebe.com/paradocs/img/sample/starrynight.jpg}
-이미지를 확대하려면 이미지 위의 플러스 버튼을 클릭하세요. {image: https://yohasebe.com/paradocs/img/sample/greatwave.jpg}
+설명용 미니 이미지 🖼 를 추가할 수도 있습니다. {image: https://yohasebe.github.io/paradocs/img/sample/monalisa.jpg}
+이미지는 적절한 크기로 조정되며 마우스로 드래그할 수 있습니다. {image: https://yohasebe.github.io/paradocs/img/sample/starrynight.jpg}
+이미지를 확대하려면 이미지 위의 플러스 버튼을 클릭하세요. {image: https://yohasebe.github.io/paradocs/img/sample/greatwave.jpg}
 ----
 #### 퀴즈
 
@@ -118,7 +118,7 @@ Markdown 표준 구문으로 표를 만들 수 있습니다.
 슬라이드에 이미지를 삽입하려면 웹에 업로드된 PNG/JPG/GIF 형식의 이미지 파일 URL을 지정합니다 🖼 .
 이미지는 가능한 한 크게 확대됩니다.
 ----
-image: https://yohasebe.com/paradocs/img/sample/towerofbabel.jpg
+image: https://yohasebe.github.io/paradocs/img/sample/towerofbabel.jpg
 ----
 #### YouTube 동영상 삽입
 

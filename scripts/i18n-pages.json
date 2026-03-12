@@ -24,6 +24,7 @@
     "btn_convert": "Convert Text",
     "btn_download": "Download HTML",
     "btn_clear": "Clear Text",
+    "btn_reset": "Reset All",
     "label_speech_lang": "Speech Language",
     "label_speech_voice": "Speech Voice",
     "label_speech_rate": "Speech Rate",
@@ -34,7 +35,12 @@
     "label_wallpaper": "Background Wallpaper",
     "label_accent_color": "Accent Color",
     "label_highlight_color": "Highlight Color",
-    "label_invert_colors": "Invert Colors"
+    "label_invert_colors": "Invert Colors",
+    "label_local_images": "Local Images",
+    "btn_upload_images": "Choose Images",
+    "image_drop_hint": "Drop images here or click to upload (JPEG, PNG, GIF, WebP — max 5MB each)",
+    "image_list_empty": "No images uploaded",
+    "image_insert_hint": "Click filename to insert into editor"
   },
   "ja": {
     "html_lang": "ja",
@@ -61,6 +67,7 @@
     "btn_convert": "プレゼンに変換",
     "btn_download": "HTMLをダウンロード",
     "btn_clear": "クリア",
+    "btn_reset": "すべてリセット",
     "label_speech_lang": "音声合成用言語",
     "label_speech_voice": "音声合成用ボイス",
     "label_speech_rate": "音声発話スピード",
@@ -71,7 +78,12 @@
     "label_wallpaper": "背景の壁紙",
     "label_accent_color": "アクセント・カラー",
     "label_highlight_color": "ハイライト・カラー",
-    "label_invert_colors": "文字/背景の色を逆転"
+    "label_invert_colors": "文字/背景の色を逆転",
+    "label_local_images": "ローカル画像",
+    "btn_upload_images": "画像を選択",
+    "image_drop_hint": "ここに画像をドロップするかクリックしてアップロード（JPEG, PNG, GIF, WebP — 各5MBまで）",
+    "image_list_empty": "画像はまだアップロードされていません",
+    "image_insert_hint": "ファイル名をクリックするとエディタに挿入"
   },
   "zh": {
     "html_lang": "zh-CN",
@@ -98,6 +110,7 @@
     "btn_convert": "转换为演示文稿",
     "btn_download": "下载HTML",
     "btn_clear": "清除文本",
+    "btn_reset": "全部重置",
     "label_speech_lang": "语音合成语言",
     "label_speech_voice": "语音合成声音",
     "label_speech_rate": "语音速度",
@@ -108,7 +121,12 @@
     "label_wallpaper": "背景壁纸",
     "label_accent_color": "强调色",
     "label_highlight_color": "高亮颜色",
-    "label_invert_colors": "反转颜色"
+    "label_invert_colors": "反转颜色",
+    "label_local_images": "本地图片",
+    "btn_upload_images": "选择图片",
+    "image_drop_hint": "将图片拖放到此处或点击上传（JPEG、PNG、GIF、WebP — 每张最大5MB）",
+    "image_list_empty": "尚未上传图片",
+    "image_insert_hint": "点击文件名插入到编辑器"
   },
   "ko": {
     "html_lang": "ko",
@@ -135,6 +153,7 @@
     "btn_convert": "프레젠테이션으로 변환",
     "btn_download": "HTML 다운로드",
     "btn_clear": "텍스트 지우기",
+    "btn_reset": "전체 초기화",
     "label_speech_lang": "음성 합성 언어",
     "label_speech_voice": "음성 합성 목소리",
     "label_speech_rate": "음성 속도",
@@ -145,6 +164,11 @@
     "label_wallpaper": "배경 벽지",
     "label_accent_color": "강조 색상",
     "label_highlight_color": "하이라이트 색상",
-    "label_invert_colors": "색상 반전"
+    "label_invert_colors": "색상 반전",
+    "label_local_images": "로컬 이미지",
+    "btn_upload_images": "이미지 선택",
+    "image_drop_hint": "여기에 이미지를 드롭하거나 클릭하여 업로드 (JPEG, PNG, GIF, WebP — 각 5MB 이하)",
+    "image_list_empty": "아직 업로드된 이미지가 없습니다",
+    "image_insert_hint": "파일명을 클릭하면 편집기에 삽입됩니다"
   }
 }

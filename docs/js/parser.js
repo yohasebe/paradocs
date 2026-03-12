@@ -197,14 +197,16 @@ class Parser {
   /**
    * @param {string} text - The raw Paradocs document text
    * @param {object} config - Configuration object with `prefix` property
+   * @param {function} [imageResolver] - Optional function(name) that resolves local image names to data URLs
    */
-  constructor(text, config) {
+  constructor(text, config, imageResolver) {
     config = config || {};
     // Normalize line endings
     this.data = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     this.output = '';
     const prefix = config.prefix || '';
     this.poster = prefix + 'img/loading.gif';
+    this.imageResolver = imageResolver || null;
 
   }
 
@@ -341,9 +343,14 @@ class Parser {
               sentence = noteMatch[1].trim();
               note.type = noteMatch[2].trim();
               var noteText = noteMatch[3].trim();
-              // For image/img notes, validate URL protocol
-              if ((note.type === 'image' || note.type === 'img') && !/^https?:\/\//i.test(noteText)) {
-                noteText = '';  // discard non-http URLs
+              // For image/img notes, resolve local: or validate URL
+              if (note.type === 'image' || note.type === 'img') {
+                if (/^local:/.test(noteText) && this.imageResolver) {
+                  var resolved = this.imageResolver(noteText.replace(/^local:/, ''));
+                  noteText = resolved || '';
+                } else if (!/^https?:\/\//i.test(noteText) && !/^data:image\//i.test(noteText)) {
+                  noteText = '';  // discard non-http, non-data URLs
+                }
               }
               note.text = noteText
                 .replace(/&/g, '&amp;')
@@ -391,7 +398,16 @@ class Parser {
             }
             // image/img:
             else if ((m = sentence.match(/^(?:image|img):\s*?(.+)/))) {
-              spans.push(m[1] || '');
+              let imgSrc = (m[1] || '').trim();
+              // Resolve local: prefix to data URL via imageResolver
+              if (imgSrc.match(/^local:/)) {
+                const localName = imgSrc.replace(/^local:/, '');
+                if (this.imageResolver) {
+                  const resolved = this.imageResolver(localName);
+                  imgSrc = resolved || 'LOCAL_NOT_FOUND:' + localName;
+                }
+              }
+              spans.push(imgSrc);
               mode = 'im';
             }
             // inline image ![...](...)
@@ -514,12 +530,21 @@ class Parser {
             // Image
             case 'im': {
               const imgUrl = spans.join('').trim();
+              if (imgUrl.startsWith('LOCAL_NOT_FOUND:')) {
+                const missingName = imgUrl.replace('LOCAL_NOT_FOUND:', '');
+                renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Local image not found: ${this._escapeHtml(missingName)}</span></p></div>`;
+                break;
+              }
               if (!this._isValidMediaUrl(imgUrl)) {
                 renderedSentences = `<div class='text'><p><span class='${classStr}' style='color:#e15759;'>Invalid image URL: ${this._escapeHtml(imgUrl)}</span></p></div>`;
                 break;
               }
               if (paragraphs.length === 1) {
-                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}' alt='Slide image'/>`;
+                var cursorStyle = /^data:/.test(imgUrl) ? " style='cursor:zoom-in;' title='Click to enlarge'" : '';
+                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}' alt='Slide image'${cursorStyle}/>`;
+              } else if (/^data:/.test(imgUrl)) {
+                // data: URLs cannot be opened in new tabs (browser security), show inline
+                renderedSentences = `<div class='text'><p><img class='${classStr}' src='${imgUrl}' alt='Slide image' style='max-width:60%;max-height:50vh;cursor:zoom-in;' title='Click to enlarge'/></p></div>`;
               } else {
                 renderedSentences = `<div class='text'><p><span class='${classStr}'><a target='_blank' href='${imgUrl}'> <i class='fa-solid fa-image'></i> <span>click to show image</span></a></span></p></div>`;
               }
@@ -604,8 +629,11 @@ class Parser {
    * Validate that a URL looks like a valid media URL.
    */
   _isValidMediaUrl(url) {
-    // Must start with http(s), no quotes or angle brackets (prevent attribute breakout)
-    return /^https?:\/\/[^\s'"<>]+$/i.test(url);
+    // http(s) URLs
+    if (/^https?:\/\/[^\s'"<>]+$/i.test(url)) return true;
+    // data:image/ URLs (for local uploaded images, reject non-image data URLs)
+    if (/^data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]+$/i.test(url)) return true;
+    return false;
   }
 
   /**

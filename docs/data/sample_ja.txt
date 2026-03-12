@@ -87,9 +87,9 @@ Markdownのテーブル構文で表を作成できます。
 ----
 #### ポップアップ画像
 
-また、説明用のミニ画像 🖼 を付けることができます。{image: https://yohasebe.com/paradocs/img/sample/monalisa.jpg }
-画像は適当にリサイズされ、マウスでドラッグすることができます。{image: https://yohasebe.com/paradocs/img/sample/starrynight.jpg}
-画像を拡大したいときには、画像の上の＋ボタンをクリックしてください。{image: https://yohasebe.com/paradocs/img/sample/greatwave.jpg}
+また、説明用のミニ画像 🖼 を付けることができます。{image: https://yohasebe.github.io/paradocs/img/sample/monalisa.jpg }
+画像は適当にリサイズされ、マウスでドラッグすることができます。{image: https://yohasebe.github.io/paradocs/img/sample/starrynight.jpg}
+画像を拡大したいときには、画像の上の＋ボタンをクリックしてください。{image: https://yohasebe.github.io/paradocs/img/sample/greatwave.jpg}
 ----
 #### クイズ
 
@@ -121,7 +121,7 @@ Markdownのテーブル構文で表を作成できます。
 画像はスライド全体に可能な限りで拡大表示されます。
 次のスライドで例を示します。
 ----
-image: https://yohasebe.com/paradocs/img/sample/towerofbabel.jpg
+image: https://yohasebe.github.io/paradocs/img/sample/towerofbabel.jpg
 ----
 #### YouTube動画の埋め込み
 

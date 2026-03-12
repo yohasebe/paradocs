@@ -376,10 +376,13 @@ function buildPresentation() {
   config.width = parseInt(resParts[0]);
   config.height = parseInt(resParts[1]);
 
-  // Parse text
+  // Parse text (with local image resolver)
   var slides;
+  var imageResolver = function(name) {
+    return typeof ImageStore !== 'undefined' ? ImageStore.get(name) : null;
+  };
   try {
-    var parser = new Parser(text, config);
+    var parser = new Parser(text, config, imageResolver);
     slides = parser.parse();
   } catch(e) {
     showError('Parser error: ' + e.message);
@@ -467,10 +470,35 @@ function saveFormSettings(config) {
   });
 }
 
-$("#reset_button").on('click', function(){
+function clearImages() {
+  ImageStore.clear();
+  localStorage.removeItem('paradocs_' + langKey + 'local_images');
+  var il = document.getElementById('image-list');
+  if (il) {
+    var emptyMsg = { 'ja': '画像はまだアップロードされていません', 'zh-CN': '尚未上传图片', 'ko': '아직 업로드된 이미지가 없습니다' };
+    il.innerHTML = "<span class='text-muted'>" + (emptyMsg[document.documentElement.lang] || 'No images uploaded') + "</span>";
+  }
+}
+
+// Clear Text — clears editor text only (keeps images)
+$("#clear_button").on('click', function(){
   editor.setValue('');
   autosave.clear();
   $('#textarea_message').hide();
+});
+
+// Reset — clears images and restores sample text
+$("#reset_button").on('click', function(){
+  autosave.clear();
+  clearImages();
+  $('#textarea_message').hide();
+  // Reload sample text
+  var sampleSuffix = { 'ja-JP': '_ja', 'zh-CN': '_zh', 'ko-KR': '_ko' }[default_lang] || '';
+  fetch(BASE_PATH + 'data/sample' + sampleSuffix + '.txt')
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      editor.setValue(text, -1);
+    });
 });
 
 function showError(message){
@@ -516,6 +544,253 @@ $(document).click(function (event) {
 $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize', function(){
   editor.resize();
 });
+
+//////////////////// Local image upload ///////////////
+
+(function() {
+  var MAX_DIMENSION = 1280;
+  var JPEG_QUALITY = 0.85;
+  var STORAGE_KEY = 'paradocs_' + langKey + 'local_images';
+  var dropZone = document.getElementById('image-drop-zone');
+  var fileInput = document.getElementById('image-file-input');
+  var imageList = document.getElementById('image-list');
+
+  if (!dropZone || !fileInput || !imageList) return;
+
+  // Restore images from localStorage on page load
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      ImageStore.fromJSON(saved);
+    }
+  } catch (e) {
+    console.warn('Failed to restore images from localStorage:', e.message);
+  }
+
+  /**
+   * Persist ImageStore to sessionStorage.
+   */
+  function persistImages() {
+    try {
+      localStorage.setItem(STORAGE_KEY, ImageStore.toJSON());
+    } catch (e) {
+      console.warn('Failed to persist images to localStorage:', e.message);
+    }
+  }
+
+  // Click to open file dialog
+  dropZone.addEventListener('click', function() {
+    fileInput.click();
+  });
+
+  // Keyboard accessibility
+  dropZone.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files && fileInput.files.length > 0) {
+      handleFiles(fileInput.files);
+      fileInput.value = '';
+    }
+  });
+
+  // Drag and drop
+  dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  });
+
+  /**
+   * Resize an image to max dimension and compress as JPEG.
+   * Returns a Promise resolving to { name, dataUrl }.
+   */
+  function resizeAndStore(file) {
+    return new Promise(function(resolve, reject) {
+      // Validate type and size first via ImageStore
+      var ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (ALLOWED_TYPES.indexOf(file.type) === -1) {
+        reject(new Error(file.name + ': unsupported image type.'));
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        reject(new Error(file.name + ': exceeds 5MB limit.'));
+        return;
+      }
+
+      // For GIF, store directly (preserve animation)
+      if (file.type === 'image/gif') {
+        ImageStore.processFile(file).then(resolve).catch(reject);
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onerror = function() { reject(new Error('Failed to read: ' + file.name)); };
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onerror = function() { reject(new Error('Failed to load image: ' + file.name)); };
+        img.onload = function() {
+          var w = img.width;
+          var h = img.height;
+
+          // Only resize if exceeds max dimension
+          if (w > MAX_DIMENSION || h > MAX_DIMENSION) {
+            if (w > h) {
+              h = Math.round(h * MAX_DIMENSION / w);
+              w = MAX_DIMENSION;
+            } else {
+              w = Math.round(w * MAX_DIMENSION / h);
+              h = MAX_DIMENSION;
+            }
+          }
+
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          // Convert to JPEG (or PNG for transparency)
+          var outputType = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
+          var quality = (outputType === 'image/jpeg') ? JPEG_QUALITY : undefined;
+          var dataUrl = canvas.toDataURL(outputType, quality);
+
+          var safeName = ImageStore.sanitizeName(file.name);
+          ImageStore.set(safeName, dataUrl);
+          resolve({ name: safeName, dataUrl: dataUrl });
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * Process multiple files: resize, store, update list.
+   */
+  function handleFiles(files) {
+    var promises = [];
+    for (var i = 0; i < files.length; i++) {
+      promises.push(resizeAndStore(files[i]));
+    }
+
+    Promise.allSettled(promises).then(function(results) {
+      var errors = [];
+      results.forEach(function(r) {
+        if (r.status === 'rejected') {
+          errors.push(r.reason.message);
+        }
+      });
+      if (errors.length > 0) {
+        showError(errors.join('<br>'));
+      }
+      persistImages();
+      refreshImageList();
+    });
+  }
+
+  /**
+   * Refresh the image list UI.
+   */
+  function refreshImageList() {
+    var names = ImageStore.list();
+    if (names.length === 0) {
+      imageList.innerHTML = "<span class='text-muted'>" +
+        (document.documentElement.lang === 'ja' ? '画像はまだアップロードされていません' :
+         document.documentElement.lang === 'zh-CN' ? '尚未上传图片' :
+         document.documentElement.lang === 'ko' ? '아직 업로드된 이미지가 없습니다' :
+         'No images uploaded') + "</span>";
+      return;
+    }
+
+    var html = '';
+    names.forEach(function(name) {
+      var dataUrl = ImageStore.get(name);
+      var thumbSrc = dataUrl ? dataUrl : '';
+      html += "<div class='image-list-item'>" +
+        "<img src='" + thumbSrc + "' alt=''>" +
+        "<span class='image-name' data-name='" + name.replace(/'/g, '&#39;') + "'>" + name + "</span>" +
+        "<span class='image-remove' data-name='" + name.replace(/'/g, '&#39;') + "' title='Remove'><i class='fa-solid fa-xmark'></i></span>" +
+        "</div>";
+    });
+    imageList.innerHTML = html;
+
+    // Click on name → insert into editor
+    imageList.querySelectorAll('.image-name').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var name = el.getAttribute('data-name');
+        insertImageReference(name);
+      });
+    });
+
+    // Click on remove → delete from store and remove references from editor
+    imageList.querySelectorAll('.image-remove').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var name = el.getAttribute('data-name');
+        ImageStore.remove(name);
+        persistImages();
+        refreshImageList();
+        // Remove matching image: local:name lines from the editor
+        removeImageReferences(name);
+      });
+    });
+  }
+
+  /**
+   * Insert `image: local:filename` at the editor cursor position,
+   * ensuring it sits on its own line.
+   */
+  function insertImageReference(name) {
+    var pos = editor.getCursorPosition();
+    var line = editor.session.getLine(pos.row);
+    var prefix = '';
+    var suffix = '\n';
+
+    // If cursor is not at the start of an empty line, add a newline before
+    if (line.length > 0 && pos.column > 0) {
+      prefix = '\n';
+    }
+
+    var text = prefix + 'image: local:' + name + suffix;
+    editor.session.insert(pos, text);
+    editor.focus();
+  }
+
+  /**
+   * Remove all `image: local:filename` or `img: local:filename` lines
+   * from the editor for a given image name.
+   */
+  function removeImageReferences(name) {
+    var content = editor.getValue();
+    var pattern = new RegExp('^\\s*(?:image|img):\\s*local:' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*$', 'gm');
+    var updated = content.replace(pattern, '');
+    // Clean up consecutive blank lines left behind
+    updated = updated.replace(/\n{3,}/g, '\n\n');
+    if (updated !== content) {
+      editor.setValue(updated, -1);
+    }
+  }
+
+  // Show restored images on page load
+  refreshImageList();
+})();
 
 $("#accent_color_selected").change(function(){
   var accent_color = $(this).val();

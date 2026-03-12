@@ -86,9 +86,9 @@ c. 字母列表项目 3
 ----
 #### 弹出图片
 
-您还可以添加用于说明的小图片 🖼。{image: https://yohasebe.com/paradocs/img/sample/monalisa.jpg}
-图片会适当调整大小，并可以用鼠标拖动。{image: https://yohasebe.com/paradocs/img/sample/starrynight.jpg}
-要放大图片，请点击图片上方的加号按钮。{image: https://yohasebe.com/paradocs/img/sample/greatwave.jpg}
+您还可以添加用于说明的小图片 🖼。{image: https://yohasebe.github.io/paradocs/img/sample/monalisa.jpg}
+图片会适当调整大小，并可以用鼠标拖动。{image: https://yohasebe.github.io/paradocs/img/sample/starrynight.jpg}
+要放大图片，请点击图片上方的加号按钮。{image: https://yohasebe.github.io/paradocs/img/sample/greatwave.jpg}
 ----
 #### 测验
 
@@ -118,7 +118,7 @@ c. 字母列表项目 3
 要在幻灯片中嵌入图片，您可以指定上传到网络上的 PNG/JPG/GIF 格式图片文件的 URL，并将其显示在幻灯片上 🖼。
 图片会被尽可能放大显示。
 ----
-image: https://yohasebe.com/paradocs/img/sample/towerofbabel.jpg
+image: https://yohasebe.github.io/paradocs/img/sample/towerofbabel.jpg
 ----
 #### 嵌入 YouTube 视频
 

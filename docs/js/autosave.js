@@ -90,7 +90,8 @@
     var storage = this._getStorage();
     if (!storage) return false;
     try {
-      return storage.getItem(this._textKey) !== null;
+      var text = storage.getItem(this._textKey);
+      return text !== null && text.length > 0;
     } catch (_e) {
       return false;
     }

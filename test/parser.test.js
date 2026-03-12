@@ -83,6 +83,52 @@ describe('Parser', () => {
       expect(html).not.toContain('Invalid');
       expect(html).toContain('src=');
     });
+
+    test('accepts data: URL for local images', () => {
+      var p = new Parser('----\nimage: data:image/jpeg;base64,/9j/4AAQ\n----', config);
+      var html = p.parse();
+      expect(html).not.toContain('Invalid');
+      expect(html).toContain('src=');
+      expect(html).toContain('data:image/jpeg;base64,');
+    });
+
+    test('rejects data: URLs that are not images', () => {
+      var p = new Parser('----\nimage: data:text/html;base64,PHNjcmlwdD4=\n----', config);
+      var html = p.parse();
+      expect(html).toContain('Invalid image URL');
+    });
+  });
+
+  // ---- Local image resolution ----
+
+  describe('local image resolution', () => {
+    test('resolves local: prefix using imageResolver', () => {
+      var resolver = function(name) { return 'data:image/jpeg;base64,RESOLVED'; };
+      var p = new Parser('----\nimage: local:photo.jpg\n----', config, resolver);
+      var html = p.parse();
+      expect(html).toContain('data:image/jpeg;base64,RESOLVED');
+      expect(html).not.toContain('local:');
+    });
+
+    test('shows error when local image not found', () => {
+      var resolver = function(name) { return null; };
+      var p = new Parser('----\nimage: local:missing.jpg\n----', config, resolver);
+      var html = p.parse();
+      expect(html).toContain('not found');
+    });
+
+    test('resolves local: prefix in note image', () => {
+      var resolver = function(name) { return 'data:image/jpeg;base64,NOTED'; };
+      var p = new Parser('----\nHello {image: local:thumb.jpg}\n----', config, resolver);
+      var html = p.parse();
+      expect(html).toContain('data:image/jpeg;base64,NOTED');
+    });
+
+    test('works without imageResolver (backward compatible)', () => {
+      var p = new Parser('----\nimage: local:photo.jpg\n----', config);
+      var html = p.parse();
+      expect(html).toContain('Invalid image URL');
+    });
   });
 
   // ---- Markdown extension: tables ----

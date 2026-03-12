@@ -307,6 +307,11 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <blockquote>
 <p>如果您想嵌入自己的图表，可以使用 <a href="https://docs.google.com/drawings/u/0/create">Google Drawings</a>，并粘贴其&quot;发布到网络&quot;功能生成的图片链接。您也可以使用 <a href="https://mermaid-js.github.io/mermaid-live-editor">Mermaid Live Editor</a>，获取&quot;Link to SVG&quot;来嵌入流程图或甘特图等商业图表。</p>
 </blockquote>
+<h4>本地图片</h4>
+<p>您可以使用编辑器旁边的拖放区域从设备上传图片。支持的格式：JPEG、PNG、GIF、WebP（每张最大 5MB）。上传的图片保存在浏览器的本地存储中，页面重新加载或浏览器重启后仍然保留。点击<strong>全部重置</strong>按钮或手动清除浏览器数据后将被删除。</p>
+<p>要将本地图片插入幻灯片，请点击图片列表中的文件名，或输入：</p>
+<pre><code class="language-text">image: local:your_image_file.jpg
+</code></pre>
 <h4>嵌入 YouTube 视频</h4>
 <p>您可以指定 YouTube 视频的 URL 并将其显示在幻灯片上。视频会被尽可能放大显示。</p>
 <pre><code class="language-text">youtube: https://www.youtube.com/watch?v=Ks-_Mh1QhMc
@@ -355,7 +360,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <h4>自动演示</h4>
 <p>点击屏幕左上角的魔法棒图标。从当前幻灯片的下一个片段到整个演示文稿的最后一个片段，文本朗读、视频播放等将自动依次执行。</p>
 <h4>自动保存</h4>
-<p>您输入的文本和表单设置会在您输入时自动保存到浏览器的本地存储中。当您再次访问页面时，之前的内容会自动恢复。点击<strong>清除文本</strong>按钮可以清除编辑器和已保存的数据。</p>
+<p>输入的文本、表单设置和上传的本地图片会自动保存到浏览器的本地存储中。即使关闭浏览器，再次访问页面时之前的工作内容也会自动恢复。点击<strong>清除文本</strong>仅清除编辑器文本，点击<strong>全部重置</strong>可清除文本、设置和所有上传的图片。</p>
 <h4>下载 HTML</h4>
 <p>点击<strong>下载 HTML</strong>按钮，将您的演示文稿导出为独立的 HTML 文件。该文件包含所有幻灯片内容、配置和样式，因此无需访问 Paradocs 网站即可在任何浏览器中打开。外部库依赖（jQuery、Reveal.js 等）通过 CDN 加载。</p>
 <p><strong>注意</strong> 在导出的文件中，YouTube 视频嵌入会自动转换为可点击的缩略图链接，因为由于浏览器安全限制，本地 HTML 文件无法嵌入 YouTube iframe。点击缩略图即可在 YouTube 上打开视频。</p>

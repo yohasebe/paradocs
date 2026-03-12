@@ -8,13 +8,13 @@
 
     <meta name="twitter:card"        content="summary" />
     <meta name="twitter:site"        content="@yohasebe" />
-    <meta property="og:image"         content="https://yohasebe.com/paradocs/img/paradocs.png" />
+    <meta property="og:image"         content="https://yohasebe.github.io/paradocs/img/paradocs.png" />
 
     <meta property="og:url"           content="https://yohasebe.com/paradocs/" />
     <meta property="og:type"          content="website" />
     <meta property="og:title"         content="Paradocs" />
     <meta property="og:description"   content="단락 중심 문서 프레젠테이션 시스템" />
-    <meta property="og:image"         content="https://yohasebe.com/paradocs/img/paradocs.png" />
+    <meta property="og:image"         content="https://yohasebe.github.io/paradocs/img/paradocs.png" />
 
     <link rel="shortcut icon" href="../ico/favicon.ico">
     <title>Paradocs: 단락 중심 문서 프레젠테이션 시스템</title>
@@ -35,7 +35,7 @@
 
     <nav class="navbar fixed-top navbar-expand-lg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="./">Paradocs</a>
+        <a class="navbar-brand" href="./"><img src="../img/paradocs-icon.png" alt="" class="navbar-logo" />Paradocs</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -86,29 +86,19 @@
 
     <div class="container-fluid logo-container">
       <div class='text-center'>
-        <div>
-          <span id="logo">
-            <img src="../img/paradocs.png" />
-            <a href="./">Paradocs </a>
-          </span>
+        <div id="logo">
+          <a href="./">
+            <img src="../img/paradocs-icon.png" alt="Paradocs" />
+            <span class="logo-text">Paradocs</span>
+          </a>
         </div>
-        <div><span class="slogan"> 단락 중심 문서 프레젠테이션 시스템</span></div>
+        <div><span class="slogan">단락 중심 문서 프레젠테이션 시스템</span></div>
       </div>
     </div>
 
     <div class="container">
       <div class="demo-gif">
         <img src="../img/paradocs-demo.gif" alt="Paradocs demo">
-      </div>
-    </div>
-
-    <div class="container-fluid">
-      <div class='row'>
-        <div class="col-sm-12 md">
-          <div class="more-margin">
-            <div id="tldr-content"></div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -140,114 +130,131 @@
 
   <div style='margin-bottom:20px; '><span class='text-warning' id='textarea_message'></span></div>
 
-  <div style='margin-bottom: 1em;'>
-    <span id='submit_button' class="file_reset btn btn-primary">프레젠테이션으로 변환</span>&nbsp;
-    <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> HTML 다운로드</span>&nbsp;
-    <span id='reset_button' class="file_reset btn btn-light">텍스트 지우기</span>
-  </div>
+  <div id="settings-and-images">
+    <div id="settings-column">
+      <div style='margin-bottom: 1em;'>
+        <span id='submit_button' class="file_reset btn btn-primary">프레젠테이션으로 변환</span>&nbsp;
+        <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> HTML 다운로드</span>&nbsp;
+        <span id='clear_button' class="file_reset btn btn-light">텍스트 지우기</span>
+        <span id='reset_button' class="file_reset btn btn-light"><i class="fa-solid fa-rotate-left"></i> 전체 초기화</span>
+      </div>
 
-  <div id='lang_controller' style='display: none;'>
-    <span class='form-label'>음성 합성 언어</span>
-    <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
-  </div>
+      <div id='lang_controller' style='display: none;'>
+        <span class='form-label'>음성 합성 언어</span>
+        <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
+      </div>
 
-  <div class="row" style='margin:0;'>
-    <div id='voice_controller' style='display: none;'>
-      <span class='form-label'>음성 합성 목소리</span>
-      <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>
+      <div id='voice_controller' style='display: none;'>
+        <span class='form-label'>음성 합성 목소리</span>
+        <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>
+      </div>
+      <div id='rate_controller' style='display: none;'>
+        <span class='form-label'>음성 속도</span>
+        <select class="form-control inline-form" id='rate_selected' name='speech_rate'></select>
+        <span class='text-warning' id='rate_disabled_message'>현재 선택된 음성은 속도 조절을 지원하지 않습니다.</span>
+      </div>
+
+      <div id='resolution_controller'>
+        <span class='form-label'>화면 해상도</span>
+        <select class="form-control inline-form" id='resolution_selected' name='resolution'>
+          <option value="800x600">SVGA (800x600)</option>
+          <option value="1280x800" selected='selected'>WXGA (1280x800)</option>
+          <option value="1920x1080">Full-HD (1920x1080)</option>
+        </select>
+      </div>
+
+      <div id='fontfamily_controller'>
+        <span class='form-label'>글꼴 종류</span>
+        <select class="form-control inline-form" id='font_family_selected' name='font_family'>
+          <option value="sans" selected='selected'>Sans Serif</option>
+          <option value="serif">Serif</option>
+          <option value="fun">Fun</option>
+        </select>
+      </div>
+
+      <div id='font_controller'>
+        <span class='form-label'>글꼴 크기</span>
+        <select class="form-control inline-form" id='font_size_selected' name='font_size'>
+          <option value="80">Huge</option>
+          <option value="70">XLarge</option>
+          <option value="60">Larger</option>
+          <option value="50">Large</option>
+          <option value="40" selected='selected'>Medium</option>
+          <option value="30">Small</option>
+          <option value="20">Smaller</option>
+          <option value="10">Tiny</option>
+        </select>
+      </div>
+
+      <div id='wallpaper_controller'>
+        <span class='form-label'>배경 벽지</span>
+        <select class="form-control inline-form" id='wallpaper_selected' name='wallpaper'>
+          <option value="sandpaper.png" selected='selected'>sandpaper</option>
+          <option value="project-paper.png">project-paper</option>
+          <option value="bedge-grunge.png">bedge-grunge</option>
+          <option value="absurdity.png">absurdity</option>
+          <option value="fabric-plaid.png">fabric-plaid</option>
+          <option value="bright-squares.png">bright-squares</option>
+          <option value="inspiration-geometry.png">inspiration-geometry</option>
+          <option value="gray-floral.png">gray-floral</option>
+          <option value="gplay.png">gplay</option>
+          <option value="food.png">food</option>
+          <option value="arches.png">arches</option>
+          <option value="none">none</option>
+        </select>
+      </div>
+
+      <div id='accent_color_controller'>
+        <span class='form-label'>강조 색상</span>
+        <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
+          <option value="#e15759" selected='selected'><span class='color: #e15759;'>Red</span></option>
+          <option value="#4e79a7"><span class='color: #4e79a7;'>Blue</span></option>
+          <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
+          <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
+          <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
+          <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
+          <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
+          <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
+          <option value="#464646"><span class='color: #464646;'>Gray</span></option>
+        </select>
+        <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Accent Color</span>
+      </div>
+
+      <div id='highlight_background_color_controller'>
+        <span class='form-label'>하이라이트 색상</span>
+        <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
+          <option value="#e15759"><span class='color: #e15759;'>Red</span></option>
+          <option value="#4e79a7" selected='selected'><span class='color: #4e79a7;'>Blue</span></option>
+          <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
+          <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
+          <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
+          <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
+          <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
+          <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
+          <option value="#464646"><span class='color: #464646;'>Black</span></option>
+        </select>
+        <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Highlight Color</span>
+      </div>
+
+      <div id="text_background_controller">
+        <span class='form-label'>색상 반전</span>
+        <input id="text_background" type="checkbox" name="text_background" value="text_background">
+      </div>
     </div>
-    <div id='rate_controller' style='display: none; margin-left:10px;'>
-      <span class='form-label'>음성 속도</span>
-      <select class="form-control inline-form" id='rate_selected' name='speech_rate'></select>
-      <span class='text-warning' id='rate_disabled_message'>현재 선택된 음성은 속도 조절을 지원하지 않습니다.</span>
+
+    <div id="images-column">
+      <div id="local_image_controller">
+        <div id="image-drop-zone" tabindex="0" role="button" aria-label="이미지 선택">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>여기에 이미지를 드롭하거나 클릭하여 업로드 (JPEG, PNG, GIF, WebP — 각 5MB 이하)</span>
+          <input type="file" id="image-file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
+        </div>
+        <div id="image-list-container">
+          <small class="text-muted">파일명을 클릭하면 편집기에 삽입됩니다</small>
+          <div id="image-list"><span class="text-muted">아직 업로드된 이미지가 없습니다</span></div>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div id='resolution_controller'>
-    <span class='form-label'>화면 해상도</span>
-    <select class="form-control inline-form" id='resolution_selected' name='resolution'>
-      <option value="800x600">SVGA (800x600)</option>
-      <option value="1280x800" selected='selected'>WXGA (1280x800)</option>
-      <option value="1920x1080">Full-HD (1920x1080)</option>
-    </select>
-  </div>
-
-  <div id='fontfamily_controller'>
-    <span class='form-label'>글꼴 종류</span>
-    <select class="form-control inline-form" id='font_family_selected' name='font_family'>
-      <option value="sans" selected='selected'>Sans Serif</option>
-      <option value="serif">Serif</option>
-      <option value="fun">Fun</option>
-    </select>
-  </div>
-
-  <div id='font_controller'>
-    <span class='form-label'>글꼴 크기</span>
-    <select class="form-control inline-form" id='font_size_selected' name='font_size'>
-      <option value="80">Huge</option>
-      <option value="70">XLarge</option>
-      <option value="60">Larger</option>
-      <option value="50">Large</option>
-      <option value="40" selected='selected'>Medium</option>
-      <option value="30">Small</option>
-      <option value="20">Smaller</option>
-      <option value="10">Tiny</option>
-    </select>
-  </div>
-
-  <div id='wallpaper_controller'>
-    <span class='form-label'>배경 벽지</span>
-    <select class="form-control inline-form" id='wallpaper_selected' name='wallpaper'>
-      <option value="sandpaper.png" selected='selected'>sandpaper</option>
-      <option value="project-paper.png">project-paper</option>
-      <option value="bedge-grunge.png">bedge-grunge</option>
-      <option value="absurdity.png">absurdity</option>
-      <option value="fabric-plaid.png">fabric-plaid</option>
-      <option value="bright-squares.png">bright-squares</option>
-      <option value="inspiration-geometry.png">inspiration-geometry</option>
-      <option value="gray-floral.png">gray-floral</option>
-      <option value="gplay.png">gplay</option>
-      <option value="food.png">food</option>
-      <option value="arches.png">arches</option>
-      <option value="none">none</option>
-    </select>
-  </div>
-
-  <div id='accent_color_controller'>
-    <span class='form-label'>강조 색상</span>
-    <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
-      <option value="#e15759" selected='selected'><span class='color: #e15759;'>Red</span></option>
-      <option value="#4e79a7"><span class='color: #4e79a7;'>Blue</span></option>
-      <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
-      <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
-      <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
-      <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
-      <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
-      <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
-      <option value="#464646"><span class='color: #464646;'>Gray</span></option>
-    </select>
-    <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Accent Color</span>
-  </div>
-
-  <div id='highlight_background_color_controller'>
-    <span class='form-label'>하이라이트 색상</span>
-    <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
-      <option value="#e15759"><span class='color: #e15759;'>Red</span></option>
-      <option value="#4e79a7" selected='selected'><span class='color: #4e79a7;'>Blue</span></option>
-      <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
-      <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
-      <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
-      <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
-      <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
-      <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
-      <option value="#464646"><span class='color: #464646;'>Black</span></option>
-    </select>
-    <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Highlight Color</span>
-  </div>
-
-  <div id="text_background_controller">
-    <span class='form-label'>색상 반전</span>
-    <input id="text_background" type="checkbox" name="text_background" value="text_background">
   </div>
 
 </form>
@@ -324,7 +331,6 @@
         });
     }
 
-    safeLoadHTML(BASE_PATH + 'data/tldr_ko.html', 'tldr-content');
     safeLoadHTML(BASE_PATH + 'data/readme_ko.html', 'readme-content');
     safeLoadHTML(BASE_PATH + 'data/documentation_ko.html', 'documentation-content');
   </script>
@@ -332,6 +338,7 @@
   <script src="../js/exporter.js"></script>
   <script src="../js/parser.js"></script>
   <script src="../js/helper.js"></script>
+  <script src="../js/image-store.js"></script>
   <script src="../js/upload.js"></script>
   </body>
 </html>

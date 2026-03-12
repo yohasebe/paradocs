@@ -136,20 +136,18 @@ jQuery(function($){
       var $option = $(this);
       var $quiz = $option.closest('.mcq-quiz');
 
-      if ($quiz.attr('data-answered') === 'true') return;
-
-      $quiz.attr('data-answered', 'true');
-      $quiz.find('.mcq-option').addClass('mcq-disabled');
+      if ($option.hasClass('mcq-disabled')) return;
 
       if ($option.attr('data-correct') === 'true') {
+        $quiz.attr('data-answered', 'true');
+        $quiz.find('.mcq-option').addClass('mcq-disabled');
         $option.addClass('mcq-correct');
         $quiz.find('.mcq-feedback').text('\u2713 Correct!').addClass('mcq-correct-feedback').show();
+        $quiz.find('.mcq-reset').show();
       } else {
-        $option.addClass('mcq-incorrect');
-        $quiz.find('.mcq-option[data-correct="true"]').addClass('mcq-correct');
-        $quiz.find('.mcq-feedback').text('\u2717 Incorrect').addClass('mcq-incorrect-feedback').show();
+        $option.addClass('mcq-incorrect mcq-disabled');
+        $quiz.find('.mcq-feedback').text('\u2717 Try again').removeClass('mcq-correct-feedback').addClass('mcq-incorrect-feedback').show();
       }
-      $quiz.find('.mcq-reset').show();
     });
 
     $(document).on('click', '.mcq-reset', function(e) {

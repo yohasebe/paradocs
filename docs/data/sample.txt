@@ -86,9 +86,9 @@ The note text can be dragged across the screen with the mouse.{note: Try draggin
 ----
 #### Pop-up Images
 
-You can also add a mini-image 🖼 for illustration. {image: https://yohasebe.com/paradocs/img/sample/monalisa.jpg}
-The image will be resized appropriately and can be dragged with the mouse. {image: https://yohasebe.com/paradocs/img/sample/starrynight.jpg}
-To enlarge the image, click on the plus button on top of the image. {image: https://yohasebe.com/paradocs/img/sample/greatwave.jpg}
+You can also add a mini-image 🖼 for illustration. {image: https://yohasebe.github.io/paradocs/img/sample/monalisa.jpg}
+The image will be resized appropriately and can be dragged with the mouse. {image: https://yohasebe.github.io/paradocs/img/sample/starrynight.jpg}
+To enlarge the image, click on the plus button on top of the image. {image: https://yohasebe.github.io/paradocs/img/sample/greatwave.jpg}
 ----
 #### Quiz
 
@@ -118,7 +118,7 @@ Mark the correct answer with an asterisk before the option letter.
 To embed a image to the slide, you can specify the URL of an image file in PNG/JPG/GIF format uploaded on the web and display it on the slide 🖼 .
 The image will be enlarged as much as possible;
 ----
-image: https://yohasebe.com/paradocs/img/sample/towerofbabel.jpg
+image: https://yohasebe.github.io/paradocs/img/sample/towerofbabel.jpg
 ----
 #### Embed YouTube Video
 

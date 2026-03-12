@@ -97,7 +97,132 @@
       });
     </script>
 
+    <!-- Lightbox overlay for inline images -->
+    <div id="img-lightbox" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);cursor:zoom-out;align-items:center;justify-content:center;">
+      <img id="img-lightbox-img" src="" alt="" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:4px;box-shadow:0 0 30px rgba(0,0,0,0.5);">
+    </div>
+
     <script src="js/tts-highlight.js"></script>
     <script src="js/paradocs.js"></script>
+
+    <script>
+    // Lightbox — click/key to zoom slide images (local and URL)
+    (function(){
+      var lb = document.getElementById('img-lightbox');
+      var lbImg = document.getElementById('img-lightbox-img');
+      var isOpen = false;
+
+      function closeLightbox() {
+        lb.style.display = 'none';
+        lbImg.src = '';
+        isOpen = false;
+      }
+
+      function openLightbox(src) {
+        lbImg.src = src;
+        lb.style.display = 'flex';
+        isOpen = true;
+      }
+
+      // Find a clickable slide image (exclude UI icons)
+      function findSlideImg(el) {
+        var img = el.closest('img.large_img') || el.closest('.slides img[style*="zoom-in"]');
+        if (img) return img;
+        // Also match img inside .slides that is a fragment or child of a fragment
+        img = el.closest('img');
+        if (img && img.closest('.slides') && (img.classList.contains('fragment') || img.classList.contains('large_img'))) return img;
+        return null;
+      }
+
+      // mousedown fires before Reveal.js click handlers
+      document.addEventListener('mousedown', function(e) {
+        if (isOpen) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          closeLightbox();
+          return;
+        }
+        var img = findSlideImg(e.target);
+        if (img) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          openLightbox(img.src);
+        }
+      }, true);
+
+      // Prevent the subsequent click from reaching Reveal.js
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('#img-lightbox') || findSlideImg(e.target)) {
+          e.stopImmediatePropagation();
+        }
+      }, true);
+
+      // Get the current fragment element
+      function getCurrentFragment() {
+        if (typeof Reveal === 'undefined' || !Reveal.getCurrentSlide) return null;
+        var currentSlide = Reveal.getCurrentSlide();
+        if (!currentSlide) return null;
+        return currentSlide.querySelector('.current-fragment') || null;
+      }
+
+      // Get the focused image from the current fragment or image-only slide
+      function getFocusedImage() {
+        var frag = getCurrentFragment();
+        if (frag) {
+          var img = frag.tagName === 'IMG' ? frag : frag.querySelector('img');
+          if (img) return img;
+          return null;
+        }
+        var currentSlide = Reveal.getCurrentSlide();
+        if (!currentSlide) return null;
+        return currentSlide.querySelector('img.large_img') || currentSlide.querySelector('img[style*="zoom-in"]') || null;
+      }
+
+      // Get focused audio/video from the current fragment
+      function getFocusedMedia() {
+        var frag = getCurrentFragment();
+        if (!frag) return null;
+        if (frag.tagName === 'AUDIO' || frag.tagName === 'VIDEO') return frag;
+        return null;
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isOpen) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          closeLightbox();
+          return;
+        }
+        if (e.key === '.') {
+          // Lightbox close
+          if (isOpen) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            closeLightbox();
+            return;
+          }
+          // Audio/Video toggle play/pause
+          var media = getFocusedMedia();
+          if (media) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (media.paused) {
+              media.play();
+            } else {
+              media.pause();
+            }
+            return;
+          }
+          // Image zoom
+          var img = getFocusedImage();
+          if (img) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            openLightbox(img.src);
+          }
+        }
+      }, true);
+    })();
+    </script>
   </body>
 </html>
