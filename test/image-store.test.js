@@ -215,5 +215,45 @@ describe('ImageStore', () => {
     test('toJSON returns empty object when no images', () => {
       expect(ImageStore.toJSON()).toBe('{}');
     });
+
+    test('fromJSON sanitizes keys with special characters', () => {
+      var data = { 'my photo (1).jpg': 'data:image/jpeg;base64,xxx' };
+      ImageStore.fromJSON(JSON.stringify(data));
+
+      expect(ImageStore.has('my photo (1).jpg')).toBe(true); // get/has also sanitizes
+      expect(ImageStore.has('my_photo__1_.jpg')).toBe(true);
+    });
+
+    test('fromJSON rejects non-image data URLs', () => {
+      var data = {
+        'safe.jpg': 'data:image/jpeg;base64,aaa',
+        'evil.jpg': 'javascript:alert(1)',
+        'html.jpg': 'data:text/html;base64,PHNjcmlwdD4='
+      };
+      ImageStore.fromJSON(JSON.stringify(data));
+
+      expect(ImageStore.has('safe.jpg')).toBe(true);
+      expect(ImageStore.has('evil.jpg')).toBe(false);
+      expect(ImageStore.has('html.jpg')).toBe(false);
+      expect(ImageStore.count()).toBe(1);
+    });
+
+    test('fromJSON rejects SVG data URLs', () => {
+      var data = { 'icon.svg': 'data:image/svg+xml;base64,PHN2Zz4=' };
+      ImageStore.fromJSON(JSON.stringify(data));
+
+      expect(ImageStore.has('icon.svg')).toBe(false);
+      expect(ImageStore.count()).toBe(0);
+    });
+
+    test('fromJSON skips non-string values', () => {
+      var data = { 'a.jpg': 'data:image/jpeg;base64,aaa', 'b.jpg': 12345, 'c.jpg': null };
+      ImageStore.fromJSON(JSON.stringify(data));
+
+      expect(ImageStore.has('a.jpg')).toBe(true);
+      expect(ImageStore.has('b.jpg')).toBe(false);
+      expect(ImageStore.has('c.jpg')).toBe(false);
+      expect(ImageStore.count()).toBe(1);
+    });
   });
 });

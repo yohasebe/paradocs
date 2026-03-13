@@ -128,8 +128,9 @@ if (autosave.hasSavedData()) {
   if (savedSettings) {
     $(function() {
       // Wait for voices to load before restoring speech settings
+      var restoreTries = 25; // Give up after 5 seconds
       var restoreTimer = setInterval(function() {
-        if ($('#lang_selected option').length > 0 || --restoreTimer._tries <= 0) {
+        if ($('#lang_selected option').length > 0 || --restoreTries <= 0) {
           clearInterval(restoreTimer);
           if (savedSettings.resolution) $('#resolution_selected').val(savedSettings.resolution).trigger('change');
           if (savedSettings.font_family) $('#font_family_selected').val(savedSettings.font_family).trigger('change');
@@ -147,15 +148,20 @@ if (autosave.hasSavedData()) {
           }
         }
       }, 200);
-      restoreTimer._tries = 25; // Give up after 5 seconds
     });
   }
 } else {
   var sampleSuffix = { 'ja-JP': '_ja', 'zh-CN': '_zh', 'ko-KR': '_ko' }[default_lang] || '';
   fetch(BASE_PATH + 'data/sample' + sampleSuffix + '.txt')
-    .then(function(r) { return r.text(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
     .then(function(text) {
       editor.setValue(text, -1);
+    })
+    .catch(function(err) {
+      console.warn('Failed to load sample text:', err.message);
     });
 }
 
@@ -176,6 +182,17 @@ function updateCharCounter() {
 editor.session.on('change', function() {
   autosave.debouncedSaveText(editor.getValue());
   updateCharCounter();
+  // Update live preview
+  if (typeof PreviewPanel !== 'undefined') {
+    PreviewPanel.scheduleUpdate();
+  }
+});
+
+// Sync preview slide on cursor movement
+editor.selection.on('changeCursor', function() {
+  if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+    PreviewPanel.syncSlide(editor.getCursorPosition().row);
+  }
 });
 
 // Initial counter update
@@ -293,7 +310,7 @@ $("#voice_selected").change(function(){
 
 //////////////////// Default config (matches paradocs.conf) ///////////////
 var DEFAULT_CONFIG = {
-  "para_version": "0.8.0",
+  "para_version": "0.9.0",
   "note_color": "#303030",
   "note_background_color": "#F4F1BB",
   "note_marker_color": "#F4F1BB",
@@ -315,7 +332,7 @@ function buildPresentation() {
     showError("Error: Input text is empty!");
     return null;
   }
-  if (text.length >= 50000) {
+  if (text.length >= MAX_CHARS) {
     showError("Input text must be less than 50,000 characters.");
     return null;
   }
@@ -495,11 +512,21 @@ $("#reset_button").on('click', function(){
   // Reload sample text
   var sampleSuffix = { 'ja-JP': '_ja', 'zh-CN': '_zh', 'ko-KR': '_ko' }[default_lang] || '';
   fetch(BASE_PATH + 'data/sample' + sampleSuffix + '.txt')
-    .then(function(r) { return r.text(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
     .then(function(text) {
       editor.setValue(text, -1);
+    })
+    .catch(function(err) {
+      console.warn('Failed to load sample text:', err.message);
     });
 });
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
 function showError(message){
   $("div.alert").html(message).show("fast");
@@ -568,13 +595,19 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
   }
 
   /**
-   * Persist ImageStore to sessionStorage.
+   * Persist ImageStore to localStorage.
    */
   function persistImages() {
     try {
       localStorage.setItem(STORAGE_KEY, ImageStore.toJSON());
     } catch (e) {
       console.warn('Failed to persist images to localStorage:', e.message);
+      var lang = document.documentElement.lang;
+      var msg = lang === 'ja' ? '画像の保存に失敗しました。ストレージの容量が不足しています。不要な画像を削除してください。' :
+                lang === 'zh-CN' ? '图片保存失败。存储空间不足，请删除不需要的图片。' :
+                lang === 'ko' ? '이미지 저장에 실패했습니다. 저장 공간이 부족합니다. 불필요한 이미지를 삭제해 주세요.' :
+                'Failed to save images. Storage quota exceeded. Please remove unnecessary images.';
+      showError(msg);
     }
   }
 
@@ -695,7 +728,7 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
       var errors = [];
       results.forEach(function(r) {
         if (r.status === 'rejected') {
-          errors.push(r.reason.message);
+          errors.push(escapeHtml(r.reason.message));
         }
       });
       if (errors.length > 0) {
@@ -724,10 +757,11 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
     names.forEach(function(name) {
       var dataUrl = ImageStore.get(name);
       var thumbSrc = dataUrl ? dataUrl : '';
+      var safeName = escapeHtml(name);
       html += "<div class='image-list-item'>" +
-        "<img src='" + thumbSrc + "' alt=''>" +
-        "<span class='image-name' data-name='" + name.replace(/'/g, '&#39;') + "'>" + name + "</span>" +
-        "<span class='image-remove' data-name='" + name.replace(/'/g, '&#39;') + "' title='Remove'><i class='fa-solid fa-xmark'></i></span>" +
+        "<img src='" + escapeHtml(thumbSrc) + "' alt=''>" +
+        "<span class='image-name' data-name='" + safeName + "'>" + safeName + "</span>" +
+        "<span class='image-remove' data-name='" + safeName + "' title='Remove'><i class='fa-solid fa-xmark'></i></span>" +
         "</div>";
     });
     imageList.innerHTML = html;
@@ -792,9 +826,17 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
   refreshImageList();
 })();
 
+// Initialize preview panel
+$(function() {
+  if (typeof PreviewPanel !== 'undefined') {
+    PreviewPanel.init();
+  }
+});
+
 $("#accent_color_selected").change(function(){
   var accent_color = $(this).val();
   $("#accent_color_sample").css("color", accent_color);
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });
 
 $("#highlight_background_color_selected").change(function(){
@@ -805,6 +847,7 @@ $("#highlight_background_color_selected").change(function(){
   }else{
     $("#highlight_background_color_sample").css("background-color", "transparent").css("color", highlight_background_color);
   }
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });
 
 $("#text_background").change(function(){
@@ -815,6 +858,7 @@ $("#text_background").change(function(){
   } else {
     $("#highlight_background_color_sample").css("background-color", "transparent").css("color", highlight_background_color);
   }
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });
 
 $("#resolution_selected").change(function(){
@@ -827,6 +871,10 @@ $("#resolution_selected").change(function(){
   } else {
     font_size_selected.val("40");
   }
+  if (typeof PreviewPanel !== 'undefined') {
+    PreviewPanel.updateAspectRatio();
+    PreviewPanel.forceUpdate();
+  }
 });
 
 $("#wallpaper_selected").change(function(){
@@ -837,6 +885,11 @@ $("#wallpaper_selected").change(function(){
     var wallpaper_url = "url(" + BASE_PATH + "img/wallpaper/" + wallpaper_selected + ")";
     $('body').css("background-image", wallpaper_url);
   }
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
+});
+
+$("#font_size_selected").change(function(){
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });
 
 $("#font_family_selected").change(function(){
@@ -851,4 +904,5 @@ $("#font_family_selected").change(function(){
     $('#accent_color_sample').css("fontFamily", '"Comic Sans MS", "\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro W4","\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro","Hiragino Maru Gothic Pro", "HG\u4E38\uFF7A\uFF9E\uFF7C\uFF6F\uFF78M-PRO","HGMaruGothicMPRO", cursive, sans-serif');
     $('#highlight_background_color_sample').css("fontFamily", '"Comic Sans MS", "\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro W4","\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro","Hiragino Maru Gothic Pro","HG\u4E38\uFF7A\uFF9E\uFF7C\uFF6F\uFF78M-PRO","HGMaruGothicMPRO", cursive, sans-serif');
   }
+  if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });

@@ -8,7 +8,7 @@
 
     <meta name="twitter:card"        content="summary" />
     <meta name="twitter:site"        content="@yohasebe" />
-    <meta property="og:image"         content="https://yohasebe.github.io/paradocs/img/paradocs.png" />
+    <meta name="twitter:image"       content="https://yohasebe.github.io/paradocs/img/paradocs.png" />
 
     <meta property="og:url"           content="https://yohasebe.com/paradocs/" />
     <meta property="og:type"          content="website" />
@@ -96,12 +96,6 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="demo-gif">
-        <img src="./img/paradocs-demo.gif" alt="Paradocs demo">
-      </div>
-    </div>
-
     <div class="container-fluid">
       <div class='row'>
         <div class="col-sm-12">
@@ -111,20 +105,41 @@
 <form role="form" enctype="multipart/form-data" target="new">
 
   <div id='data_controller'>
-    <div class='md'>
-      <h2>Use Paradocs</h2>
-
+    <div id="editor-preview-container">
+      <div id="editor-wrapper">
+        <div id="editor-header">
+          <span>Text Input (syntax highlighting enabled)</span>
+          <span id="filmstrip-sync-btn" class="filmstrip-sync" title="Sync with cursor" style="display:none;"><i class="fa-solid fa-link"></i></span>
+        </div>
+        <div id='input-textarea' class="ui-widget-content" style='height:450px; border:solid 1px lightgray; border-top:none;'></div>
+      </div>
+      <div id="filmstrip-handle" style="display:none;"></div>
+      <div id="filmstrip-panel" style="display:none;">
+        <div id="filmstrip-scroll"></div>
+      </div>
     </div>
-    <div>
-      <span class='form-label' style='width:100%'>Text Input (syntax highlighting enabled)</span>
+    <div id="editor-footer">
+      <span id="char_counter" class="text-muted"></span>
     </div>
-
-    <div id='input-textarea' class="ui-widget-content" style='height:480px; border:solid 1px lightgray;'></div>
-    <div class='text-end'>
-      <sub>
-        <span id="char_counter" style="margin-right: 1em; color: #999;"></span>
-        Textarea is vertically resizable
-      </sub>
+    <div id="dropzone-button-row">
+      <div id="editor-dropzone">
+        <div id="image-drop-zone" tabindex="0" role="button" aria-label="Choose Images">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Drop images here or click to upload (JPEG, PNG, GIF, WebP — max 5MB each)</span>
+          <input type="file" id="image-file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
+        </div>
+      </div>
+      <div id="button-row">
+        <span id='submit_button' class="file_reset btn btn-sm btn-primary"><i class="fa-solid fa-play"></i> Start</span>
+        <span id='download_button' class="file_reset btn btn-sm btn-success"><i class="fa-solid fa-download"></i> Download HTML</span>
+        <span id='clear_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-eraser"></i> Clear Text</span>
+        <span id='reset_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-rotate-left"></i> Reset All</span>
+        <span id='preview_toggle_button' class="file_reset btn btn-sm btn-light" title="Preview"><i class="fa-solid fa-eye"></i> Preview</span>
+      </div>
+    </div>
+    <div id="image-list-container" style="font-size:0.75em;">
+      <span class="text-muted">Click filename to insert into editor</span>
+      <div id="image-list"><span class="text-muted">No images uploaded</span></div>
     </div>
   </div>
 
@@ -132,12 +147,6 @@
 
   <div id="settings-and-images">
     <div id="settings-column">
-      <div style='margin-bottom: 1em;'>
-        <span id='submit_button' class="file_reset btn btn-primary">Convert Text</span>&nbsp;
-        <span id='download_button' class="file_reset btn btn-success"><i class="fa-solid fa-download"></i> Download HTML</span>&nbsp;
-        <span id='clear_button' class="file_reset btn btn-light">Clear Text</span>
-        <span id='reset_button' class="file_reset btn btn-light"><i class="fa-solid fa-rotate-left"></i> Reset All</span>
-      </div>
 
       <div id='lang_controller' style='display: none;'>
         <span class='form-label'>Speech Language</span>
@@ -207,15 +216,15 @@
       <div id='accent_color_controller'>
         <span class='form-label'>Accent Color</span>
         <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
-          <option value="#e15759" selected='selected'><span class='color: #e15759;'>Red</span></option>
-          <option value="#4e79a7"><span class='color: #4e79a7;'>Blue</span></option>
-          <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
-          <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
-          <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
-          <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
-          <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
-          <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
-          <option value="#464646"><span class='color: #464646;'>Gray</span></option>
+          <option value="#e15759" selected='selected'>Red</option>
+          <option value="#4e79a7">Blue</option>
+          <option value="#edc948">Yellow</option>
+          <option value="#59a14f">Green</option>
+          <option value="#b07aa1">Purple</option>
+          <option value="#ff9da7">Pink</option>
+          <option value="#76b7b2">Cyan</option>
+          <option value="#9c755f">Brown</option>
+          <option value="#464646">Gray</option>
         </select>
         <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Accent Color</span>
       </div>
@@ -223,15 +232,15 @@
       <div id='highlight_background_color_controller'>
         <span class='form-label'>Highlight Color</span>
         <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
-          <option value="#e15759"><span class='color: #e15759;'>Red</span></option>
-          <option value="#4e79a7" selected='selected'><span class='color: #4e79a7;'>Blue</span></option>
-          <option value="#edc948"><span class='color: #edc948;'>Yellow</span></option>
-          <option value="#59a14f"><span class='color: #59a14f;'>Green</span></option>
-          <option value="#b07aa1"><span class='color: #b07aa1;'>Purple</span></option>
-          <option value="#ff9da7"><span class='color: #ff9da7;'>Pink</span></option>
-          <option value="#76b7b2"><span class='color: #76b7b2;'>Cyan</span></option>
-          <option value="#9c755f"><span class='color: #9c755f;'>Brown</span></option>
-          <option value="#464646"><span class='color: #464646;'>Black</span></option>
+          <option value="#e15759">Red</option>
+          <option value="#4e79a7" selected='selected'>Blue</option>
+          <option value="#edc948">Yellow</option>
+          <option value="#59a14f">Green</option>
+          <option value="#b07aa1">Purple</option>
+          <option value="#ff9da7">Pink</option>
+          <option value="#76b7b2">Cyan</option>
+          <option value="#9c755f">Brown</option>
+          <option value="#464646">Black</option>
         </select>
         <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Highlight Color</span>
       </div>
@@ -242,19 +251,6 @@
       </div>
     </div>
 
-    <div id="images-column">
-      <div id="local_image_controller">
-        <div id="image-drop-zone" tabindex="0" role="button" aria-label="Choose Images">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>Drop images here or click to upload (JPEG, PNG, GIF, WebP — max 5MB each)</span>
-          <input type="file" id="image-file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
-        </div>
-        <div id="image-list-container">
-          <small class="text-muted">Click filename to insert into editor</small>
-          <div id="image-list"><span class="text-muted">No images uploaded</span></div>
-        </div>
-      </div>
-    </div>
   </div>
 
 </form>
@@ -294,8 +290,8 @@
   <br />
   <div id="footer">
     <p class='text-center text-muted' style='margin-bottom:0; padding: 1em;'>
-      Paradocs [Version 0.8.0]<br />
-      <b>Yoichiro Hasebe 2018-2026</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a> |
+      Paradocs [Version 0.9.0]<br />
+      <b>Yoichiro Hasebe 2018-2026</b> | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a>
     </p>
   </div>
 
@@ -339,6 +335,7 @@
   <script src="./js/parser.js"></script>
   <script src="./js/helper.js"></script>
   <script src="./js/image-store.js"></script>
+  <script src="./js/preview.js"></script>
   <script src="./js/upload.js"></script>
   </body>
 </html>

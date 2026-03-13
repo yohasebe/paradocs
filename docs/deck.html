@@ -59,7 +59,110 @@
 
     <script>
       var pconf;
+      var isPreviewMode = (window.location.search.indexOf('mode=preview') !== -1);
+
       jQuery(function($){
+
+        if (isPreviewMode) {
+          // Preview mode: hide gadgets and switches, wait for postMessage
+          $('.additional').hide();
+          $('.switches').hide();
+
+          // Preview mode CSS: ensure slides are visible and fill viewport
+          var previewModeStyle = document.createElement('style');
+          previewModeStyle.textContent =
+            'html, body { margin: 0; padding: 0; overflow: hidden; }' +
+            '.reveal { width: 100%; height: 100vh; }' +
+            '.reveal .slides section.stack { visibility: visible !important; }' +
+            '.reveal .slides section .fragment { visibility: visible !important; opacity: 1 !important; }';
+          document.head.appendChild(previewModeStyle);
+
+          // Listen for preview updates from parent (BEFORE sending ready)
+          var previewStyleEl = null;
+          window.addEventListener('message', function(e) {
+            if (e.origin !== window.location.origin) return;
+            if (!e.data || !e.data.type) return;
+
+            if (e.data.type === 'paradocs-preview-update') {
+              if (e.data.empty) {
+                document.getElementById('slides-container').innerHTML =
+                  '<section><div style="text-align:center;padding:2em;color:#999;"><p>Enter text to preview...</p></div></section>';
+                Reveal.initialize({ controls: false, progress: false, transition: 'none' });
+                return;
+              }
+
+              // Inject slides
+              document.getElementById('slides-container').innerHTML = e.data.slides;
+
+              // Parse config
+              try {
+                pconf = (typeof e.data.config === 'string') ? JSON.parse(e.data.config) : e.data.config;
+              } catch (err) {
+                return;
+              }
+
+              // Apply inverted class
+              var revealEl = document.getElementById('reveal-container');
+              if (e.data.inverted) {
+                revealEl.classList.add('inverted');
+              } else {
+                revealEl.classList.remove('inverted');
+              }
+
+              // Inject CSS
+              if (previewStyleEl) {
+                previewStyleEl.remove();
+              }
+              if (e.data.css) {
+                previewStyleEl = document.createElement('style');
+                var cssContent = e.data.css.replace(/<\/?style[^>]*>/gi, '');
+                previewStyleEl.textContent = cssContent;
+                document.head.appendChild(previewStyleEl);
+              }
+
+              // Destroy and re-initialize Reveal.js
+              var slideIndex = e.data.slideIndex || 0;
+              try {
+                if (typeof Reveal !== 'undefined' && Reveal.isReady && Reveal.isReady()) {
+                  Reveal.destroy();
+                }
+              } catch (err) { /* ignore */ }
+
+              Reveal.initialize({
+                width: pconf.width || 1280,
+                height: pconf.height || 800,
+                controls: false,
+                progress: false,
+                hash: false,
+                keyboard: false,
+                touch: false,
+                overview: false,
+                center: true,
+                transition: 'none',
+                margin: 0.1
+              }).then(function() {
+                // Slides are vertical within a single deck section
+                try { Reveal.slide(0, slideIndex, 0); } catch(err) {}
+              });
+            }
+
+            if (e.data.type === 'paradocs-preview-slide') {
+              try {
+                if (typeof Reveal !== 'undefined' && Reveal.isReady && Reveal.isReady()) {
+                  // Slides are vertical within a single deck section
+                  Reveal.slide(0, e.data.slideIndex || 0, 0);
+                }
+              } catch (err) { /* ignore */ }
+            }
+          });
+
+          // Notify parent that iframe is ready (AFTER listener is set up)
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: 'paradocs-preview-ready' }, window.location.origin);
+          }
+
+          return; // Skip normal sessionStorage loading
+        }
 
         // Touch-punch is loaded unconditionally in paradocs.js (get_punch_script)
 
@@ -90,9 +193,13 @@
           document.getElementById('reveal-container').classList.add('inverted');
         }
 
-        // Inject CSS (cssText includes <style> tags from createCSS)
+        // Inject CSS safely (cssText includes <style> tags from createCSS)
         if (cssText) {
-          document.head.insertAdjacentHTML('beforeend', cssText);
+          var styleEl = document.createElement('style');
+          // Strip <style> tags if present, extract CSS content only
+          var cssContent = cssText.replace(/<\/?style[^>]*>/gi, '');
+          styleEl.textContent = cssContent;
+          document.head.appendChild(styleEl);
         }
       });
     </script>
@@ -102,12 +209,24 @@
       <img id="img-lightbox-img" src="" alt="" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:4px;box-shadow:0 0 30px rgba(0,0,0,0.5);">
     </div>
 
-    <script src="js/tts-highlight.js"></script>
-    <script src="js/paradocs.js"></script>
+    <script>
+    // Only load TTS and presentation scripts in normal mode (not preview iframe)
+    if (!isPreviewMode) {
+      var scripts = ['js/tts-highlight.js', 'js/paradocs.js'];
+      (function loadNext(i) {
+        if (i >= scripts.length) return;
+        var s = document.createElement('script');
+        s.src = scripts[i];
+        s.onload = function() { loadNext(i + 1); };
+        document.head.appendChild(s);
+      })(0);
+    }
+    </script>
 
     <script>
     // Lightbox — click/key to zoom slide images (local and URL)
     (function(){
+      if (isPreviewMode) return;
       var lb = document.getElementById('img-lightbox');
       var lbImg = document.getElementById('img-lightbox-img');
       var isOpen = false;
@@ -119,6 +238,7 @@
       }
 
       function openLightbox(src) {
+        lbImg.onerror = function() { closeLightbox(); };
         lbImg.src = src;
         lb.style.display = 'flex';
         isOpen = true;
@@ -187,6 +307,10 @@
       }
 
       document.addEventListener('keydown', function(e) {
+        // Don't intercept when typing in input/textarea
+        var tag = e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+
         if (e.key === 'Escape' && isOpen) {
           e.preventDefault();
           e.stopImmediatePropagation();

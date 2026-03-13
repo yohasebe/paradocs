@@ -126,6 +126,11 @@ describe('AutoSave', () => {
       autosave.clear();
       expect(autosave.hasSavedData()).toBe(false);
     });
+
+    test('returns false when saved text is empty string', () => {
+      autosave.saveText('');
+      expect(autosave.hasSavedData()).toBe(false);
+    });
   });
 
   // ---- prefix isolation ----

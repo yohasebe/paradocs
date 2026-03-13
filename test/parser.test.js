@@ -97,6 +97,26 @@ describe('Parser', () => {
       var html = p.parse();
       expect(html).toContain('Invalid image URL');
     });
+
+    test('rejects SVG data: URLs', () => {
+      var p = new Parser('----\nimage: data:image/svg+xml;base64,PHN2Zz4=\n----', config);
+      var html = p.parse();
+      expect(html).toContain('Invalid image URL');
+    });
+
+    test('accepts GIF data: URLs', () => {
+      var p = new Parser('----\nimage: data:image/gif;base64,R0lGODlh\n----', config);
+      var html = p.parse();
+      expect(html).not.toContain('Invalid');
+      expect(html).toContain('data:image/gif;base64,');
+    });
+
+    test('accepts WebP data: URLs', () => {
+      var p = new Parser('----\nimage: data:image/webp;base64,UklGR\n----', config);
+      var html = p.parse();
+      expect(html).not.toContain('Invalid');
+      expect(html).toContain('data:image/webp;base64,');
+    });
   });
 
   // ---- Local image resolution ----
@@ -128,6 +148,29 @@ describe('Parser', () => {
       var p = new Parser('----\nimage: local:photo.jpg\n----', config);
       var html = p.parse();
       expect(html).toContain('Invalid image URL');
+    });
+
+    test('resolves inline ![alt](local:filename) syntax', () => {
+      var resolver = function(name) { return 'data:image/png;base64,INLINE'; };
+      var p = new Parser('----\n![photo](local:cat.png)\n----', config, resolver);
+      var html = p.parse();
+      expect(html).toContain('data:image/png;base64,INLINE');
+      expect(html).not.toContain('local:');
+    });
+
+    test('inline local image shows error when not found', () => {
+      var resolver = function(name) { return null; };
+      var p = new Parser('----\n![photo](local:missing.png)\n----', config, resolver);
+      var html = p.parse();
+      expect(html).toContain('not found');
+      expect(html).toContain('missing.png');
+    });
+
+    test('inline local image without resolver falls through', () => {
+      var p = new Parser('----\n![photo](local:cat.png)\n----', config);
+      var html = p.parse();
+      // Without resolver, local: prefix stays as-is (invalid URL)
+      expect(html).toContain('local:cat.png');
     });
   });
 
@@ -234,6 +277,60 @@ describe('Parser', () => {
       var html = p.parse();
       expect(html).toContain('mcq-reset');
       expect(html).toContain('Try Again');
+    });
+
+    test('includes data-correct-label attribute', () => {
+      var text = '----\n| {mcq: Q?\n|   a) A\n|   *b) B\n| }\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('data-correct-label');
+    });
+
+    test('renders Japanese labels when speech_lang is ja-JP', () => {
+      var jaConfig = { prefix: './', speech_lang: 'ja-JP' };
+      var text = '----\n| {mcq: Q?\n|   a) A\n|   *b) B\n| }\n----';
+      var p = new Parser(text, jaConfig);
+      var html = p.parse();
+      expect(html).toContain('\u3082\u3046\u4e00\u5ea6'); // もう一度
+      expect(html).toContain('\u6b63\u89e3'); // 正解
+    });
+
+    test('renders Chinese labels when speech_lang is zh-CN', () => {
+      var zhConfig = { prefix: './', speech_lang: 'zh-CN' };
+      var text = '----\n| {mcq: Q?\n|   a) A\n|   *b) B\n| }\n----';
+      var p = new Parser(text, zhConfig);
+      var html = p.parse();
+      expect(html).toContain('\u518d\u8bd5\u4e00\u6b21'); // 再试一次
+    });
+
+    test('renders Korean labels when speech_lang is ko-KR', () => {
+      var koConfig = { prefix: './', speech_lang: 'ko-KR' };
+      var text = '----\n| {mcq: Q?\n|   a) A\n|   *b) B\n| }\n----';
+      var p = new Parser(text, koConfig);
+      var html = p.parse();
+      expect(html).toContain('\ub2e4\uc2dc \uc2dc\ub3c4'); // 다시 시도
+    });
+
+    test('defaults to English labels when no speech_lang', () => {
+      var text = '----\n| {mcq: Q?\n|   a) A\n|   *b) B\n| }\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('Try Again');
+      expect(html).toContain('Correct!');
+    });
+  });
+
+  // ---- Ordered list multi-digit ----
+
+  describe('ordered list multi-digit numbers', () => {
+    test('parses two-digit numbered list items', () => {
+      var text = '----\n10. Tenth item\n11. Eleventh item\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('10.');
+      expect(html).toContain('Tenth item');
+      expect(html).toContain('11.');
+      expect(html).toContain('Eleventh item');
     });
   });
 

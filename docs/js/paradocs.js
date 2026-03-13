@@ -1,4 +1,7 @@
-jQuery(function($){  
+jQuery(function($){
+
+  // Skip all initialization in preview mode (used by live preview iframe)
+  if (window.location.search.indexOf('mode=preview') !== -1) return;
 
   //////////////////// Variables ///////////////
   var sqrScale;
@@ -142,11 +145,13 @@ jQuery(function($){
         $quiz.attr('data-answered', 'true');
         $quiz.find('.mcq-option').addClass('mcq-disabled');
         $option.addClass('mcq-correct');
-        $quiz.find('.mcq-feedback').text('\u2713 Correct!').addClass('mcq-correct-feedback').show();
+        var correctLabel = $quiz.attr('data-correct-label') || '\u2713 Correct!';
+        $quiz.find('.mcq-feedback').text(correctLabel).addClass('mcq-correct-feedback').show();
         $quiz.find('.mcq-reset').show();
       } else {
         $option.addClass('mcq-incorrect mcq-disabled');
-        $quiz.find('.mcq-feedback').text('\u2717 Try again').removeClass('mcq-correct-feedback').addClass('mcq-incorrect-feedback').show();
+        var tryAgainLabel = $quiz.find('.mcq-reset').text() || '\u2717 Try again';
+        $quiz.find('.mcq-feedback').text('\u2717 ' + tryAgainLabel.replace(/^\u21bb\s*/, '')).removeClass('mcq-correct-feedback').addClass('mcq-incorrect-feedback').show();
       }
     });
 
@@ -192,7 +197,7 @@ jQuery(function($){
   }
 
   var keybindings = {
-    // ESC
+    // ENTER
     13 : function() {
       if(Reveal.isOverview()){
         Reveal.toggleOverview();
@@ -280,7 +285,7 @@ jQuery(function($){
   }
 
   var keybindings_autoplaying = {
-    // ESC
+    // ENTER
     13 : function() {
       return false;
     },
@@ -357,7 +362,6 @@ jQuery(function($){
       overview: true,
       navigationMode: "default",
       center: true,
-      keyboard: true,
       hideInactiveCursor: true,
       hideCursorTime: 2000,
       help: false,
@@ -1156,11 +1160,10 @@ jQuery(function($){
       }, 500);
 
       if(media === "speech"){
-        magicTimerId = setInterval(function(){
+        magicTimerId = setTimeout(function(){
           if(!mediaStarted){
             defer.reject();
             clearInterval(magicIntervalId);
-            clearTimeout(magicTimerId);
           }
         }, 2000);
       }

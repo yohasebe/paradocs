@@ -136,9 +136,15 @@ var ImageStore = (function() {
    */
   function fromJSON(json) {
     var obj = JSON.parse(json);
+    var dataUrlPattern = /^data:image\/(jpeg|png|gif|webp);base64,[A-Za-z0-9+/=]+$/i;
     for (var key in obj) {
       if (obj.hasOwnProperty(key)) {
-        store.set(key, obj[key]);
+        var safeName = sanitizeName(key);
+        var value = obj[key];
+        // Validate that the value is a safe image data URL
+        if (typeof value === 'string' && dataUrlPattern.test(value)) {
+          store.set(safeName, value);
+        }
       }
     }
   }

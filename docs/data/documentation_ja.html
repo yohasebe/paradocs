@@ -37,7 +37,7 @@
 <td><strong>前</strong> のアイテムに移動</td>
 </tr>
 <tr>
-<td><code>.</code></td>
+<td><code>.</code> or <code>b</code></td>
 <td><strong>合成音声</strong>の開始/停止; <strong>動画・音声</strong>の開始/停止（YouTube 動画を含む）; <strong>ポップアップ画像</strong>の拡大/縮小</td>
 </tr>
 <tr>
@@ -91,6 +91,8 @@
 <p>ブロックは2つ以上の連続した改行<code>↩↩</code>によって区切られます。1つのブロックは複数の要素を持つことができますが、複数のセンテンスによって構成されたブロックをパラグラフと呼びます。</p>
 <p><strong>スライド（slide）</strong></p>
 <p>スライドは「ページ」と呼ぶこともできます。スライドは4つ以上のハイフンと改行（<code>----↩</code> または <code>- - - -↩</code>）で区切ります。1つのスライドは複数のブロックを持つことができます。</p>
+<p><strong>デッキ（deck）</strong></p>
+<p>デッキはスライドのグループです。4つ以上のイコール記号（<code>====</code>）で区切ります。複数のデッキを含むプレゼンテーションでは、各デッキ内のスライドはReveal.jsの同一水平セクション内で縦に配置されます。</p>
 <h4>パラグラフの記述</h4>
 <p>センテンスを改行しながら縦に記述していくとパラグラフ（ブロック）になります。</p>
 <pre><code class="language-text">----
@@ -232,10 +234,28 @@ c. Ordered list item 3
 <td>Paradocs独自拡張</td>
 </tr>
 <tr>
+<td>取り消し線</td>
+<td><code>~~text~~</code></td>
+<td><code>~~text~~</code></td>
+<td>GFM互換</td>
+</tr>
+<tr>
 <td>テーブル</td>
 <td><code>| 列 | 列 |</code></td>
 <td><code>| 列 | 列 |</code></td>
 <td>GFM互換；<a href="https://marked.js.org/">marked.js</a>でレンダリング</td>
+</tr>
+<tr>
+<td>リンク</td>
+<td><code>[テキスト](url)</code></td>
+<td><code>[テキスト](url)</code></td>
+<td>同一構文</td>
+</tr>
+<tr>
+<td>画像</td>
+<td><code>![alt](url)</code></td>
+<td><code>![alt](url)</code></td>
+<td>同一構文；<code>![alt](local:ファイル名)</code> でアップロード画像も使用可</td>
 </tr>
 <tr>
 <td>見出し</td>
@@ -255,9 +275,36 @@ c. Ordered list item 3
 <td><code>1. 項目</code></td>
 <td>同一構文；<code>a. 項目</code> 形式にも対応</td>
 </tr>
+<tr>
+<td>インラインコード</td>
+<td><code>`code`</code></td>
+<td><code>`code`</code></td>
+<td>同一構文</td>
+</tr>
+<tr>
+<td>引用</td>
+<td><code>&gt; テキスト</code></td>
+<td><code>&gt; テキスト</code></td>
+<td>同一構文</td>
+</tr>
+<tr>
+<td>コードブロック</td>
+<td><code>```</code></td>
+<td><code>```</code></td>
+<td>フェンスドコードブロック；言語指定（例: <code>```python</code>）は無視されます</td>
+</tr>
 </tbody>
 </table>
-<p><strong>注：</strong> Paradocsはプレゼンテーション用途に特化した独自のテキストパーサーを持っています。一部の構文はMarkdownと共通ですが、以下の標準Markdown機能には<strong>対応していません</strong>：インラインコード（<code>`code`</code>）、引用（<code>&gt;</code>）、画像（<code>![alt](url)</code>）、ネストされたリスト。メディアの埋め込みにはParadocs専用のコマンド（<code>image:</code>、<code>video:</code> など）を使用してください。</p>
+<p><strong>注：</strong> Paradocsはプレゼンテーション用途に特化した独自のテキストパーサーを持っています。一部の構文はMarkdownと共通ですが、以下の点にご注意ください：</p>
+<ul>
+<li><code>_text_</code> は<strong>下線</strong>になります（斜字ではありません。斜字には <code>*text*</code> を使用）</li>
+<li><code>----</code>（4文字以上のハイフン）は水平線ではなく<strong>スライド区切り</strong>です</li>
+<li><code>====</code>（4文字以上のイコール）は<strong>デッキ区切り</strong>（スライドのグループ分け）です</li>
+<li>生のHTMLタグ（<code>&lt;b&gt;</code>、<code>&lt;div&gt;</code> など）は<strong>エスケープ</strong>されプレーンテキストとして表示されます</li>
+<li><strong>ネストされたリスト</strong>には対応していません（フラットなリストのみ使用可能）</li>
+<li><strong>Setext形式の見出し</strong>（<code>タイトル</code>の下に <code>===</code> や <code>---</code>）は非対応です。ATX形式（<code># タイトル</code>）を使用してください</li>
+<li>フルスライドのメディア表示にはParadocs専用のコマンド（<code>image:</code>、<code>video:</code> など）を使用してください</li>
+</ul>
 <h4>ノートとポップアップ画像</h4>
 <p>ノートは波カッコと<code>note</code>コマンドを用いて作成します。文字によるノートのほか、画像のURLを指定してポップアップさせることができます。</p>
 <pre><code class="language-text">This is part of main text. {note: これは注です}
@@ -284,7 +331,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 |   d) ローマ
 | }
 </code></pre>
-<p>正解の選択肢には<code>*</code>を付けます。選択肢をクリックすると、正解は緑、不正解は赤でハイライトされ、正答が表示されます。回答後には<strong>やり直し</strong>ボタンが表示され、クイズをリセットして再挑戦することができます。</p>
+<p>正解の選択肢には<code>*</code>を付けます。正解をクリックすると緑でハイライトされます。不正解をクリックするとその選択肢だけが赤でハイライトされ、<strong>やり直し</strong>のメッセージが表示されます。正解は明かされないので、何度でも挑戦できます。正解後には<strong>やり直し</strong>ボタンが表示され、クイズをリセットできます。</p>
 <h4>テーブル</h4>
 <p>Markdownのテーブル構文を使用してテーブルを作成できます。すべての行が<code>|</code>で始まり<code>|</code>で終わる必要があり、2行目はセパレータ行です。</p>
 <pre><code class="language-text">| 名前   | 点数  |
@@ -308,8 +355,11 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <p><strong>注：</strong> 画像を表示するには、上記コマンドがそのスライド中で唯一のブロックとなるように記述します。複数のブロックを記述した場合には、画像自体は表示されず、画像へのリンクが用いられます。</p>
 <h4>ローカル画像</h4>
 <p>エディタ横のドロップゾーンを使って、デバイスから画像をアップロードできます。対応形式：JPEG、PNG、GIF、WebP（各5MBまで）。アップロードされた画像はブラウザのローカルストレージに保存され、ページのリロードやブラウザの再起動後も保持されます。<strong>すべてリセット</strong>ボタンをクリックするか、ブラウザのデータを手動で削除すると消去されます。</p>
-<p>ローカル画像をスライドに挿入するには、画像リストのファイル名をクリックするか、以下のように入力します：</p>
+<p>ローカル画像をスライド全体に表示するには、画像リストのファイル名をクリックするか、以下のように入力します：</p>
 <pre><code class="language-text">image: local:your_image_file.jpg
+</code></pre>
+<p>Markdownのインライン画像構文も使用できます：</p>
+<pre><code class="language-text">![説明](local:your_image_file.jpg)
 </code></pre>
 <h4>YouTube 動画の埋め込み</h4>
 <p>YouTubeのURLを用いて動画を指定します。</p>
@@ -365,7 +415,17 @@ audio: url_to_your_audio_file_2.mp3
 <h4>HTMLダウンロード</h4>
 <p><strong>HTMLをダウンロード</strong>ボタンをクリックすると、プレゼンテーションをスタンドアロンのHTMLファイルとしてエクスポートできます。スライドの内容、設定、スタイルがすべてファイル内に埋め込まれるため、Paradocsのウェブサイトにアクセスしなくてもブラウザで開くことができます。外部ライブラリ（jQuery、Reveal.js等）はCDN経由で読み込まれます。</p>
 <p><strong>注意</strong> エクスポートされたHTMLファイルでは、YouTube動画の埋め込みはクリック可能なサムネイルリンクに自動変換されます。これはローカルHTMLファイルではブラウザのセキュリティ制限によりYouTubeのiframe埋め込みが機能しないためです。サムネイルをクリックするとYouTubeで動画が開きます。</p>
-<h4>URLによる位置共有</h4>
-<p>プレゼン中にスライドやフラグメントを移動すると、ブラウザのURLが自動的に更新されます（例：<code>#/0/1/3</code>）。このURLをコピーして共有すると、そのスライドとフラグメントに直接ジャンプすることができます。</p>
-<h4>ダークモード（色の反転）</h4>
-<p><strong>文字/背景の色を逆転</strong>チェックボックスをオンにするとダークモードに切り替わります。付箋、注釈ポップアップ、マーカー、スライド番号、ナビゲーションコントロールなど、すべてのプレゼン要素が暗い背景に適した色に変わります。</p>
+<h4>スライド位置と内部リンク</h4>
+<p>プレゼン中にスライドやフラグメントを移動すると、ブラウザのURLが自動的に更新されます（例：<code>#/0/1/3</code>）。このハッシュベースのURLを使って、スライド間の内部リンクを作成できます。例えば <code>&lt;a href=&quot;#/2&quot;&gt;スライド3へ&lt;/a&gt;</code> のようなアンカータグで、プレゼン内の別のスライドにジャンプできます。</p>
+<h4>フィルムストリップ・プレビュー</h4>
+<p>アクションボタンの横にある<strong>プレビュー</strong>ボタン（目のアイコン）をクリックすると、エディタの右側にフィルムストリップパネルが表示されます。テキスト入力中にスライドのサムネイルが自動更新されます（800msの遅延あり）。</p>
+<ul>
+<li>サムネイルを<strong>クリック</strong>すると、ライトボックスでスライドが拡大表示されます。<strong>矢印キー</strong>でスライド間を移動、<strong>Escape</strong>または外側クリックで閉じます。</li>
+<li>サムネイルを<strong>ダブルクリック</strong>すると、エディタのカーソルが該当スライドの位置にジャンプします。</li>
+<li>エディタヘッダーの<strong>同期トグル</strong>（リンクアイコン）を有効にすると、カーソル位置に合わせてフィルムストリップが自動スクロールします。</li>
+<li>エディタとパネルの間のリサイズハンドルをドラッグして、フィルムストリップの幅を調整できます。</li>
+</ul>
+<p>入力中にパースエラーが発生した場合、プレビューは最後に正常にレンダリングされた内容を維持します。</p>
+<p><strong>注：</strong> フィルムストリップパネルはブラウザのウインドウ幅が900pxを超える場合にのみ利用可能です。それより小さい画面ではプレビューボタンは自動的に非表示になります。仮想スクロールにより、スライド数が多くてもメモリ使用量を低く抑えます。</p>
+<h4>色の反転</h4>
+<p><strong>文字/背景の色を逆転</strong>チェックボックスをオンにすると、ハイライト部分の表示が反転します。通常は透明背景に色付きテキストですが、反転時はハイライト色が背景として塗りつぶされ、テキストが白色になります。</p>

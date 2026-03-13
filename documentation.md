@@ -15,7 +15,7 @@ Many operations available during the presentation can be performed using the mou
 | `k`                       | Move back to the **previous** item                                             |
 | `SPACE`                   | Move to the **next** item                                                     |
 | `SHIFT+SPACE`             | Move back to the **previous** item                                             |
-| `.`                       | Play/Stop **TTS read-aloud**; Play/Stop **video/audio clips** (including YouTube videos); Enlarge/Shrink **pop-up images** |
+| `.` or `b`                | Play/Stop **TTS read-aloud**; Play/Stop **video/audio clips** (including YouTube videos); Enlarge/Shrink **pop-up images** |
 | `a`                       | Play/Stop **automatic presentation**                                           |
 | `/`                       | Enter/Exit screen **blackout**                                                 |
 | `f`                       | Enter **fullscreen-mode**                                                      |
@@ -51,6 +51,10 @@ A block is separated by two or more consecutive line breaks `↩↩`; a single b
 **Slide**
 
 A slide can also be called a "page." Slides are separated by a single line break after four or more hyphens (`----↩` or`- - - -↩`). A single slide can have more than one block.
+
+**Deck**
+
+A deck is a group of slides. Decks are separated by four or more equals signs (`====`). When a presentation contains multiple decks, slides within each deck are arranged vertically within the same horizontal section in Reveal.js.
 
 #### How to describe a paragraph
 
@@ -226,12 +230,26 @@ Paradocs supports a subset of Markdown syntax alongside its own formatting rules
 | Italic | `*text*` | `*text*` | Same syntax |
 | Underline | `_text_` | `_text_` (italic) | Paradocs uses `_` for underline, not italic |
 | Highlight | `==text==` | N/A | Paradocs extension |
+| Strikethrough | `~~text~~` | `~~text~~` | GFM-compatible |
 | Tables | `\| col \| col \|` | `\| col \| col \|` | GFM-compatible; rendered via [marked.js](https://marked.js.org/) |
+| Links | `[text](url)` | `[text](url)` | Same syntax |
+| Images | `![alt](url)` | `![alt](url)` | Same syntax; also supports `![alt](local:filename)` for uploaded images |
 | Headings | `# Heading` | `# Heading` | Same syntax (levels 1-3) |
 | Unordered Lists | `* item` | `* item` | Same syntax |
 | Ordered Lists | `1. item` | `1. item` | Same syntax; also supports `a. item` |
+| Inline Code | `` `code` `` | `` `code` `` | Same syntax |
+| Blockquotes | `> text` | `> text` | Same syntax |
+| Code Block | ` ``` ` | ` ``` ` | Fenced code blocks; language specifier (e.g. ` ```python `) is ignored |
 
-**N.B.** Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, the following standard Markdown features are **not supported**: inline code (`` `code` ``), blockquotes (`>`), images (`![alt](url)`), and nested lists. Use the dedicated Paradocs commands (`image:`, `video:`, etc.) for embedding media.
+**N.B.** Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, please note the following differences:
+
+- `_text_` produces **underline**, not italic (use `*text*` for italic)
+- `----` (4+ hyphens) is a **slide separator**, not a horizontal rule
+- `====` (4+ equals) is a **deck separator** (groups of slides)
+- Raw HTML tags (e.g. `<b>`, `<div>`) are **escaped** and displayed as plain text
+- **Nested lists** are not supported (use flat lists only)
+- **Setext-style headings** (`Title` followed by `===` or `---`) are not supported; use ATX-style (`# Title`) instead
+- For full-slide media, use the dedicated Paradocs commands (`image:`, `video:`, etc.)
 
 #### Showing Notes and Pop-up Images
 
@@ -243,7 +261,7 @@ This is also part of main text. {note: This is another note}
 You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 ```
 
-**N.B.** Notes and pop-up images are available in "regular paragraphs" and "unordered/ordered lists" (not available in static paragraphs). You cannot display notes and pop-up images when the automatic sentence-segmentation function is used. The curly brackets `{ }` and the text inside will be ignored.
+**N.B.** Notes and pop-up images are available in "regular paragraphs" and "unordered/ordered lists" (not available in static paragraphs). You cannot display notes and pop-up images when the automatic sentence-segmentation function is used. The curly brackets `{ }` and the text inside will be removed.
 
 #### Quizzes
 
@@ -269,7 +287,7 @@ You can create a multiple choice quiz with options that the audience can click t
 | }
 ```
 
-Mark the correct answer with `*` before the option letter. When a user clicks an option, it is highlighted green (correct) or red (incorrect), and the correct answer is revealed. A **Try Again** button appears after answering, allowing the quiz to be reset and retried.
+Mark the correct answer with `*` before the option letter. Clicking the correct option highlights it green. Clicking a wrong option highlights only that option red and shows a **Try Again** prompt—the correct answer is not revealed, so the user can keep trying. A **Try Again** button appears after answering correctly, allowing the quiz to be reset.
 
 #### Tables
 
@@ -317,10 +335,16 @@ To display an image on a slide, make sure that the above command is the only blo
 
 You can upload images from your device using the drop zone next to the editor. Supported formats: JPEG, PNG, GIF, WebP (max 5MB each). Uploaded images are stored in the browser's local storage and persist across page reloads and browser restarts. They are cleared when you click the **Reset All** button or manually clear your browser data.
 
-To insert a local image into a slide, click the filename in the image list, or type:
+To insert a local image as a full-slide image, click the filename in the image list, or type:
 
 ```text
 image: local:your_image_file.jpg
+```
+
+You can also use standard Markdown image syntax for inline local images:
+
+```text
+![description](local:your_image_file.jpg)
 ```
 
 #### Embed YouTube Video
@@ -426,10 +450,23 @@ Click the **Download HTML** button to export your presentation as a standalone H
 
 **N.B.** YouTube video embeds are automatically converted to clickable thumbnail links in the exported file, because local HTML files cannot embed YouTube iframes due to browser security restrictions. Click the thumbnail to open the video on YouTube.
 
-#### URL Sharing
+#### Slide Position and Internal Links
 
-The presentation URL updates automatically as you navigate through slides and fragments. You can share a specific position by copying the URL from the browser's address bar (e.g., `#/0/1/3`). When someone opens the shared URL, they will jump directly to that slide and fragment.
+The presentation URL updates automatically as you navigate through slides and fragments (e.g., `#/0/1/3`). You can use these hash-based URLs to create internal links that jump to a specific slide within your presentation — for example, linking from one slide to another using an anchor tag like `<a href="#/2">Go to slide 3</a>`.
 
-#### Dark Mode (Inverted Colors)
+#### Filmstrip Preview
 
-Check the **Invert Colors** checkbox to switch to dark mode. All presentation elements — including sticky notes, annotation popups, markers, slide numbers, and navigation controls — adapt their colors for comfortable viewing on dark backgrounds.
+Click the **Preview** button (eye icon) next to the action buttons to open a filmstrip panel on the right side of the editor. The panel displays slide thumbnails that update automatically as you type (after an 800ms delay).
+
+- **Click** a thumbnail to open a lightbox showing the slide at full size. Use **arrow keys** to navigate between slides, and **Escape** or click outside to close.
+- **Double-click** a thumbnail to jump the editor cursor to the corresponding slide.
+- The **sync toggle** (link icon in the editor header) enables automatic scrolling of the filmstrip to follow the editor cursor position.
+- The filmstrip width is adjustable by dragging the resize handle between the editor and the panel.
+
+If a parse error occurs while typing, the preview retains the last successfully rendered content.
+
+**N.B.** The filmstrip panel is only available when the browser window is wider than 900px. On smaller screens, the preview button is hidden automatically. The filmstrip uses virtual scrolling to keep memory usage low even with many slides.
+
+#### Invert Colors
+
+Check the **Invert Colors** checkbox to swap the highlight colors — the highlight background color is applied as a filled background and the text turns white, instead of the default colored text on a transparent background.

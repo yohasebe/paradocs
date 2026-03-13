@@ -36,7 +36,7 @@
 <td>返回<strong>上一个</strong>项目</td>
 </tr>
 <tr>
-<td><code>.</code></td>
+<td><code>.</code> or <code>b</code></td>
 <td>播放/停止<strong>文本转语音朗读</strong>；播放/停止<strong>视频/音频片段</strong>（包括 YouTube 视频）；放大/缩小<strong>弹出图片</strong></td>
 </tr>
 <tr>
@@ -90,6 +90,8 @@
 <p>块之间通过两个或更多连续换行符 <code>↩↩</code> 分隔；一个块可以包含多个元素。由多个句子组成的块特别称为段落。</p>
 <p><strong>幻灯片</strong></p>
 <p>幻灯片也可以称为&quot;页面&quot;。幻灯片之间通过四个或更多连字符后跟一个换行符（<code>----↩</code> 或 <code>- - - -↩</code>）分隔。一张幻灯片可以包含多个块。</p>
+<p><strong>幻灯片组（Deck）</strong></p>
+<p>幻灯片组是幻灯片的集合。通过四个或更多等号（<code>====</code>）分隔。当演示文稿包含多个幻灯片组时，每个组内的幻灯片在 Reveal.js 的同一水平部分中垂直排列。</p>
 <h4>如何编写段落</h4>
 <p>将多个句子垂直排列，每行一个句子，即可构成段落。</p>
 <pre><code class="language-text">----
@@ -232,10 +234,28 @@ Highlight: orange ==strawberry== apple
 <td>Paradocs 扩展功能</td>
 </tr>
 <tr>
+<td>删除线</td>
+<td><code>~~text~~</code></td>
+<td><code>~~text~~</code></td>
+<td>兼容 GFM</td>
+</tr>
+<tr>
 <td>表格</td>
 <td><code>| col | col |</code></td>
 <td><code>| col | col |</code></td>
 <td>兼容 GFM；通过 <a href="https://marked.js.org/">marked.js</a> 渲染</td>
+</tr>
+<tr>
+<td>链接</td>
+<td><code>[文本](url)</code></td>
+<td><code>[文本](url)</code></td>
+<td>语法相同</td>
+</tr>
+<tr>
+<td>图片</td>
+<td><code>![alt](url)</code></td>
+<td><code>![alt](url)</code></td>
+<td>语法相同；还支持 <code>![alt](local:文件名)</code> 用于上传的图片</td>
 </tr>
 <tr>
 <td>标题</td>
@@ -255,16 +275,43 @@ Highlight: orange ==strawberry== apple
 <td><code>1. item</code></td>
 <td>语法相同；还支持 <code>a. item</code></td>
 </tr>
+<tr>
+<td>行内代码</td>
+<td><code>`code`</code></td>
+<td><code>`code`</code></td>
+<td>语法相同</td>
+</tr>
+<tr>
+<td>引用块</td>
+<td><code>&gt; 文本</code></td>
+<td><code>&gt; 文本</code></td>
+<td>语法相同</td>
+</tr>
+<tr>
+<td>代码块</td>
+<td><code>```</code></td>
+<td><code>```</code></td>
+<td>围栏代码块；语言标识（如 <code>```python</code>）将被忽略</td>
+</tr>
 </tbody>
 </table>
-<p><strong>注意</strong> Paradocs 拥有专为演示用途设计的文本解析器。虽然部分语法与 Markdown 重叠，但以下标准 Markdown 功能<strong>不受支持</strong>：行内代码（<code>`code`</code>）、引用块（<code>&gt;</code>）、图片（<code>![alt](url)</code>）和嵌套列表。请使用 Paradocs 专用命令（<code>image:</code>、<code>video:</code> 等）来嵌入媒体内容。</p>
+<p><strong>注意：</strong> Paradocs 拥有专为演示用途设计的文本解析器。虽然部分语法与 Markdown 重叠，但请注意以下区别：</p>
+<ul>
+<li><code>_text_</code> 产生<strong>下划线</strong>，而非斜体（斜体请使用 <code>*text*</code>）</li>
+<li><code>----</code>（4个以上连字符）是<strong>幻灯片分隔符</strong>，而非水平线</li>
+<li><code>====</code>（4个以上等号）是<strong>幻灯片组分隔符</strong>（将幻灯片分组）</li>
+<li>原始 HTML 标签（如 <code>&lt;b&gt;</code>、<code>&lt;div&gt;</code>）会被<strong>转义</strong>并显示为纯文本</li>
+<li>不支持<strong>嵌套列表</strong>（仅可使用扁平列表）</li>
+<li>不支持 <strong>Setext 样式标题</strong>（<code>标题</code>后跟 <code>===</code> 或 <code>---</code>）；请使用 ATX 样式（<code># 标题</code>）</li>
+<li>如需全幻灯片媒体展示，请使用 Paradocs 专用命令（<code>image:</code>、<code>video:</code> 等）</li>
+</ul>
 <h4>显示注释和弹出图片</h4>
 <p>可以在与正文分开的注释中显示简短文本。注释使用花括号和 <code>note</code> 命令创建。除了文本注释之外，您还可以使用 <code>image</code> 命令指定文件 URL 来创建图片弹窗。</p>
 <pre><code class="language-text">This is part of main text. {note: This is a note}
 This is also part of main text. {note: This is another note}
 You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 </code></pre>
-<p><strong>注意</strong> 注释和弹出图片可用于&quot;普通段落&quot;和&quot;无序/有序列表&quot;中（不适用于静态段落）。使用自动分句功能时无法显示注释和弹出图片。花括号 <code>{ }</code> 及其内部的文本将被忽略。</p>
+<p><strong>注意</strong> 注释和弹出图片可用于&quot;普通段落&quot;和&quot;无序/有序列表&quot;中（不适用于静态段落）。使用自动分句功能时无法显示注释和弹出图片。花括号 <code>{ }</code> 及其内部的文本将被删除。</p>
 <h4>测验</h4>
 <p>使用花括号和 <code>quiz</code> 命令，您可以创建一种测验效果，最初将文本对观众隐藏，在适当时机再予以揭示。</p>
 <pre><code class="language-text">| In a static context, words and phrases in {curly brackets}
@@ -280,7 +327,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 |   d) Rome
 | }
 </code></pre>
-<p>在正确答案的选项字母前加上 <code>*</code> 进行标记。当用户点击选项时，正确答案会以绿色高亮显示，错误答案会以红色高亮，同时正确答案会被揭示。回答后会出现一个<strong>重试</strong>按钮，允许重置并再次作答。</p>
+<p>在正确答案的选项字母前加上 <code>*</code> 进行标记。点击正确选项会以绿色高亮显示。点击错误选项只会将该选项以红色高亮，并显示<strong>重试</strong>提示——正确答案不会被揭示，用户可以继续尝试。回答正确后会出现一个<strong>重试</strong>按钮，允许重置测验并再次作答。</p>
 <h4>表格</h4>
 <p>您可以使用标准 Markdown 表格语法创建表格。所有行必须以 <code>|</code> 开始和结束，第二行必须是分隔符。</p>
 <pre><code class="language-text">| Name  | Score |
@@ -311,6 +358,9 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <p>您可以使用编辑器旁边的拖放区域从设备上传图片。支持的格式：JPEG、PNG、GIF、WebP（每张最大 5MB）。上传的图片保存在浏览器的本地存储中，页面重新加载或浏览器重启后仍然保留。点击<strong>全部重置</strong>按钮或手动清除浏览器数据后将被删除。</p>
 <p>要将本地图片插入幻灯片，请点击图片列表中的文件名，或输入：</p>
 <pre><code class="language-text">image: local:your_image_file.jpg
+</code></pre>
+<p>您也可以使用标准 Markdown 图片语法来插入行内本地图片：</p>
+<pre><code class="language-text">![描述](local:your_image_file.jpg)
 </code></pre>
 <h4>嵌入 YouTube 视频</h4>
 <p>您可以指定 YouTube 视频的 URL 并将其显示在幻灯片上。视频会被尽可能放大显示。</p>
@@ -364,7 +414,17 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <h4>下载 HTML</h4>
 <p>点击<strong>下载 HTML</strong>按钮，将您的演示文稿导出为独立的 HTML 文件。该文件包含所有幻灯片内容、配置和样式，因此无需访问 Paradocs 网站即可在任何浏览器中打开。外部库依赖（jQuery、Reveal.js 等）通过 CDN 加载。</p>
 <p><strong>注意</strong> 在导出的文件中，YouTube 视频嵌入会自动转换为可点击的缩略图链接，因为由于浏览器安全限制，本地 HTML 文件无法嵌入 YouTube iframe。点击缩略图即可在 YouTube 上打开视频。</p>
-<h4>URL 分享</h4>
-<p>演示文稿的 URL 会在您浏览幻灯片和片段时自动更新。您可以通过复制浏览器地址栏中的 URL（例如 <code>#/0/1/3</code>）来分享特定位置。当他人打开分享的 URL 时，会直接跳转到该幻灯片和片段。</p>
-<h4>深色模式（反色）</h4>
-<p>勾选<strong>反色</strong>复选框即可切换到深色模式。所有演示元素——包括便签、注释弹窗、标记、幻灯片编号和导航控件——都会调整颜色，以便在深色背景下舒适浏览。</p>
+<h4>幻灯片位置与内部链接</h4>
+<p>演示文稿的 URL 会在您浏览幻灯片和片段时自动更新（例如 <code>#/0/1/3</code>）。您可以利用这些基于哈希的 URL 创建内部链接，在演示文稿内跳转到特定幻灯片——例如使用锚标签 <code>&lt;a href=&quot;#/2&quot;&gt;跳转到第3张幻灯片&lt;/a&gt;</code> 从一张幻灯片链接到另一张。</p>
+<h4>胶片条预览</h4>
+<p>点击操作按钮旁边的<strong>预览</strong>按钮（眼睛图标），即可在编辑器右侧打开胶片条面板。面板会显示幻灯片缩略图，在您输入文本时自动更新（延迟800毫秒）。</p>
+<ul>
+<li><strong>单击</strong>缩略图可在灯箱中放大显示幻灯片。使用<strong>方向键</strong>在幻灯片间导航，按 <strong>Escape</strong> 或点击外部关闭。</li>
+<li><strong>双击</strong>缩略图可将编辑器光标跳转到对应幻灯片的位置。</li>
+<li>编辑器标题栏中的<strong>同步开关</strong>（链接图标）可启用胶片条自动滚动以跟随光标位置。</li>
+<li>拖动编辑器与面板之间的调整手柄可改变胶片条宽度。</li>
+</ul>
+<p>如果输入过程中发生解析错误，预览会保留上次成功渲染的内容。</p>
+<p><strong>注意</strong> 胶片条面板仅在浏览器窗口宽度超过 900px 时可用。在较小的屏幕上，预览按钮会自动隐藏。胶片条采用虚拟滚动技术，即使幻灯片数量很多也能保持较低的内存使用量。</p>
+<h4>反色</h4>
+<p>勾选<strong>反色</strong>复选框可反转高亮部分的显示方式。默认情况下，高亮文本为彩色文字配透明背景；反转后，高亮颜色将作为填充背景，文字变为白色。</p>

@@ -21,7 +21,7 @@
     "h2_use": "Use Paradocs",
     "label_text_input": "Text Input (syntax highlighting enabled)",
     "label_textarea_resize": "Textarea is vertically resizable",
-    "btn_convert": "Convert Text",
+    "btn_convert": "Start",
     "btn_download": "Download HTML",
     "btn_clear": "Clear Text",
     "btn_reset": "Reset All",
@@ -40,7 +40,8 @@
     "btn_upload_images": "Choose Images",
     "image_drop_hint": "Drop images here or click to upload (JPEG, PNG, GIF, WebP — max 5MB each)",
     "image_list_empty": "No images uploaded",
-    "image_insert_hint": "Click filename to insert into editor"
+    "image_insert_hint": "Click filename to insert into editor",
+    "btn_preview": "Preview"
   },
   "ja": {
     "html_lang": "ja",
@@ -64,7 +65,7 @@
     "h2_use": "使ってみる",
     "label_text_input": "入力テキスト（自動的に色がつきます）",
     "label_textarea_resize": "テキストエリアは縦に拡張できます",
-    "btn_convert": "プレゼンに変換",
+    "btn_convert": "スタート",
     "btn_download": "HTMLをダウンロード",
     "btn_clear": "クリア",
     "btn_reset": "すべてリセット",
@@ -83,7 +84,8 @@
     "btn_upload_images": "画像を選択",
     "image_drop_hint": "ここに画像をドロップするかクリックしてアップロード（JPEG, PNG, GIF, WebP — 各5MBまで）",
     "image_list_empty": "画像はまだアップロードされていません",
-    "image_insert_hint": "ファイル名をクリックするとエディタに挿入"
+    "image_insert_hint": "ファイル名をクリックするとエディタに挿入",
+    "btn_preview": "プレビュー"
   },
   "zh": {
     "html_lang": "zh-CN",
@@ -107,7 +109,7 @@
     "h2_use": "开始使用",
     "label_text_input": "输入文本（自动语法高亮）",
     "label_textarea_resize": "文本区域可纵向调整大小",
-    "btn_convert": "转换为演示文稿",
+    "btn_convert": "开始",
     "btn_download": "下载HTML",
     "btn_clear": "清除文本",
     "btn_reset": "全部重置",
@@ -126,7 +128,8 @@
     "btn_upload_images": "选择图片",
     "image_drop_hint": "将图片拖放到此处或点击上传（JPEG、PNG、GIF、WebP — 每张最大5MB）",
     "image_list_empty": "尚未上传图片",
-    "image_insert_hint": "点击文件名插入到编辑器"
+    "image_insert_hint": "点击文件名插入到编辑器",
+    "btn_preview": "预览"
   },
   "ko": {
     "html_lang": "ko",
@@ -150,7 +153,7 @@
     "h2_use": "시작하기",
     "label_text_input": "텍스트 입력 (자동 구문 강조)",
     "label_textarea_resize": "텍스트 영역은 세로로 크기를 조절할 수 있습니다",
-    "btn_convert": "프레젠테이션으로 변환",
+    "btn_convert": "시작",
     "btn_download": "HTML 다운로드",
     "btn_clear": "텍스트 지우기",
     "btn_reset": "전체 초기화",
@@ -169,6 +172,7 @@
     "btn_upload_images": "이미지 선택",
     "image_drop_hint": "여기에 이미지를 드롭하거나 클릭하여 업로드 (JPEG, PNG, GIF, WebP — 각 5MB 이하)",
     "image_list_empty": "아직 업로드된 이미지가 없습니다",
-    "image_insert_hint": "파일명을 클릭하면 편집기에 삽입됩니다"
+    "image_insert_hint": "파일명을 클릭하면 편집기에 삽입됩니다",
+    "btn_preview": "미리보기"
   }
 }

@@ -78,11 +78,11 @@ function configureMarked() {
 // Sentence segmentation (replaces PragmaticSegmenter)
 // ---------------------------------------------------------------------------
 
-function segmentSentences(text) {
+function segmentSentences(text, locale) {
   // Try Intl.Segmenter first (available in modern browsers)
   if (typeof Intl !== 'undefined' && Intl.Segmenter) {
     try {
-      const segmenter = new Intl.Segmenter(undefined, { granularity: 'sentence' });
+      const segmenter = new Intl.Segmenter(locale || undefined, { granularity: 'sentence' });
       const segments = [];
       for (const seg of segmenter.segment(text)) {
         const trimmed = seg.segment.trim();
@@ -117,7 +117,7 @@ function renderMarkdown(text) {
 
 function renderInlineMarkdown(text) {
   // Use marked.parse but strip wrapping <p> tags for inline use
-  return marked.parse(text).replace(/<\/?p>/g, '').trim();
+  return marked.parse(text).replace(/<\/?p[^>]*>/g, '').trim();
 }
 
 // ---------------------------------------------------------------------------
@@ -136,11 +136,11 @@ function processQuiz(sentence) {
 // MCQ (Multiple Choice Quiz) processing
 // ---------------------------------------------------------------------------
 
-function processMCQ(text) {
+function processMCQ(text, lang) {
   return text.replace(/\{mcq:\s*(.+?)\n([\s\S]*?)\}/g, function(_match, question, optionsBlock) {
     const options = parseMCQOptions(optionsBlock);
     if (options.length === 0) return _match; // fallback: leave as-is
-    return buildMCQHtml(question.trim(), options);
+    return buildMCQHtml(question.trim(), options, lang);
   });
 }
 
@@ -160,8 +160,14 @@ function parseMCQOptions(block) {
   return options;
 }
 
-function buildMCQHtml(question, options) {
-  let html = "<div class='mcq-quiz' data-answered='false'>\n";
+function buildMCQHtml(question, options, lang) {
+  var tryAgainLabels = { 'ja': '\u21bb もう一度', 'zh': '\u21bb 再试一次', 'ko': '\u21bb 다시 시도' };
+  var correctLabels = { 'ja': '\u2713 正解!', 'zh': '\u2713 正确!', 'ko': '\u2713 정답!' };
+  var langPrefix = (lang || '').split('-')[0].toLowerCase();
+  var tryAgainText = tryAgainLabels[langPrefix] || '\u21bb Try Again';
+  var correctText = correctLabels[langPrefix] || '\u2713 Correct!';
+
+  let html = "<div class='mcq-quiz' data-answered='false' data-correct-label='" + sanitizeUserText(correctText) + "'>\n";
   html += "  <div class='mcq-question'>" + renderInlineMarkdown(sanitizeUserText(question)) + "</div>\n";
   html += "  <div class='mcq-options'>\n";
   for (const opt of options) {
@@ -171,7 +177,7 @@ function buildMCQHtml(question, options) {
   }
   html += "  </div>\n";
   html += "  <div class='mcq-feedback' style='display:none;'></div>\n";
-  html += "  <div class='mcq-reset' style='display:none;' role='button' tabindex='0'>\u21bb Try Again</div>\n";
+  html += "  <div class='mcq-reset' style='display:none;' role='button' tabindex='0'>" + sanitizeUserText(tryAgainText) + "</div>\n";
   html += "</div>";
   return html;
 }
@@ -204,6 +210,7 @@ class Parser {
     // Normalize line endings
     this.data = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     this.output = '';
+    this.config = config;
     const prefix = config.prefix || '';
     this.poster = prefix + 'img/loading.gif';
     this.imageResolver = imageResolver || null;
@@ -291,7 +298,7 @@ class Parser {
 
             // MCQ quiz: check for {mcq:...} in static text
             if (/\{mcq:/i.test(paragraph)) {
-              const mcqHtml = processMCQ(paragraph);
+              const mcqHtml = processMCQ(paragraph, this.config.speech_lang);
               this.output += "<div class='text'>\n" + mcqHtml + '\n</div>\n';
               return; // skip rest of paragraph processing
             }
@@ -307,7 +314,7 @@ class Parser {
             if (autoSegMatch) {
               // Remove {note:...} etc. before segmenting
               const cleaned = autoSegMatch[1].replace(/\{[^{}]*\}/g, '');
-              const segmented = segmentSentences(cleaned);
+              const segmented = segmentSentences(cleaned, this.config.speech_lang);
               segmented.forEach(s => sentencesNew.push(s));
             } else {
               sentencesNew.push(sent);
@@ -412,7 +419,16 @@ class Parser {
             }
             // inline image ![...](...)
             else if ((m = sentence.match(/^!\[[^\]]*\]\((.*?)\)/))) {
-              spans.push(m[1] || '');
+              let inlineImgSrc = (m[1] || '').trim();
+              // Resolve local: prefix to data URL via imageResolver
+              if (inlineImgSrc.match(/^local:/)) {
+                const localName = inlineImgSrc.replace(/^local:/, '');
+                if (this.imageResolver) {
+                  const resolved = this.imageResolver(localName);
+                  inlineImgSrc = resolved || 'LOCAL_NOT_FOUND:' + localName;
+                }
+              }
+              spans.push(inlineImgSrc);
               mode = 'im';
             }
             // unordered list: * item
@@ -429,7 +445,7 @@ class Parser {
               mode = 'list-table';
             }
             // ordered list: N. item  or  a. item
-            else if ((m = sentence.match(/^([^.])\. (.*)$/))) {
+            else if ((m = sentence.match(/^([^.\s]+)\. (.*)$/))) {
               const classStr = noFrag ? '' : 'fragment';
               const alpha = m[1];
               const rendered = renderInlineMarkdown(sanitizeUserText(m[2]));
@@ -540,13 +556,9 @@ class Parser {
                 break;
               }
               if (paragraphs.length === 1) {
-                var cursorStyle = /^data:/.test(imgUrl) ? " style='cursor:zoom-in;' title='Click to enlarge'" : '';
-                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}' alt='Slide image'${cursorStyle}/>`;
-              } else if (/^data:/.test(imgUrl)) {
-                // data: URLs cannot be opened in new tabs (browser security), show inline
-                renderedSentences = `<div class='text'><p><img class='${classStr}' src='${imgUrl}' alt='Slide image' style='max-width:60%;max-height:50vh;cursor:zoom-in;' title='Click to enlarge'/></p></div>`;
+                renderedSentences = `<img class='${classStr} large_img' src='${imgUrl}' alt='Slide image' style='cursor:zoom-in;' title='Click to enlarge'/>`;
               } else {
-                renderedSentences = `<div class='text'><p><span class='${classStr}'><a target='_blank' href='${imgUrl}'> <i class='fa-solid fa-image'></i> <span>click to show image</span></a></span></p></div>`;
+                renderedSentences = `<div class='text'><p><img class='${classStr}' src='${imgUrl}' alt='Slide image' style='max-width:60%;max-height:50vh;cursor:zoom-in;' title='Click to enlarge'/></p></div>`;
               }
               break;
             }
@@ -632,7 +644,7 @@ class Parser {
     // http(s) URLs
     if (/^https?:\/\/[^\s'"<>]+$/i.test(url)) return true;
     // data:image/ URLs (for local uploaded images, reject non-image data URLs)
-    if (/^data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]+$/i.test(url)) return true;
+    if (/^data:image\/(jpeg|png|gif|webp);base64,[A-Za-z0-9+/=]+$/i.test(url)) return true;
     return false;
   }
 
