@@ -92,7 +92,7 @@ c. 字母列表项目 3
 ----
 #### 测验
 
-您可以创建测验 🙋，最初将文本对观众隐藏，在适当时机再予以揭示。
+您可以创建测验 🙋——文本初始处于隐藏状态，在适当时机点击即可揭示答案。
 
 | * 在静态文本块中，{花括号}中的词语和短语
 | * 会以{遮盖框}元素的形式呈现
@@ -138,11 +138,11 @@ youtube: https://www.youtube.com/watch?v=MMmOLN5zBLY&start=30&end=60
 
 | 雨林环境音
 
-audio: https://www.yohasebe.com/paradocs/media/rainforest_ambience.mp3#t=0,5
+audio: https://yohasebe.github.io/paradocs/media/rainforest_ambience.mp3#t=0,5
 
 | 礼堂掌声
 
-audio: https://www.yohasebe.com/paradocs/media/auditorium_applause.mp3#t=0,5
+audio: https://yohasebe.github.io/paradocs/media/auditorium_applause.mp3#t=0,5
 ----
 ### 附加功能
 ----

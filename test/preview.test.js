@@ -21,7 +21,7 @@ function setupDOM() {
       </div>
     </div>
     <span id="preview_toggle_button" class="btn"></span>
-    <span id="filmstrip-sync-btn" class="filmstrip-sync" style="display:none;"></span>
+    <span id="filmstrip-sync-btn" class="filmstrip-sync active" style="display:none;"></span>
   `;
 }
 
@@ -145,14 +145,14 @@ describe('PreviewPanel', () => {
       PreviewPanel.init();
       PreviewPanel.toggle(); // open panel
       var syncBtn = document.getElementById('filmstrip-sync-btn');
-      // Default is off (no active class)
-      expect(syncBtn.classList.contains('active')).toBe(false);
-      // Click to enable
-      syncBtn.click();
+      // Default is on (active class)
       expect(syncBtn.classList.contains('active')).toBe(true);
       // Click to disable
       syncBtn.click();
       expect(syncBtn.classList.contains('active')).toBe(false);
+      // Click to re-enable
+      syncBtn.click();
+      expect(syncBtn.classList.contains('active')).toBe(true);
     });
   });
 
@@ -221,6 +221,50 @@ describe('PreviewPanel', () => {
       var panel = document.getElementById('filmstrip-panel');
       expect(panel.style.maxHeight).toBe('478px');
     });
+  });
+});
+
+describe('replaceMediaForThumb', () => {
+  beforeAll(() => {
+    setWindowWidth(1200);
+    setupDOM();
+    loadPreview();
+  });
+
+  test('replaces YouTube iframe with thumbnail image', () => {
+    var html = "<iframe class='fragment' width='100%' allow='autoplay' data-ytid='ABC123def' src='https://www.youtube.com/embed/ABC123def' id='yt1' data-ignore='true' ></iframe>";
+    var result = PreviewPanel._replaceMediaForThumb(html);
+    expect(result).not.toContain('<iframe');
+    expect(result).toContain('img.youtube.com/vi/ABC123def/');
+    expect(result).toContain('object-fit:cover');
+  });
+
+  test('replaces non-YouTube iframe with placeholder', () => {
+    var html = "<iframe src='https://example.com/embed'></iframe>";
+    var result = PreviewPanel._replaceMediaForThumb(html);
+    expect(result).not.toContain('<iframe');
+    expect(result).toContain('embedded content');
+  });
+
+  test('replaces audio element with placeholder', () => {
+    var html = "<audio src='https://example.com/audio.mp3'></audio>";
+    var result = PreviewPanel._replaceMediaForThumb(html);
+    expect(result).not.toContain('<audio');
+    expect(result).toContain('audio');
+  });
+
+  test('preserves non-media HTML content', () => {
+    var html = "<div class='text'><p>Hello world</p></div>";
+    var result = PreviewPanel._replaceMediaForThumb(html);
+    expect(result).toBe(html);
+  });
+
+  test('handles multiple YouTube iframes', () => {
+    var html = "<iframe data-ytid='vid1' src='x'></iframe><p>text</p><iframe data-ytid='vid2' src='y'></iframe>";
+    var result = PreviewPanel._replaceMediaForThumb(html);
+    expect(result).toContain('vid1');
+    expect(result).toContain('vid2');
+    expect(result).not.toContain('<iframe');
   });
 });
 

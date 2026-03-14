@@ -138,11 +138,11 @@ The slide page automatically scrolls when all the blocks do not fit on the curre
 
 | Rainforest Ambience
 
-audio: https://www.yohasebe.com/paradocs/media/rainforest_ambience.mp3#t=0,5
+audio: https://yohasebe.github.io/paradocs/media/rainforest_ambience.mp3#t=0,5
 
 | Auditorium Applause
 
-audio: https://www.yohasebe.com/paradocs/media/auditorium_applause.mp3#t=0,5
+audio: https://yohasebe.github.io/paradocs/media/auditorium_applause.mp3#t=0,5
 ----
 ### Additional Features
 ----

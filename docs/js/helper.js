@@ -471,11 +471,32 @@ div.gadgets div.sticky{
 }
 
 
+.switches span#beep_icon{
+  cursor: pointer;
+  opacity: 0.8;
+  font-size: 0.8em;
+  color: gray;
+  outline: none;
+}
+
+.switches span#beep_icon:focus{
+  outline: none;
+  box-shadow: none;
+}
+
+.switches span#beep_icon.playing{
+  color: ${conf.progress_color};
+}
+
 .switches span#overview_icon{
   cursor: pointer;
   opacity: 0.8;
   font-size: 0.8em;
   color: gray;
+  outline: none;
+}
+.switches span#overview_icon:focus{
+  outline: none;
 }
 
 .switches span#overview_icon.playing{
@@ -586,10 +607,17 @@ div.gadgets div.sticky{
 .reveal div.list-table td {
   border: none !important;
   vertical-align: baseline;
-  padding-right: 10px;
+  padding-right: 0px;
   padding-left: 0px;
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+.reveal div.list-table td:first-child {
+  white-space: nowrap;
+  width: 1px;
+  padding-right: 0.4em;
+  text-align: right;
 }
 
 .reveal blockquote{
@@ -612,7 +640,7 @@ div.gadgets div.sticky{
 }
 
 .reveal li span{
-  position: relative; left: 20px;
+  position: relative;
 }
 
 .reveal sup{
@@ -866,6 +894,7 @@ textarea::selection{
   margin-top: 0.3em;
   font-weight: bold;
   font-size: 0.85em;
+  text-align: right;
 }
 
 .mcq-correct-feedback {
@@ -919,6 +948,71 @@ textarea::selection{
 
 .reveal.inverted .tts-word-highlight {
   background-color: rgba(255, 200, 0, 0.25);
+}
+
+/* Custom overview overlay */
+#custom-overview-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: rgba(245, 245, 245, 0.97);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+#custom-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.custom-overview-thumb {
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-overview-thumb:hover {
+  border-color: #4e79a7;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.custom-overview-thumb.active {
+  border-color: #e15759;
+  box-shadow: 0 2px 8px rgba(225,87,89,0.3);
+}
+
+.custom-overview-label {
+  position: absolute;
+  top: 4px; left: 6px;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(0,0,0,0.35);
+  padding: 1px 6px;
+  border-radius: 3px;
+  z-index: 1;
+  font-family: sans-serif;
+}
+
+.custom-overview-iframe-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.custom-overview-iframe-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  border: none;
+  pointer-events: none;
+  transform-origin: top left;
 }
 
 </style>`;

@@ -383,4 +383,42 @@ describe('Parser', () => {
       expect(html).not.toContain('javascript:alert');
     });
   });
+
+  describe('auto-animate (~~~~ separator)', () => {
+    test('adds data-auto-animate to sections separated by ~~~~', () => {
+      var text = '----\nSlide 1\n~~~~\nSlide 2\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('data-auto-animate');
+    });
+
+    test('does not add data-auto-animate for ---- separator', () => {
+      var text = '----\nSlide 1\n----\nSlide 2\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).not.toContain('data-auto-animate');
+    });
+
+    test('creates correct number of slides with ~~~~', () => {
+      var text = '----\nSlide 1\n~~~~\nSlide 2\n~~~~\nSlide 3\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      // 4 sections: 1 deck wrapper + 3 content slides
+      var sections = html.match(/<section /g);
+      expect(sections.length).toBe(4);
+    });
+
+    test('mixes ---- and ~~~~ separators correctly', () => {
+      var text = '----\nSlide 1\n----\nSlide 2\n~~~~\nSlide 3\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      // Find all section attributes (0=deck, 1=Slide1, 2=Slide2, 3=Slide3)
+      var attrs = [...html.matchAll(/<section ([^>]*)>/g)].map(m => m[1]);
+      // Slide 1 should NOT have auto-animate
+      expect(attrs[1]).not.toContain('data-auto-animate');
+      // Slide 2 and 3 should both have auto-animate (~~~~ between them)
+      expect(attrs[2]).toContain('data-auto-animate');
+      expect(attrs[3]).toContain('data-auto-animate');
+    });
+  });
 });

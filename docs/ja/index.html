@@ -109,7 +109,7 @@
       <div id="editor-wrapper">
         <div id="editor-header">
           <span>入力テキスト（自動的に色がつきます）</span>
-          <span id="filmstrip-sync-btn" class="filmstrip-sync" title="Sync with cursor" style="display:none;"><i class="fa-solid fa-link"></i></span>
+          <span id="filmstrip-sync-btn" class="filmstrip-sync active" title="Sync with cursor" style="display:none;"><i class="fa-solid fa-link"></i></span>
         </div>
         <div id='input-textarea' class="ui-widget-content" style='height:450px; border:solid 1px lightgray; border-top:none;'></div>
       </div>
@@ -130,8 +130,17 @@
         </div>
       </div>
       <div id="button-row">
-        <span id='submit_button' class="file_reset btn btn-sm btn-primary"><i class="fa-solid fa-play"></i> スタート</span>
-        <span id='download_button' class="file_reset btn btn-sm btn-success"><i class="fa-solid fa-download"></i> HTMLをダウンロード</span>
+        <span id='submit_button' class="file_reset btn btn-sm btn-primary"><i class="fa-solid fa-play"></i> プレゼン</span>
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-file"></i> ファイル</button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" id="save_text_button"><i class="fa-solid fa-floppy-disk"></i> テキストを保存</a></li>
+            <li><a class="dropdown-item" href="#" id="load_text_button"><i class="fa-solid fa-folder-open"></i> テキストを読込</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" id="download_button"><i class="fa-solid fa-download"></i> HTMLをダウンロード</a></li>
+          </ul>
+        </div>
+        <input type="file" id="load-text-input" accept=".txt,.md,text/plain,text/markdown" style="display:none;">
         <span id='clear_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-eraser"></i> クリア</span>
         <span id='reset_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-rotate-left"></i> すべてリセット</span>
         <span id='preview_toggle_button' class="file_reset btn btn-sm btn-light" title="プレビュー"><i class="fa-solid fa-eye"></i> プレビュー</span>

@@ -161,13 +161,15 @@ function parseMCQOptions(block) {
 }
 
 function buildMCQHtml(question, options, lang) {
-  var tryAgainLabels = { 'ja': '\u21bb もう一度', 'zh': '\u21bb 再试一次', 'ko': '\u21bb 다시 시도' };
+  var incorrectLabels = { 'ja': '\u2717 不正解', 'zh': '\u2717 不正确', 'ko': '\u2717 오답' };
   var correctLabels = { 'ja': '\u2713 正解!', 'zh': '\u2713 正确!', 'ko': '\u2713 정답!' };
+  var resetLabels = { 'ja': '\u21bb もう一度', 'zh': '\u21bb 再试一次', 'ko': '\u21bb 다시 시도' };
   var langPrefix = (lang || '').split('-')[0].toLowerCase();
-  var tryAgainText = tryAgainLabels[langPrefix] || '\u21bb Try Again';
+  var incorrectText = incorrectLabels[langPrefix] || '\u2717 Incorrect';
   var correctText = correctLabels[langPrefix] || '\u2713 Correct!';
+  var resetText = resetLabels[langPrefix] || '\u21bb Try Again';
 
-  let html = "<div class='mcq-quiz' data-answered='false' data-correct-label='" + sanitizeUserText(correctText) + "'>\n";
+  let html = "<div class='mcq-quiz' data-answered='false' data-correct-label='" + sanitizeUserText(correctText) + "' data-incorrect-label='" + sanitizeUserText(incorrectText) + "'>\n";
   html += "  <div class='mcq-question'>" + renderInlineMarkdown(sanitizeUserText(question)) + "</div>\n";
   html += "  <div class='mcq-options'>\n";
   for (const opt of options) {
@@ -177,7 +179,7 @@ function buildMCQHtml(question, options, lang) {
   }
   html += "  </div>\n";
   html += "  <div class='mcq-feedback' style='display:none;'></div>\n";
-  html += "  <div class='mcq-reset' style='display:none;' role='button' tabindex='0'>" + sanitizeUserText(tryAgainText) + "</div>\n";
+  html += "  <div class='mcq-reset' style='display:none;' role='button' tabindex='0'>" + sanitizeUserText(resetText) + "</div>\n";
   html += "</div>";
   return html;
 }
@@ -252,14 +254,42 @@ class Parser {
     this.output += "<section class='deck'>\n";
 
     decks.forEach((deck) => {
-      // Split by ---- (slide separator, must be on its own line)
-      let slides = deck.split(/^\s*(?:- ?){4,}\s*$/m);
-      slides = slides.filter(sl => sl.trim().length > 0);
+      // Split by ---- or ~~~~ (slide separator / auto-animate separator)
+      // Keep the separator tokens so we know which type was used
+      let parts = deck.split(/^(\s*(?:- ?){4,}\s*|\s*(?:~ ?){4,}\s*)$/m);
 
-      slides.forEach((slide, j) => {
+      // Build slides array with auto-animate flags
+      let slides = [];
+      let autoAnimateNext = false;
+      for (let pi = 0; pi < parts.length; pi++) {
+        let part = parts[pi];
+        if (/^\s*(?:- ?){4,}\s*$/.test(part)) {
+          autoAnimateNext = false;
+          continue;
+        }
+        if (/^\s*(?:~ ?){4,}\s*$/.test(part)) {
+          autoAnimateNext = true;
+          continue;
+        }
+        if (part.trim().length > 0) {
+          slides.push({ content: part, autoAnimate: autoAnimateNext });
+          autoAnimateNext = false;
+        }
+      }
+
+      // Mark previous slide for auto-animate pairs (both slides need the attribute)
+      for (let si = 1; si < slides.length; si++) {
+        if (slides[si].autoAnimate) {
+          slides[si - 1].autoAnimate = true;
+        }
+      }
+
+      slides.forEach((slideObj, j) => {
+        const slide = slideObj.content;
         const lastSlide = (j === slides.length - 1);
 
-        this.output += "<section data-header='' data-footer=''>\n";
+        var sectionAttrs = slideObj.autoAnimate ? "data-auto-animate" : "";
+        this.output += "<section " + sectionAttrs + ">\n";
 
         // Split by blank lines (paragraph separator)
         let paragraphs = slide.split(/\n\n+/);
@@ -436,11 +466,13 @@ class Parser {
               const classStr = noFrag ? '' : 'fragment';
               const rendered = renderInlineMarkdown(sanitizeUserText(m[1]));
               const alpha = '•';
+              const markerTd = `<td style='white-space:nowrap;width:1px;padding:5px 0.4em 5px 0;vertical-align:baseline;'>${alpha}</td>`;
+              const contentTd = `<td style='padding:5px 0;vertical-align:baseline;'><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td>`;
               if (startFrom === null) {
                 startFrom = alpha;
-                spans.push(`<table style='margin-right: auto;'><tbody><tr><td>${alpha}</td><td><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td></tr>`);
+                spans.push(`<table style='margin-right:auto;border-collapse:collapse;'><tbody><tr>${markerTd}${contentTd}</tr>`);
               } else {
-                spans.push(`<tr><td>${alpha}</td><td><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td></tr>`);
+                spans.push(`<tr>${markerTd}${contentTd}</tr>`);
               }
               mode = 'list-table';
             }
@@ -449,16 +481,18 @@ class Parser {
               const classStr = noFrag ? '' : 'fragment';
               const alpha = m[1];
               const rendered = renderInlineMarkdown(sanitizeUserText(m[2]));
+              const markerTd = `<td style='white-space:nowrap;width:1px;padding:5px 0.4em 5px 0;vertical-align:baseline;text-align:right;'>${alpha}.</td>`;
+              const contentTd = `<td style='padding:5px 0;vertical-align:baseline;'><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td>`;
 
               if (startFrom === null) {
                 startFrom = alpha;
-                spans.push(`<table style='margin-right: auto;'><tbody><tr><td>${alpha}.</td><td><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td></tr>`);
+                spans.push(`<table style='margin-right:auto;border-collapse:collapse;'><tbody><tr>${markerTd}${contentTd}</tr>`);
               } else if (startFrom !== alpha) {
                 startFrom = alpha;
-                spans.push(`<tr><td>${alpha}.</td><td><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td></tr>`);
+                spans.push(`<tr>${markerTd}${contentTd}</tr>`);
               } else {
                 // startFrom === alpha: append to last span
-                spans[spans.length - 1] += `<tr><td>${alpha}.</td><td><span class='${classStr}' data-note='${noteId}'>${rendered}</span></td></tr>`;
+                spans[spans.length - 1] += `<tr>${markerTd}${contentTd}</tr>`;
               }
               mode = 'list-table';
             }

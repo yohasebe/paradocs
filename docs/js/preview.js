@@ -11,7 +11,7 @@ var PreviewPanel = (function() {
   var lastText = null;
   var lastSlideIndex = -1;
   var visible = false;
-  var syncEnabled = false;
+  var syncEnabled = true;
 
   // Virtual scroll state
   var slideData = [];    // Array of srcdoc strings
@@ -177,6 +177,37 @@ var PreviewPanel = (function() {
   var REVEAL_CORE_CSS = 'https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css';
   var REVEAL_THEME_CSS = 'https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css';
 
+  // Cache for resolved YouTube thumbnail URLs
+  var ytThumbCache = {};
+
+  function resolveYtThumb(ytid) {
+    if (ytThumbCache[ytid]) return ytThumbCache[ytid];
+    var maxres = 'https://img.youtube.com/vi/' + ytid + '/maxresdefault.jpg';
+    var fallback = 'https://img.youtube.com/vi/' + ytid + '/hqdefault.jpg';
+    var img = new Image();
+    img.onload = function() { ytThumbCache[ytid] = maxres; };
+    img.onerror = function() { ytThumbCache[ytid] = fallback; };
+    img.src = maxres;
+    return ytThumbCache[ytid] || maxres;
+  }
+
+  // Replace YouTube/audio/video embeds with static placeholders for thumbnails
+  function replaceMediaForThumb(html) {
+    html = html.replace(/<iframe[^>]*data-ytid=['"]([^'"]+)['"][^>]*>[^<]*<\/iframe>/gi, function(match, ytid) {
+      var thumbUrl = resolveYtThumb(ytid);
+      return '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+        '<img src="' + thumbUrl + '" style="width:100%;height:100%;object-fit:cover;" />' +
+        '<div style="position:absolute;width:60px;height:42px;background:rgba(205,32,31,0.9);border-radius:10px;display:flex;align-items:center;justify-content:center;">' +
+        '<div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 18px;border-color:transparent transparent transparent #fff;margin-left:3px;"></div>' +
+        '</div></div>';
+    });
+    html = html.replace(/<iframe[^>]*>[^<]*<\/iframe>/gi,
+      '<div style="width:100%;height:80px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">embedded content</div>');
+    html = html.replace(/<audio[^>]*>(?:[\s\S]*?<\/audio>)?/gi,
+      '<div style="width:100%;height:40px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;border-radius:4px;">&#9835; audio</div>');
+    return html;
+  }
+
   function buildSlideData(slidesHtml, cssText, config, inverted) {
     slideWidth = config.width || 1280;
     slideHeight = config.height || 800;
@@ -193,6 +224,7 @@ var PreviewPanel = (function() {
 
     slideData = [];
     for (var i = 0; i < sections.length; i++) {
+      var slideHtml = replaceMediaForThumb(sections[i].innerHTML);
       var slideDoc = '<!doctype html><html><head><meta charset="utf-8">' +
         '<link rel="stylesheet" href="' + REVEAL_CORE_CSS + '">' +
         '<link rel="stylesheet" href="' + REVEAL_THEME_CSS + '">' +
@@ -215,7 +247,7 @@ var PreviewPanel = (function() {
         '</style>' +
         '</head><body>' +
         '<div class="reveal' + (inverted ? ' inverted' : '') + '">' +
-          '<div class="slides"><section>' + sections[i].innerHTML + '</section></div>' +
+          '<div class="slides"><section>' + slideHtml + '</section></div>' +
         '</div>' +
         '</body></html>';
 
@@ -244,12 +276,15 @@ var PreviewPanel = (function() {
       num.textContent = i + 1;
       div.appendChild(num);
 
-      // Click to open lightbox, double-click to jump editor
+      // Click: sync ON → jump to editor, sync OFF → open lightbox
       div.addEventListener('click', (function(idx) {
-        return function() { openLightbox(idx); };
-      })(i));
-      div.addEventListener('dblclick', (function(idx) {
-        return function() { jumpToSlide(idx); };
+        return function() {
+          if (syncEnabled) {
+            jumpToSlide(idx);
+          } else {
+            openLightbox(idx);
+          }
+        };
       })(i));
 
       filmstripScroll.appendChild(div);
@@ -311,12 +346,7 @@ var PreviewPanel = (function() {
     for (var i = 0; i < thumbDivs.length; i++) {
       if (i === index) {
         thumbDivs[i].classList.add('active');
-        var ct = filmstripScroll;
-        var tTop = thumbDivs[i].offsetTop;
-        var tBot = tTop + thumbDivs[i].offsetHeight;
-        if (tTop < ct.scrollTop || tBot > ct.scrollTop + ct.clientHeight) {
-          thumbDivs[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
+        thumbDivs[i].scrollIntoView({ block: 'center', behavior: 'smooth' });
       } else {
         thumbDivs[i].classList.remove('active');
       }
@@ -411,17 +441,27 @@ var PreviewPanel = (function() {
   function jumpToSlide(index) {
     if (typeof editor === 'undefined') return;
     var lines = editor.session.getDocument().getAllLines();
+    var sepRegex = /^\s*(?:=\s?|-\s?|~\s?){4,}\s*$/;
     var sepCount = 0;
+    var startLine = -1;
+    var endLine = lines.length - 1;
     for (var i = 0; i < lines.length; i++) {
-      if (/^\s*(?:=\s?|-\s?){4,}\s*$/.test(lines[i])) {
-        sepCount++;
-        if (sepCount - 1 === index) {
-          editor.gotoLine(Math.min(i + 2, lines.length), 0, true);
-          editor.focus();
-          return;
+      if (sepRegex.test(lines[i])) {
+        if (sepCount === index) {
+          startLine = i + 1;
+        } else if (sepCount === index + 1) {
+          endLine = i - 1;
+          break;
         }
+        sepCount++;
       }
     }
+    if (startLine < 0) return;
+    // Select the slide's text range
+    var Range = ace.require('ace/range').Range;
+    editor.selection.setRange(new Range(startLine, 0, endLine, lines[endLine].length));
+    editor.scrollToLine(startLine, true, true);
+    editor.focus();
   }
 
   function syncSlide(cursorRow) {
@@ -440,7 +480,7 @@ var PreviewPanel = (function() {
     var lines = editor.session.getLines(0, row);
     var count = 0;
     for (var i = 0; i < lines.length; i++) {
-      if (/^\s*(?:=\s?|-\s?){4,}\s*$/.test(lines[i])) {
+      if (/^\s*(?:=\s?|-\s?|~\s?){4,}\s*$/.test(lines[i])) {
         count++;
       }
     }
@@ -473,6 +513,7 @@ var PreviewPanel = (function() {
     syncSlide: syncSlide,
     isVisible: isVisible,
     forceUpdate: forceUpdate,
-    updateAspectRatio: updateAspectRatio
+    updateAspectRatio: updateAspectRatio,
+    _replaceMediaForThumb: replaceMediaForThumb
   };
 })();

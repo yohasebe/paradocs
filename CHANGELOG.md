@@ -2,7 +2,7 @@
 
 All notable changes to Paradocs are documented in this file.
 
-## [0.9.0] - 2026-03-13
+## [0.9.0] - 2026-03-14
 
 ### Added
 - Local image upload with drag-and-drop, localStorage persistence
@@ -24,10 +24,18 @@ All notable changes to Paradocs are documented in this file.
 - TTS word-level highlighting during read-aloud
 - Ordered list support for multi-digit numbers (10., 11., etc.)
 - `Intl.Segmenter` locale-aware sentence splitting
-- Comprehensive Jest test suite (158 tests across 6 suites)
+- Comprehensive Jest test suite (184 tests across 7 suites)
 - Chinese (zh-CN) and Korean (ko-KR) language support
 - 4-language navigation dropdown (EN/JA/ZH/KO)
 - Template-based page build system (`scripts/build-pages.js`)
+- Filmstrip preview panel with virtual scroll, lightbox, and resize handle
+- Auto-animate transition support (`~~~~` slide separator)
+- Overview mode mouse wheel scrolling
+- Drop zone and button row side-by-side layout on wide screens
+- Custom grid-based overview (ESC key toggle, arrow key navigation, Enter to select)
+- Beep sound on fragment advance (toggle via bell icon)
+- Save/Load source text via File dropdown menu (with security validation)
+- YouTube thumbnail placeholders in filmstrip and overview (maxresdefault with hqdefault fallback)
 
 ### Fixed
 - XSS: file name escaping in error messages and image list display
@@ -49,8 +57,20 @@ All notable changes to Paradocs are documented in this file.
 - Keycode comment corrected (13 = ENTER, not ESC)
 - Duplicate `keyboard: true` property removed from Reveal.js config
 - Footer trailing pipe character removed
+- Security: postMessage origin validation in deck.html
+- Security: `document.write()` replaced with dynamic script loading
+- CSS syntax fix: missing colon in `margin-top` declaration
+- Documentation: "Dark Mode" → "Invert Colors" (4 languages)
+- Documentation: "URL Sharing" → "Slide Position and Internal Links" (4 languages)
 - Documentation: "ignored" → "removed" for auto-segmentation note handling (EN/ZH/KO)
 - Documentation: Markdown compatibility notes expanded (underline vs italic, slide/deck separators, HTML escaping, Setext headings, nested lists)
+- Removed unused `data-header`/`data-footer` attributes from parser output
+- MP3 sample URLs updated to GitHub Pages domain
+- List item spacing (bullet/number to text gap) adjusted via inline table styles
+- Overview icon changed from arrows to grid icon (`fa-grip`)
+- File operation buttons consolidated into dropdown menu
+- `alert()` replaced with inline messages for file load errors
+- Security: `parseInt` radix specified, event listener deduplication, HTML sanitization refined
 
 ### Changed
 - Migrated from Ruby/Sinatra server to fully static client-side site

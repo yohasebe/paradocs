@@ -67,8 +67,26 @@ jQuery(function($){
   var $pointer_icon = $('.switches span#pointer_icon');
   var $playall_icon = $('.switches span#playall_icon');
   var $speaker_icon = $('.switches span#speaker_icon');
+  var $beep_icon = $('.switches span#beep_icon');
   var $left_switches = $('.switches div#left_switches');
   var $right_switches = $('.switches div#right_switches');
+
+  // Beep sound
+  var beepEnabled = false;
+  var audioCtx = null;
+  function playBeep() {
+    if (!beepEnabled) return;
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 1200;
+    osc.type = 'sine';
+    gain.gain.value = 0.08;
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.06);
+  }
 
   // tooltips
   tippy.setDefaultProps({
@@ -82,7 +100,11 @@ jQuery(function($){
   $('#playall_icon').attr('aria-label', 'Start/Stop Automatic Presentation (a)').attr('role', 'button').attr('tabindex', '0');
   $('#speaker_icon').attr('aria-label', 'Start/Stop Text-to-Speech (.)').attr('role', 'button').attr('tabindex', '0');
   $('#overview_icon').attr('aria-label', 'Toggle Overview (ESC)').attr('role', 'button').attr('tabindex', '0');
+  $('#beep_icon').attr('aria-label', 'Toggle Beep Sound').attr('role', 'button').attr('tabindex', '0');
 
+  tippy("#beep_icon", {
+    content: "<span class='tooltip'><b>Toggle Beep Sound</b></span>"
+  });
   tippy("#sticky_icon", {
     content: "<span class='tooltip'><b>Toggle Sticky Note</b><br />Shortcut: <span class='shortcut'>s</span></span></span>"
   });
@@ -150,8 +172,8 @@ jQuery(function($){
         $quiz.find('.mcq-reset').show();
       } else {
         $option.addClass('mcq-incorrect mcq-disabled');
-        var tryAgainLabel = $quiz.find('.mcq-reset').text() || '\u2717 Try again';
-        $quiz.find('.mcq-feedback').text('\u2717 ' + tryAgainLabel.replace(/^\u21bb\s*/, '')).removeClass('mcq-correct-feedback').addClass('mcq-incorrect-feedback').show();
+        var incorrectLabel = $quiz.attr('data-incorrect-label') || '\u2717 Incorrect';
+        $quiz.find('.mcq-feedback').text(incorrectLabel).removeClass('mcq-correct-feedback').addClass('mcq-incorrect-feedback').show();
       }
     });
 
@@ -199,10 +221,6 @@ jQuery(function($){
   var keybindings = {
     // ENTER
     13 : function() {
-      if(Reveal.isOverview()){
-        Reveal.toggleOverview();
-        return false;
-      }
       return true;
     },
     // G
@@ -359,7 +377,7 @@ jQuery(function($){
       slideNumber: 'c/t',
       hash: true,
       fragmentInURL: true,
-      overview: true,
+      overview: false,
       navigationMode: "default",
       center: true,
       hideInactiveCursor: true,
@@ -377,7 +395,7 @@ jQuery(function($){
       previewLinks: false,
       transition: 'none',
       transitionSpeed: 'normal',
-      viewDistance: 2,
+      viewDistance: 3,
       keyboard: keybindings,
       margin: 0.1
     }).then(function() {
@@ -408,7 +426,19 @@ jQuery(function($){
       $('.fragment').css("visibility", "visible");
 
       $overview_icon.click(function () {
-        Reveal.toggleOverview();
+        this.blur();
+        toggleCustomOverview();
+      });
+
+      $beep_icon.click(function () {
+        beepEnabled = !beepEnabled;
+        if (beepEnabled) {
+          $beep_icon.addClass('playing');
+          playBeep();
+        } else {
+          $beep_icon.removeClass('playing');
+        }
+        this.blur();
       });
 
       $sticky_icon.click(function () {
@@ -462,6 +492,7 @@ jQuery(function($){
       stopSpeechSound();
       move_to_fragment(false);
       scrollIfNecessary($current_fragment);
+      playBeep();
       if(Reveal.getProgress() === 1 && $current_fragment.attr('id') === "eos"){
         $("#coffee").show();
       }
@@ -481,7 +512,84 @@ jQuery(function($){
       }
     });
 
-    Reveal.on('overviewshown', function(event) {
+    // Custom overview (iframe-based, like filmstrip preview)
+    var customOverviewOpen = false;
+    var customOverlayEl = null;
+
+    // Cache for resolved YouTube thumbnail URLs
+    var ytThumbCache = {};
+
+    // Pre-check if maxresdefault exists, cache result for reuse
+    function resolveYtThumb(ytid) {
+      if (ytThumbCache[ytid]) return ytThumbCache[ytid];
+      var maxres = 'https://img.youtube.com/vi/' + ytid + '/maxresdefault.jpg';
+      var fallback = 'https://img.youtube.com/vi/' + ytid + '/hqdefault.jpg';
+      // Synchronously return maxres, but probe in background for next time
+      var img = new Image();
+      img.onload = function() { ytThumbCache[ytid] = maxres; };
+      img.onerror = function() { ytThumbCache[ytid] = fallback; };
+      img.src = maxres;
+      return ytThumbCache[ytid] || maxres;
+    }
+
+    // Replace YouTube/audio/video iframes and elements with static placeholders for thumbnails
+    function replaceMediaForThumb(html) {
+      // YouTube iframes → thumbnail image with play icon
+      html = html.replace(/<iframe[^>]*data-ytid=['"]([^'"]+)['"][^>]*>[^<]*<\/iframe>/gi, function(match, ytid) {
+        var thumbUrl = resolveYtThumb(ytid);
+        return '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+          '<img src="' + thumbUrl + '" style="width:100%;height:100%;object-fit:cover;" />' +
+          '<div style="position:absolute;width:60px;height:42px;background:rgba(205,32,31,0.9);border-radius:10px;display:flex;align-items:center;justify-content:center;">' +
+          '<div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 18px;border-color:transparent transparent transparent #fff;margin-left:3px;"></div>' +
+          '</div></div>';
+      });
+      // Any remaining iframes (non-YouTube) → placeholder
+      html = html.replace(/<iframe[^>]*>[^<]*<\/iframe>/gi,
+        '<div style="width:100%;height:80px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">embedded content</div>');
+      // Audio elements → simple icon placeholder
+      html = html.replace(/<audio[^>]*>(?:[\s\S]*?<\/audio>)?/gi,
+        '<div style="width:100%;height:40px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;border-radius:4px;">&#9835; audio</div>');
+      return html;
+    }
+
+    function buildSlideSrcdoc(sectionInnerHtml, cleanCss, inverted, w, h) {
+      sectionInnerHtml = replaceMediaForThumb(sectionInnerHtml);
+      return '<!doctype html><html><head><meta charset="utf-8">' +
+        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">' +
+        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css">' +
+        '<style>' +
+          'html,body{margin:0;padding:0;overflow:hidden;}' +
+          '.reveal{width:' + w + 'px;height:' + h + 'px;overflow:hidden;}' +
+          '.reveal .slides{width:100%;height:100%;}' +
+          '.reveal .slides section{' +
+            'visibility:visible!important;' +
+            'display:flex!important;' +
+            'flex-direction:column;' +
+            'justify-content:center;' +
+            'top:0!important;' +
+            'width:100%;height:100%;' +
+            'padding:40px;box-sizing:border-box;' +
+          '}' +
+          '.reveal .slides section .fragment{visibility:visible!important;opacity:1!important;}' +
+          cleanCss +
+        '</style>' +
+        '</head><body>' +
+        '<div class="reveal' + inverted + '">' +
+          '<div class="slides"><section>' + sectionInnerHtml + '</section></div>' +
+        '</div>' +
+        '</body></html>';
+    }
+
+    function toggleCustomOverview() {
+      if (customOverviewOpen) {
+        closeCustomOverview();
+      } else {
+        openCustomOverview();
+      }
+    }
+
+    function openCustomOverview() {
+      customOverviewOpen = true;
       showingNote = $div_note.is(":visible");
       showingImageNote = $div_imagenote.is(":visible");
       showingSticky = $div_sticky.is(":visible");
@@ -489,20 +597,148 @@ jQuery(function($){
       $div_imagenote.hide();
       $div_sticky.hide();
       $left_switches.hide();
-
       $overview_icon.addClass("playing");
-      Reveal.configure({keyboard: keybindings_overview});
-    });
+      $('#overview_icon').removeClass('fa-grip').addClass('fa-compress');
+      Reveal.configure({keyboard: false, mouseWheel: false});
 
-    Reveal.on('overviewhidden', function(event) {
-      $left_switches.show();
-      if(showingSticky){
-        $div_sticky.show();
+      // Collect custom CSS (strip <style> tags)
+      var cleanCss = '';
+      document.querySelectorAll('style').forEach(function(s) {
+        cleanCss += s.textContent;
+      });
+      var inverted = document.getElementById('reveal-container').classList.contains('inverted') ? ' inverted' : '';
+      var w = pconf.width || 1280;
+      var h = pconf.height || 800;
+
+      // Build overlay
+      customOverlayEl = document.createElement('div');
+      customOverlayEl.id = 'custom-overview-overlay';
+      var grid = document.createElement('div');
+      grid.id = 'custom-overview-grid';
+
+      var sections = document.querySelectorAll('.reveal .slides > section > section');
+      var currentIndex = Reveal.getIndices().v || 0;
+
+      sections.forEach(function(sec, i) {
+        var thumb = document.createElement('div');
+        thumb.className = 'custom-overview-thumb' + (i === currentIndex ? ' active' : '');
+
+        var label = document.createElement('div');
+        label.className = 'custom-overview-label';
+        label.textContent = (i + 1);
+
+        var iframeWrap = document.createElement('div');
+        iframeWrap.className = 'custom-overview-iframe-wrap';
+
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('sandbox', 'allow-same-origin');
+        iframe.setAttribute('tabindex', '-1');
+        iframe.style.pointerEvents = 'none';
+        iframe.srcdoc = buildSlideSrcdoc(sec.innerHTML, cleanCss, inverted, w, h);
+
+        iframeWrap.appendChild(iframe);
+        thumb.appendChild(label);
+        thumb.appendChild(iframeWrap);
+
+        thumb.addEventListener('click', function() {
+          Reveal.slide(0, i, 0);
+          closeCustomOverview();
+        });
+
+        grid.appendChild(thumb);
+      });
+
+      customOverlayEl.appendChild(grid);
+      document.body.appendChild(customOverlayEl);
+
+      // Compute scale based on actual rendered thumb width
+      var firstThumb = grid.querySelector('.custom-overview-thumb');
+      if (firstThumb) {
+        var thumbW = firstThumb.clientWidth;
+        var scale = thumbW / w;
+        var thumbH = Math.round(h * scale);
+        var wraps = grid.querySelectorAll('.custom-overview-iframe-wrap');
+        wraps.forEach(function(wrap) {
+          wrap.style.height = thumbH + 'px';
+          var ifr = wrap.querySelector('iframe');
+          if (ifr) {
+            ifr.style.width = w + 'px';
+            ifr.style.height = h + 'px';
+            ifr.style.transform = 'scale(' + scale + ')';
+          }
+        });
       }
 
+      // Scroll to current slide
+      setTimeout(function() {
+        var activeThumb = grid.querySelector('.active');
+        if (activeThumb) activeThumb.scrollIntoView({ block: 'center', behavior: 'auto' });
+      }, 50);
+
+      // Arrow/Enter keys for overview navigation (remove first to prevent duplicates)
+      document.removeEventListener('keydown', overviewNavHandler);
+      document.addEventListener('keydown', overviewNavHandler);
+    }
+
+    function closeCustomOverview() {
+      customOverviewOpen = false;
+      if (customOverlayEl) {
+        customOverlayEl.remove();
+        customOverlayEl = null;
+      }
+      $left_switches.show();
+      if (showingSticky) $div_sticky.show();
       $overview_icon.removeClass("playing");
-      Reveal.configure({keyboard: keybindings});
-    });
+      $('#overview_icon').removeClass('fa-compress').addClass('fa-grip');
+      Reveal.configure({keyboard: keybindings, mouseWheel: true});
+      document.removeEventListener('keydown', overviewNavHandler);
+    }
+
+    // Global ESC handler — always active, toggles overview open/close
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Escape') return;
+      // Don't intercept when typing in input/textarea
+      var tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      toggleCustomOverview();
+    }, true);
+
+    function overviewNavHandler(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var grid = document.getElementById('custom-overview-grid');
+        if (grid) {
+          var active = grid.querySelector('.custom-overview-thumb.active');
+          if (active) {
+            var idx = parseInt(active.querySelector('.custom-overview-label').textContent, 10) - 1;
+            Reveal.slide(0, idx, 0);
+          }
+        }
+        closeCustomOverview();
+        return;
+      }
+      var grid = document.getElementById('custom-overview-grid');
+      if (!grid) return;
+      var thumbs = grid.querySelectorAll('.custom-overview-thumb');
+      if (!thumbs.length) return;
+      var cols = Math.round(grid.clientWidth / thumbs[0].offsetWidth);
+      var activeIdx = 0;
+      thumbs.forEach(function(t, i) { if (t.classList.contains('active')) activeIdx = i; });
+      var newIdx = activeIdx;
+      if (e.key === 'ArrowRight') newIdx = Math.min(activeIdx + 1, thumbs.length - 1);
+      else if (e.key === 'ArrowLeft') newIdx = Math.max(activeIdx - 1, 0);
+      else if (e.key === 'ArrowDown') newIdx = Math.min(activeIdx + cols, thumbs.length - 1);
+      else if (e.key === 'ArrowUp') newIdx = Math.max(activeIdx - cols, 0);
+      else return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      thumbs[activeIdx].classList.remove('active');
+      thumbs[newIdx].classList.add('active');
+      thumbs[newIdx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
 
     $(window).resize(function() {
       sqrScale = getSqrt();
@@ -1192,7 +1428,7 @@ jQuery(function($){
     $speaker_icon.removeClass("playing").css("visibility", "visible");
     $speaker_icon.show();
     $overview_icon.show();
-    Reveal.configure({ controls: true, keyboard: keybindings, overview: true});
+    Reveal.configure({ controls: true, keyboard: keybindings, overview: false});
     playingAll = false;
     stopVideo();
     stopSpeechSound();

@@ -19,7 +19,7 @@ Many operations available during the presentation can be performed using the mou
 | `a`                       | Play/Stop **automatic presentation**                                           |
 | `/`                       | Enter/Exit screen **blackout**                                                 |
 | `f`                       | Enter **fullscreen-mode**                                                      |
-| `ESC`                     | Enter **overview-mode**; Exit **fullscreen-mode**                              |
+| `ESC`                     | Toggle **overview mode** (grid view of all slides); Exit **fullscreen-mode**   |
 | `s`                       | Show/hide **sticky note**                                                      |
 | `p`                       | Enable/disable **laser pointer** mode                                          |
 | `SHIFT+TAB`               | Finish editing (de-focus) **sticky note**                                      |
@@ -276,7 +276,7 @@ Using curly brackets and the `quiz` command, you can create a quiz in such a way
 
 #### Multiple Choice Quiz (MCQ)
 
-You can create a multiple choice quiz with options that the audience can click to answer. Place the MCQ block inside a static paragraph (lines starting with `|`).
+You can create a multiple choice quiz with clickable options. The presenter clicks an option to reveal whether it is correct. Place the MCQ block inside a static paragraph (lines starting with `|`).
 
 ```text
 | {mcq: What is the capital of France?
@@ -444,9 +444,17 @@ Click on the magic wand icon in the upper left corner of the screen. From the ne
 
 Your input text, form settings, and uploaded local images are automatically saved to the browser's local storage. When you revisit the page, your previous work is restored automatically—even after closing the browser. Click **Clear Text** to clear only the editor text, or **Reset All** to clear the editor, saved settings, and all uploaded images.
 
+#### File Menu (Save / Load / Download)
+
+The **File** dropdown button provides file operations:
+
+- **Save Text** — Downloads the current editor text as a `.txt` file (`paradocs-source.txt`).
+- **Load Text** — Opens a file picker to load a `.txt` or `.md` file into the editor. Files are validated for type (text only), size (max 1MB), and content safety (script tags and event handlers are stripped).
+- **Download HTML** — Exports the presentation as a standalone HTML file (see below).
+
 #### Download HTML
 
-Click the **Download HTML** button to export your presentation as a standalone HTML file. The file includes all slide content, configuration, and styles embedded directly, so it can be opened in any browser without needing to access the Paradocs website. External library dependencies (jQuery, Reveal.js, etc.) are loaded via CDN.
+Click **Download HTML** in the File menu to export your presentation as a standalone HTML file. The file includes all slide content, configuration, and styles embedded directly, so it can be opened in any browser without needing to access the Paradocs website. External library dependencies (jQuery, Reveal.js, etc.) are loaded via CDN.
 
 **N.B.** YouTube video embeds are automatically converted to clickable thumbnail links in the exported file, because local HTML files cannot embed YouTube iframes due to browser security restrictions. Click the thumbnail to open the video on YouTube.
 
@@ -458,14 +466,29 @@ The presentation URL updates automatically as you navigate through slides and fr
 
 Click the **Preview** button (eye icon) next to the action buttons to open a filmstrip panel on the right side of the editor. The panel displays slide thumbnails that update automatically as you type (after an 800ms delay).
 
-- **Click** a thumbnail to open a lightbox showing the slide at full size. Use **arrow keys** to navigate between slides, and **Escape** or click outside to close.
-- **Double-click** a thumbnail to jump the editor cursor to the corresponding slide.
+- When **sync is ON** (default): **Click** a thumbnail to jump the editor cursor to the corresponding slide text and select it.
+- When **sync is OFF**: **Click** a thumbnail to open a lightbox showing the slide at full size. Use **arrow keys** to navigate between slides, and **Escape** or click outside to close.
 - The **sync toggle** (link icon in the editor header) enables automatic scrolling of the filmstrip to follow the editor cursor position.
 - The filmstrip width is adjustable by dragging the resize handle between the editor and the panel.
 
 If a parse error occurs while typing, the preview retains the last successfully rendered content.
 
 **N.B.** The filmstrip panel is only available when the browser window is wider than 900px. On smaller screens, the preview button is hidden automatically. The filmstrip uses virtual scrolling to keep memory usage low even with many slides.
+
+#### Overview Mode
+
+Press **ESC** during a presentation to toggle the overview mode. This displays all slides as a grid of thumbnails, making it easy to navigate large presentations.
+
+- Use **arrow keys** (←→↑↓) to move the selection between slides.
+- Press **Enter** to jump to the selected slide and return to the presentation.
+- Press **ESC** again to close the overview and return to the current slide.
+- **Click** any thumbnail to navigate directly to that slide.
+
+YouTube video slides show a thumbnail preview image instead of the embedded player. The grid icon in the top-right corner of the presentation screen also toggles the overview.
+
+#### Beep Sound
+
+Click the **bell icon** in the left toolbar of the presentation screen to enable a short beep sound that plays each time a fragment (sentence or list item) is advanced. This can help the audience notice each step in the presentation. Click the icon again to disable the beep.
 
 #### Invert Colors
 

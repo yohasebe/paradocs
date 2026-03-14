@@ -426,6 +426,20 @@ span.marker{
   font-size: 13px;
 }
 
+#button-row .dropdown-menu {
+  font-size: 13px;
+  min-width: auto;
+}
+
+#button-row .dropdown-item {
+  color: #707070;
+  padding: 4px 14px;
+}
+
+#button-row .dropdown-item:hover {
+  color: #333;
+}
+
 /* Settings layout */
 #settings-and-images {
   display: block;

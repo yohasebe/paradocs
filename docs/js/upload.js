@@ -412,6 +412,17 @@ function buildPresentation() {
   return { slides: slides, config: config, css: css, colorInverted: colorInverted };
 }
 
+// Pre-calculate submit button width to prevent resize on click
+(function() {
+  var $btn = $('#submit_button');
+  var originalHtml = $btn.html();
+  var originalWidth = $btn.outerWidth();
+  $btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Converting...');
+  var convertingWidth = $btn.outerWidth();
+  $btn.html(originalHtml);
+  $btn.css('min-width', Math.max(originalWidth, convertingWidth) + 'px');
+})();
+
 $('#submit_button').on('click', function(){
   var $btn = $(this);
   var originalText = $btn.html();
@@ -470,6 +481,80 @@ $('#download_button').on('click', function(){
       $btn.html(originalText).removeClass('disabled');
     }, 2000);
   }, 50);
+});
+
+// Save source text as .txt file
+$('#save_text_button').on('click', function(e) {
+  e.preventDefault();
+  var text = editor.getValue();
+  if (!text.trim()) return;
+  var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'paradocs-source.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// Load source text from .txt file
+$('#load_text_button').on('click', function(e) {
+  e.preventDefault();
+  document.getElementById('load-text-input').click();
+});
+
+function showLoadMessage(msg) {
+  var $msg = $('#textarea_message');
+  $msg.text(msg).show();
+  setTimeout(function() { $msg.fadeOut(); }, 4000);
+}
+
+$('#load-text-input').on('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  // Validate file type
+  var validTypes = ['text/plain', 'text/markdown', ''];
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (validTypes.indexOf(file.type) === -1 && ext !== 'txt' && ext !== 'md') {
+    showLoadMessage('Only .txt and .md files are allowed.');
+    this.value = '';
+    return;
+  }
+
+  // Validate file size (max 1MB)
+  if (file.size > 1024 * 1024) {
+    showLoadMessage('File is too large. Maximum size is 1MB.');
+    this.value = '';
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var text = ev.target.result;
+
+    // Security: reject binary / non-text content
+    if (/[\x00-\x08\x0E-\x1F]/.test(text)) {
+      showLoadMessage('File contains invalid characters.');
+      return;
+    }
+
+    // Security: strip script tags and event handler attributes
+    text = text.replace(/<script[\s\S]*?<\/script>/gi, '');
+    text = text.replace(/\bon\w+\s*=\s*(['"]?)[\s\S]*?\1/gi, '');
+
+    editor.setValue(text, -1);
+    editor.focus();
+  };
+  reader.onerror = function() {
+    showLoadMessage('Failed to read file.');
+  };
+  reader.readAsText(file, 'UTF-8');
+
+  // Reset input so same file can be re-loaded
+  this.value = '';
 });
 
 function saveFormSettings(config) {

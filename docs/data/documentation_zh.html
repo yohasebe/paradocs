@@ -53,7 +53,7 @@
 </tr>
 <tr>
 <td><code>ESC</code></td>
-<td>进入<strong>概览模式</strong>；退出<strong>全屏模式</strong></td>
+<td>切换<strong>概览模式</strong>（所有幻灯片的网格视图）; 退出<strong>全屏模式</strong></td>
 </tr>
 <tr>
 <td><code>s</code></td>
@@ -313,13 +313,13 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 </code></pre>
 <p><strong>注意</strong> 注释和弹出图片可用于&quot;普通段落&quot;和&quot;无序/有序列表&quot;中（不适用于静态段落）。使用自动分句功能时无法显示注释和弹出图片。花括号 <code>{ }</code> 及其内部的文本将被删除。</p>
 <h4>测验</h4>
-<p>使用花括号和 <code>quiz</code> 命令，您可以创建一种测验效果，最初将文本对观众隐藏，在适当时机再予以揭示。</p>
+<p>使用花括号和 <code>quiz</code> 命令，您可以创建测验效果——文本初始处于隐藏状态，演示者在适当时机点击即可揭示答案。</p>
 <pre><code class="language-text">| In a static context, words and phrases in {curly brackets}
 | will be rendered as {quiz items} overlayed by an opaque box.
 </code></pre>
 <p><strong>注意</strong> 创建测验时，必须使用静态段落或静态有序/无序列表。</p>
 <h4>选择题（MCQ）</h4>
-<p>您可以创建带有可点击选项的选择题，供观众作答。将 MCQ 块放在静态段落中（以 <code>|</code> 开头的行）。</p>
+<p>您可以创建带有可点击选项的选择题。演示者点击选项后会显示正误结果。将 MCQ 块放在静态段落中（以 <code>|</code> 开头的行）。</p>
 <pre><code class="language-text">| {mcq: What is the capital of France?
 |   a) London
 |   b) Berlin
@@ -411,20 +411,38 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <p>点击屏幕左上角的魔法棒图标。从当前幻灯片的下一个片段到整个演示文稿的最后一个片段，文本朗读、视频播放等将自动依次执行。</p>
 <h4>自动保存</h4>
 <p>输入的文本、表单设置和上传的本地图片会自动保存到浏览器的本地存储中。即使关闭浏览器，再次访问页面时之前的工作内容也会自动恢复。点击<strong>清除文本</strong>仅清除编辑器文本，点击<strong>全部重置</strong>可清除文本、设置和所有上传的图片。</p>
+<h4>文件菜单（保存 / 加载 / 下载）</h4>
+<p><strong>文件</strong>下拉按钮提供文件操作：</p>
+<ul>
+<li><strong>保存文本</strong> — 将编辑器当前文本下载为 <code>.txt</code> 文件（<code>paradocs-source.txt</code>）。</li>
+<li><strong>加载文本</strong> — 打开文件选择器，将 <code>.txt</code> 或 <code>.md</code> 文件加载到编辑器中。文件类型（仅文本）、大小（最大 1MB）和内容安全性（script 标签和事件处理器将被去除）会被验证。</li>
+<li><strong>下载HTML</strong> — 将演示文稿导出为独立的 HTML 文件（参见下文）。</li>
+</ul>
 <h4>下载 HTML</h4>
-<p>点击<strong>下载 HTML</strong>按钮，将您的演示文稿导出为独立的 HTML 文件。该文件包含所有幻灯片内容、配置和样式，因此无需访问 Paradocs 网站即可在任何浏览器中打开。外部库依赖（jQuery、Reveal.js 等）通过 CDN 加载。</p>
+<p>点击文件菜单中的<strong>下载HTML</strong>，将您的演示文稿导出为独立的 HTML 文件。该文件包含所有幻灯片内容、配置和样式，因此无需访问 Paradocs 网站即可在任何浏览器中打开。外部库依赖（jQuery、Reveal.js 等）通过 CDN 加载。</p>
 <p><strong>注意</strong> 在导出的文件中，YouTube 视频嵌入会自动转换为可点击的缩略图链接，因为由于浏览器安全限制，本地 HTML 文件无法嵌入 YouTube iframe。点击缩略图即可在 YouTube 上打开视频。</p>
 <h4>幻灯片位置与内部链接</h4>
 <p>演示文稿的 URL 会在您浏览幻灯片和片段时自动更新（例如 <code>#/0/1/3</code>）。您可以利用这些基于哈希的 URL 创建内部链接，在演示文稿内跳转到特定幻灯片——例如使用锚标签 <code>&lt;a href=&quot;#/2&quot;&gt;跳转到第3张幻灯片&lt;/a&gt;</code> 从一张幻灯片链接到另一张。</p>
 <h4>胶片条预览</h4>
 <p>点击操作按钮旁边的<strong>预览</strong>按钮（眼睛图标），即可在编辑器右侧打开胶片条面板。面板会显示幻灯片缩略图，在您输入文本时自动更新（延迟800毫秒）。</p>
 <ul>
-<li><strong>单击</strong>缩略图可在灯箱中放大显示幻灯片。使用<strong>方向键</strong>在幻灯片间导航，按 <strong>Escape</strong> 或点击外部关闭。</li>
-<li><strong>双击</strong>缩略图可将编辑器光标跳转到对应幻灯片的位置。</li>
+<li><strong>同步开启</strong>时（默认）：<strong>单击</strong>缩略图可将编辑器光标跳转到对应幻灯片文本并选中。</li>
+<li><strong>同步关闭</strong>时：<strong>单击</strong>缩略图可在灯箱中放大显示幻灯片。使用<strong>方向键</strong>在幻灯片间导航，按 <strong>Escape</strong> 或点击外部关闭。</li>
 <li>编辑器标题栏中的<strong>同步开关</strong>（链接图标）可启用胶片条自动滚动以跟随光标位置。</li>
 <li>拖动编辑器与面板之间的调整手柄可改变胶片条宽度。</li>
 </ul>
 <p>如果输入过程中发生解析错误，预览会保留上次成功渲染的内容。</p>
 <p><strong>注意</strong> 胶片条面板仅在浏览器窗口宽度超过 900px 时可用。在较小的屏幕上，预览按钮会自动隐藏。胶片条采用虚拟滚动技术，即使幻灯片数量很多也能保持较低的内存使用量。</p>
+<h4>概览模式</h4>
+<p>在演示过程中按 <strong>ESC</strong> 键可切换概览模式。所有幻灯片会以网格形式的缩略图展示，便于快速浏览大型演示文稿。</p>
+<ul>
+<li>使用<strong>方向键</strong>（←→↑↓）在幻灯片之间移动选择。</li>
+<li>按 <strong>Enter</strong> 跳转到所选幻灯片并返回演示。</li>
+<li>再次按 <strong>ESC</strong> 关闭概览并返回当前幻灯片。</li>
+<li><strong>单击</strong>任意缩略图可直接跳转到该幻灯片。</li>
+</ul>
+<p>YouTube 视频幻灯片会显示缩略图预览而非嵌入播放器。演示屏幕右上角的网格图标也可以切换概览模式。</p>
+<h4>提示音</h4>
+<p>点击演示屏幕左侧工具栏的<strong>铃铛图标</strong>，可在每次推进一个片段（句子或列表项）时播放一声短促的提示音。这有助于让观众注意到演示中的每个步骤。再次点击图标可禁用提示音。</p>
 <h4>反色</h4>
 <p>勾选<strong>反色</strong>复选框可反转高亮部分的显示方式。默认情况下，高亮文本为彩色文字配透明背景；反转后，高亮颜色将作为填充背景，文字变为白色。</p>
