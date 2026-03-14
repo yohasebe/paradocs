@@ -397,10 +397,27 @@ To display an image on a slide, make sure that the above command is the only blo
 <hr>
 <h3>6. Additional Features</h3>
 <h4>Text-to-Speech</h4>
-<p>Sentences in regular paragraphs can be played back with a text-to-speech engine available in your browser. The available languages and audio variations vary by OS and browser.</p>
+<p>Sentences in regular paragraphs can be read aloud using the browser&#39;s built-in Web Speech API (<code>speechSynthesis</code>). This is a standard browser API, not limited to Chrome — it works in Safari, Firefox, Edge, and other modern browsers.</p>
+<p>The available voices include both browser-provided voices (e.g., Google TTS in Chrome, Microsoft TTS in Edge) and OS-level system voices (e.g., macOS Siri voices, Windows SAPI voices). You can select the <strong>Speech Language</strong> and <strong>Speech Voice</strong> from the dropdowns on the input page. The <strong>Speech Rate</strong> can also be adjusted, though some voices may not support rate changes.</p>
 <p>When TTS is available for highlighted content, a speaker icon appears in the upper left corner of the presentation screen. Click on this icon or press the <code>.</code> key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.</p>
 <p>During TTS playback, the word currently being spoken is highlighted with a yellow background. This word-level highlighting helps the audience follow along with the read-aloud text. The highlighting is automatically cleaned up when playback ends or is stopped.</p>
-<p><strong>N.B.</strong> Word-level highlighting depends on the browser&#39;s <code>onboundary</code> event support. It works well in Chrome and Edge but may not be available in all browsers.</p>
+<p><strong>N.B.</strong> Word-level highlighting depends on the browser&#39;s <code>onboundary</code> event support. It works well in Chrome and Edge but may not be available in all browsers. The set of available languages and voices depends entirely on your OS and browser — installing additional language packs on your OS may add more voices.</p>
+<h4>Cloud TTS (Advanced)</h4>
+<p>In addition to the browser&#39;s built-in TTS, Paradocs supports cloud-based text-to-speech via <strong>OpenAI</strong> and <strong>ElevenLabs</strong> APIs. Cloud TTS offers higher-quality, more natural-sounding voices.</p>
+<p>To use Cloud TTS, expand the <strong>Cloud TTS (Advanced)</strong> section on the input page:</p>
+<ol>
+<li><strong>TTS Provider</strong>: Select <em>OpenAI</em> or <em>ElevenLabs</em> from the dropdown. Selecting a cloud provider hides the browser TTS controls and shows cloud-specific options.</li>
+<li><strong>API Key</strong>: Enter your API key for the selected provider. Click <strong>Verify</strong> to check that the key is valid. Your key is stored only in your browser&#39;s local storage and is never sent to any server other than the provider&#39;s API.</li>
+<li><strong>Voice</strong>: For OpenAI, choose from a fixed list of voices (alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer). For ElevenLabs, the voice list is fetched from your account after entering a valid API key.</li>
+<li><strong>Speed</strong> (OpenAI only): Adjust the playback speed from 0.5× to 2.0×.</li>
+</ol>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>Cloud TTS does not support word-level highlighting during playback (the browser&#39;s <code>onboundary</code> event is not available for cloud-generated audio).</li>
+<li>An active internet connection and a valid API key are required.</li>
+<li>API usage may incur costs according to the provider&#39;s pricing.</li>
+<li>When exporting as a standalone HTML file, API keys are <strong>not</strong> included in the exported file for security reasons. Cloud TTS will not be available in exported files.</li>
+</ul>
 <h4>Sticky Note</h4>
 <p>You can show your audience what comes to mind during your presentation by writing it in a sticky note. </p>
 <p>You can show or hide the sticky note by clicking its icon at the top left of the presentation screen. The contents of the sticky note will be retained even if the slide changes.</p>

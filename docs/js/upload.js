@@ -114,7 +114,7 @@ editor.renderer.updateFontSize();
 editor.renderer.setOption('showPrintMargin', false);
 editor.renderer.setOption('showInvisibles', true);
 editor.renderer.setOption('showGutter', false);
-editor.setAutoScrollEditorIntoView(true);
+editor.setAutoScrollEditorIntoView(false);
 
 //////////////////// Auto-save setup ///////////////
 var langKey = { 'ja-JP': 'ja_', 'zh-CN': 'zh_', 'ko-KR': 'ko_' }[default_lang] || 'en_';
@@ -144,6 +144,33 @@ if (autosave.hasSavedData()) {
             setTimeout(function() {
               if (savedSettings.speech_voice) $('#voice_selected').val(savedSettings.speech_voice);
               if (savedSettings.speech_rate) $('#rate_selected').val(savedSettings.speech_rate);
+            }, 200);
+          }
+          // Restore per-provider API keys
+          if (window._cloudKeys) {
+            if (savedSettings.tts_api_key_openai) window._cloudKeys.openai = savedSettings.tts_api_key_openai;
+            if (savedSettings.tts_api_key_elevenlabs) window._cloudKeys.elevenlabs = savedSettings.tts_api_key_elevenlabs;
+            // Legacy: single key field
+            if (!savedSettings.tts_api_key_openai && !savedSettings.tts_api_key_elevenlabs && savedSettings.tts_api_key) {
+              if (savedSettings.tts_provider) window._cloudKeys[savedSettings.tts_provider] = savedSettings.tts_api_key;
+            }
+          }
+          if (savedSettings.tts_provider && savedSettings.tts_provider !== 'browser') {
+            $('#tts_provider_selected').val(savedSettings.tts_provider).trigger('change');
+            // Wait for voice list to populate, then restore selection
+            var voiceRestoreTries = 20;
+            var voiceRestoreTimer = setInterval(function() {
+              var $opts = $('#tts_cloud_voice_selected option');
+              var hasVoices = $opts.length > 0 && $opts.first().val() !== '';
+              // Also stop early if voices failed to load (error message option present)
+              var hasFailed = $opts.length > 0 && $opts.first().text().indexOf('Failed') >= 0;
+              if (hasVoices || hasFailed || --voiceRestoreTries <= 0) {
+                clearInterval(voiceRestoreTimer);
+                if (hasVoices && savedSettings.tts_cloud_voice) {
+                  $('#tts_cloud_voice_selected').val(savedSettings.tts_cloud_voice);
+                }
+                if (savedSettings.tts_cloud_rate) $('#tts_cloud_rate_selected').val(savedSettings.tts_cloud_rate);
+              }
             }, 200);
           }
         }
@@ -182,8 +209,8 @@ function updateCharCounter() {
 editor.session.on('change', function() {
   autosave.debouncedSaveText(editor.getValue());
   updateCharCounter();
-  // Update live preview
-  if (typeof PreviewPanel !== 'undefined') {
+  // Update live preview (skip if style panel is inserting to prevent scroll)
+  if (typeof PreviewPanel !== 'undefined' && !(typeof window._isStylePanelInserting === 'function' && window._isStylePanelInserting())) {
     PreviewPanel.scheduleUpdate();
   }
 });
@@ -197,6 +224,164 @@ editor.selection.on('changeCursor', function() {
 
 // Initial counter update
 $(function() { updateCharCounter(); });
+
+//////////////////// Style panel ///////////////
+(function() {
+  var $toggle = $('#style-panel-toggle');
+  var $panel = $('#style-panel');
+  if (!$toggle.length || !$panel.length) return;
+
+  // Toggle panel visibility
+  $toggle.on('click', function() {
+    if ($panel.is(':visible')) {
+      $panel.slideUp(150, function() {
+        $toggle.removeClass('active');
+        if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+          PreviewPanel.syncHeight();
+        }
+      });
+    } else {
+      $panel.slideDown(150, function() {
+        $toggle.addClass('active');
+        if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+          PreviewPanel.syncHeight();
+        }
+      });
+    }
+  });
+
+  // Prevent ALL mousedown within the panel from stealing editor focus
+  $panel[0].addEventListener('mousedown', function(e) {
+    e.preventDefault();
+  }, true);
+
+  // Snippet definitions: what to insert for each data-insert value
+  var snippets = {
+    'slide-sep':    { line: '\n----\n\n', wrap: false },
+    'deck-sep':     { line: '\n====\n\n', wrap: false },
+
+    'static':       { prefix: '| ', wrap: false, lineStart: true, blockAware: true },
+    'auto-split':   { prefix: '!! ', wrap: false, lineStart: true, blockAware: true },
+    'h1':           { prefix: '# ', wrap: false, lineStart: true },
+    'h2':           { prefix: '## ', wrap: false, lineStart: true },
+    'h3':           { prefix: '### ', wrap: false, lineStart: true },
+    'bold':         { before: '**', after: '**', placeholder: 'text' },
+    'italic':       { before: '*', after: '*', placeholder: 'text' },
+    'underline':    { before: '_', after: '_', placeholder: 'text' },
+    'strikethrough':{ before: '~~', after: '~~', placeholder: 'text' },
+    'highlight':    { before: '==', after: '==', placeholder: 'text' },
+    'code-inline':  { before: '`', after: '`', placeholder: 'code' },
+    'ul':           { prefix: '* ', wrap: false, lineStart: true, blockAware: true },
+    'ol':           { prefix: '1. ', wrap: false, lineStart: true, blockAware: true, numbered: true },
+    'blockquote':   { prefix: '> ', wrap: false, lineStart: true, blockAware: true },
+    'code-block':   { line: '\n```\ncode\n```\n', wrap: false, blockWrap: true, wrapBefore: '```\n', wrapAfter: '\n```' },
+    'table':        { line: '\n| Header 1 | Header 2 | Header 3 |\n|----------|----------|----------|\n| Cell 1   | Cell 2   | Cell 3   |\n', wrap: false },
+    'link':         { before: '[', after: '](url)', placeholder: 'text' },
+    'image':        { line: 'image: https://\n', wrap: false, lineStart: true },
+    'youtube':      { line: 'youtube: https://www.youtube.com/watch?v=\n', wrap: false, lineStart: true },
+    'video':        { line: 'video: https://\n', wrap: false, lineStart: true },
+    'audio':        { line: 'audio: https://\n', wrap: false, lineStart: true },
+    'note':         { before: '{note: ', after: '}', placeholder: 'note text' },
+    'image-note':   { before: '{image: ', after: '}', placeholder: 'url' },
+    'hidden':       { line: '| text {hidden text} text\n', wrap: false, lineStart: true },
+    'mcq':          { line: '| {mcq: Question?\n|   a) Option A\n|   *b) Correct Answer\n|   c) Option C\n| }\n', wrap: false, lineStart: true }
+  };
+
+  // Flag to suppress preview update during snippet insertion
+  var _suppressPreview = false;
+  window._isStylePanelInserting = function() { return _suppressPreview; };
+
+  // Scroll guard: intercept and cancel any page scroll during insertion
+  var _scrollGuard = false;
+  var _guardScrollY = 0;
+  window.addEventListener('scroll', function() {
+    if (_scrollGuard) window.scrollTo(0, _guardScrollY);
+  }, { passive: false });
+
+  $panel.on('click', '.sp-btn', function() {
+    var key = $(this).data('insert');
+    var snip = snippets[key];
+    if (!snip) return;
+
+    // Activate scroll guard
+    _guardScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    _scrollGuard = true;
+    var editorScrollTop = editor.session.getScrollTop();
+
+    // Suppress preview update
+    _suppressPreview = true;
+
+    var session = editor.session;
+    var selection = editor.selection;
+    var range = selection.getRange();
+    var selectedText = session.getTextRange(range);
+
+    // Block-aware: apply prefix to each selected line
+    if (selectedText && snip.blockAware) {
+      var lines = selectedText.split('\n');
+      var num = 0;
+      var result = lines.map(function(ln) {
+        if (!ln.trim()) return ln;
+        if (snip.numbered) {
+          num++;
+          return num + '. ' + ln;
+        }
+        return snip.prefix + ln;
+      }).join('\n');
+      session.replace(range, result);
+    // Block wrap: wrap selected text in delimiters (e.g. ```)
+    } else if (selectedText && snip.blockWrap) {
+      session.replace(range, snip.wrapBefore + selectedText + snip.wrapAfter);
+    // Line insert (separators, templates)
+    } else if (snip.line) {
+      var pos = editor.getCursorPosition();
+      var line = session.getLine(pos.row);
+      var text = snip.line;
+      if (snip.lineStart && pos.column > 0 && line.length > 0) {
+        text = '\n' + text;
+      }
+      session.insert(pos, text);
+    // Prefix at line start (no selection)
+    } else if (snip.prefix && snip.lineStart) {
+      var pos = editor.getCursorPosition();
+      var line = session.getLine(pos.row);
+      if (pos.column === 0 || line.trim().length === 0) {
+        session.insert({ row: pos.row, column: 0 }, snip.prefix);
+      } else {
+        session.insert(pos, '\n' + snip.prefix);
+      }
+    // Inline wrap (bold, italic, etc.)
+    } else if (snip.before !== undefined) {
+      if (selectedText) {
+        var replacement = snip.before + selectedText + snip.after;
+        session.replace(range, replacement);
+      } else {
+        var pos = editor.getCursorPosition();
+        var text = snip.before + snip.placeholder + snip.after;
+        session.insert(pos, text);
+        var startCol = pos.column + snip.before.length;
+        var endCol = startCol + snip.placeholder.length;
+        selection.setRange({
+          start: { row: pos.row, column: startCol },
+          end: { row: pos.row, column: endCol }
+        });
+      }
+    }
+
+    // Restore editor internal scroll
+    editor.renderer.scrollToY(editorScrollTop);
+
+    // Release scroll guard, refocus editor, then update preview
+    setTimeout(function() {
+      editor.focus();
+      _scrollGuard = false;
+      _suppressPreview = false;
+      if (typeof PreviewPanel !== 'undefined') {
+        PreviewPanel.scheduleUpdate();
+      }
+    }, 300);
+  });
+})();
 
 //////////////////// Speech setup ///////////////
 try{
@@ -258,9 +443,15 @@ function setupLanguages(refresh, default_lang){
   }
 
   if($('#lang_selected option').length == 0){
+    var displayNames = null;
+    try { displayNames = new Intl.DisplayNames([navigator.language || 'en'], { type: 'language' }); } catch(e) {}
     for (var i in vlangs){
       var key = vlangs[i];
-      $('#lang_selected').append('<option value="' + key +'">' + key + '</option>');
+      var label = key;
+      if (displayNames) {
+        try { label = displayNames.of(key); } catch(e) {}
+      }
+      $('#lang_selected').append('<option value="' + key +'">' + label + '</option>');
     }
     if (vlangs.length > 0){
       var dl = vlangs[0];
@@ -308,6 +499,145 @@ $("#voice_selected").change(function(){
   setupRates(true);
 });
 
+//////////////////// Cloud TTS setup ///////////////
+(function() {
+  if (typeof CloudTTS === 'undefined') return;
+
+  // Show cloud TTS section once speech controls are visible
+  var cloudWait = setInterval(function() {
+    if ($('#lang_controller').is(':visible') || $('#lang_selected option').length > 0) {
+      clearInterval(cloudWait);
+      $('#cloud_tts_section').show();
+    }
+  }, 200);
+
+  // Toggle controls visibility
+  $('#cloud_tts_toggle').on('click', function() {
+    var $controls = $('#cloud_tts_controls');
+    var $caret = $('#cloud_tts_caret');
+    if ($controls.is(':visible')) {
+      $controls.slideUp(200);
+      $caret.removeClass('fa-caret-down').addClass('fa-caret-right');
+    } else {
+      $controls.slideDown(200);
+      $caret.removeClass('fa-caret-right').addClass('fa-caret-down');
+    }
+  });
+
+  // Per-provider API key storage
+  var _cloudKeys = { openai: '', elevenlabs: '' };
+  var _prevProvider = 'browser';
+
+  // Provider change
+  $('#tts_provider_selected').on('change', function() {
+    var provider = $(this).val();
+
+    // Stop any in-progress cloud TTS playback before switching
+    if (typeof CloudTTS !== 'undefined' && CloudTTS.isPlaying()) {
+      CloudTTS.stop();
+    }
+
+    // Save current key before switching
+    if (_prevProvider !== 'browser') {
+      _cloudKeys[_prevProvider] = $('#tts_api_key').val() || '';
+    }
+
+    if (provider === 'browser') {
+      $('#tts_api_key_controller').hide();
+      $('#tts_cloud_voice_controller').hide();
+      $('#tts_cloud_rate_controller').hide();
+      $('#lang_controller').show();
+      $('#voice_controller').show();
+      $('#rate_controller').show();
+    } else {
+      // Restore saved key for this provider
+      $('#tts_api_key').val(_cloudKeys[provider] || '');
+      $('#tts_api_key_status').text('');
+      $('#tts_api_key_controller').show();
+      $('#tts_cloud_voice_controller').show();
+      $('#lang_controller').hide();
+      $('#voice_controller').hide();
+      $('#rate_controller').hide();
+      // OpenAI supports speed; ElevenLabs does not
+      if (provider === 'openai') {
+        $('#tts_cloud_rate_controller').show();
+      } else {
+        $('#tts_cloud_rate_controller').hide();
+      }
+      populateCloudVoices(provider);
+    }
+
+    _prevProvider = provider;
+  });
+
+  // API key change (for ElevenLabs voice list refresh)
+  $('#tts_api_key').on('change', function() {
+    var provider = $('#tts_provider_selected').val();
+    if (provider === 'elevenlabs') {
+      populateCloudVoices(provider);
+    }
+    // Clear previous verification status
+    $('#tts_api_key_status').text('');
+  });
+
+  // Verify API key
+  $('#tts_api_key_verify').on('click', function() {
+    var provider = $('#tts_provider_selected').val();
+    var apiKey = $('#tts_api_key').val();
+    var $status = $('#tts_api_key_status');
+    var $btn = $(this);
+
+    if (!apiKey) {
+      $status.text('Enter a key first').css('color', '#e15759');
+      return;
+    }
+
+    $btn.addClass('disabled');
+    $status.text('Verifying...').css('color', '#999');
+
+    CloudTTS.verifyApiKey(provider, apiKey).then(function(result) {
+      $btn.removeClass('disabled');
+      if (result.valid) {
+        $status.html('<i class="fa-solid fa-circle-check"></i> Valid').css('color', '#59a14f');
+      } else {
+        $status.html('<i class="fa-solid fa-circle-xmark"></i> ' + result.error).css('color', '#e15759');
+      }
+    });
+  });
+
+  function populateCloudVoices(provider) {
+    var $select = $('#tts_cloud_voice_selected');
+    $select.empty();
+
+    if (provider === 'openai') {
+      CloudTTS.OPENAI_VOICES.forEach(function(v) {
+        $select.append('<option value="' + v + '">' + v + '</option>');
+      });
+    } else if (provider === 'elevenlabs') {
+      var apiKey = $('#tts_api_key').val();
+      if (!apiKey) {
+        $select.append('<option value="">-- Enter API key first --</option>');
+        return;
+      }
+      $select.append('<option value="">Loading...</option>');
+      CloudTTS.fetchVoices(apiKey).then(function(voices) {
+        $select.empty();
+        voices.forEach(function(v) {
+          $select.append($('<option>').val(v.voice_id).text(v.name));
+        });
+      }).catch(function(err) {
+        $select.empty();
+        $select.append('<option value="">Failed to load voices</option>');
+        console.error('Failed to fetch ElevenLabs voices:', err.message);
+      });
+    }
+  }
+
+  // Expose for settings restore
+  window._populateCloudVoices = populateCloudVoices;
+  window._cloudKeys = _cloudKeys;
+})();
+
 //////////////////// Default config (matches paradocs.conf) ///////////////
 var DEFAULT_CONFIG = {
   "para_version": "0.9.0",
@@ -343,6 +673,10 @@ function buildPresentation() {
   config.speech_voice = $('#voice_selected').val() || '';
   config.speech_lang = $('#lang_selected').val() || default_lang;
   config.speech_rate = $('#rate_selected').val() || '1.0';
+  config.tts_provider = $('#tts_provider_selected').val() || 'browser';
+  config.tts_api_key = $('#tts_api_key').val() || '';
+  config.tts_cloud_voice = $('#tts_cloud_voice_selected').val() || '';
+  config.tts_cloud_rate = $('#tts_cloud_rate_selected').val() || '1.0';
 
   var fontSize = parseInt($('#font_size_selected').val()) || 40;
   config.font_size = fontSize;
@@ -568,7 +902,19 @@ function saveFormSettings(config) {
     highlight_background_color: $('#highlight_background_color_selected').val() || '#4e79a7',
     resolution: $('#resolution_selected').val() || '1280x800',
     wallpaper: $('#wallpaper_selected').val() || 'sandpaper.png',
-    color_inverted: config.color_inverted
+    color_inverted: config.color_inverted,
+    tts_provider: config.tts_provider || 'browser',
+    // Sync current input to _cloudKeys before saving
+    tts_api_key_openai: (function() {
+      if (config.tts_provider === 'openai' && config.tts_api_key) window._cloudKeys.openai = config.tts_api_key;
+      return (window._cloudKeys && window._cloudKeys.openai) || '';
+    })(),
+    tts_api_key_elevenlabs: (function() {
+      if (config.tts_provider === 'elevenlabs' && config.tts_api_key) window._cloudKeys.elevenlabs = config.tts_api_key;
+      return (window._cloudKeys && window._cloudKeys.elevenlabs) || '';
+    })(),
+    tts_cloud_voice: config.tts_cloud_voice || '',
+    tts_cloud_rate: config.tts_cloud_rate || '1.0'
   });
 }
 
@@ -979,15 +1325,14 @@ $("#font_size_selected").change(function(){
 
 $("#font_family_selected").change(function(){
   var fontfamily_selected = $("#font_family_selected").val();
+  var fontFamily;
   if (fontfamily_selected == "sans"){
-    $('#accent_color_sample').css("fontFamily", '"News Cycle", Impact, sans-serif');
-    $('#highlight_background_color_sample').css("fontFamily", '"Lato", sans-serif');
+    fontFamily = '"Lato", sans-serif';
   } else if(fontfamily_selected == "serif"){
-    $('#accent_color_sample').css("fontFamily", '"Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif');
-    $('#highlight_background_color_sample').css("fontFamily", '"Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif');
+    fontFamily = '"Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif';
   } else if(fontfamily_selected == "fun"){
-    $('#accent_color_sample').css("fontFamily", '"Comic Sans MS", "\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro W4","\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro","Hiragino Maru Gothic Pro", "HG\u4E38\uFF7A\uFF9E\uFF7C\uFF6F\uFF78M-PRO","HGMaruGothicMPRO", cursive, sans-serif');
-    $('#highlight_background_color_sample').css("fontFamily", '"Comic Sans MS", "\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro W4","\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro","Hiragino Maru Gothic Pro","HG\u4E38\uFF7A\uFF9E\uFF7C\uFF6F\uFF78M-PRO","HGMaruGothicMPRO", cursive, sans-serif');
+    fontFamily = '"Comic Sans MS", "\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro W4","\u30D2\u30E9\u30AE\u30CE\u4E38\u30B4 Pro","Hiragino Maru Gothic Pro","HG\u4E38\uFF7A\uFF9E\uFF7C\uFF6F\uFF78M-PRO","HGMaruGothicMPRO", cursive, sans-serif';
   }
+  $('.color-sample').css("fontFamily", fontFamily);
   if (typeof PreviewPanel !== 'undefined') PreviewPanel.forceUpdate();
 });

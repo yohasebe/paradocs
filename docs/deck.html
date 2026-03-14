@@ -213,7 +213,7 @@
     <script>
     // Only load TTS and presentation scripts in normal mode (not preview iframe)
     if (!isPreviewMode) {
-      var scripts = ['js/tts-highlight.js', 'js/paradocs.js'];
+      var scripts = ['js/cloud-tts.js', 'js/tts-highlight.js', 'js/paradocs.js'];
       (function loadNext(i) {
         if (i >= scripts.length) return;
         var s = document.createElement('script');

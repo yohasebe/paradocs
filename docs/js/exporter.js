@@ -52,7 +52,13 @@
    * Generate a complete standalone HTML string.
    */
   Exporter.generateHTML = function (slidesHtml, config, cssText, inverted, paradocsScript, ttsHighlightScript) {
-    var configJson = safeEmbed(JSON.stringify(config));
+    // Strip sensitive data (API keys) from exported config
+    var exportConfig = JSON.parse(JSON.stringify(config));
+    delete exportConfig.tts_api_key;
+    delete exportConfig.tts_provider;
+    delete exportConfig.tts_cloud_voice;
+    delete exportConfig.tts_cloud_rate;
+    var configJson = safeEmbed(JSON.stringify(exportConfig));
     var safeSlidesHtml = safeEmbed(Exporter.convertYouTubeEmbeds(slidesHtml));
     var safeCssText = safeEmbed(cssText);
     var safeParadocsScript = paradocsScript ? safeEmbed(paradocsScript) : '';

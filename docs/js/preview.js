@@ -37,11 +37,10 @@ var PreviewPanel = (function() {
       toggle();
     });
 
-    var syncBtn = document.getElementById('filmstrip-sync-btn');
-    if (syncBtn) {
-      syncBtn.addEventListener('click', function() {
-        syncEnabled = !syncEnabled;
-        syncBtn.classList.toggle('active', syncEnabled);
+    var syncCheckbox = document.getElementById('filmstrip-sync-checkbox');
+    if (syncCheckbox) {
+      syncCheckbox.addEventListener('change', function() {
+        syncEnabled = syncCheckbox.checked;
       });
     }
 
@@ -132,8 +131,12 @@ var PreviewPanel = (function() {
   function syncFilmstripHeight() {
     var textarea = document.getElementById('input-textarea');
     var editorHeader = document.getElementById('editor-header');
+    var stylePanel = document.getElementById('style-panel');
     if (textarea && filmstripPanel) {
       var h = textarea.offsetHeight + (editorHeader ? editorHeader.offsetHeight : 0);
+      if (stylePanel && stylePanel.offsetHeight > 0 && stylePanel.style.display !== 'none') {
+        h += stylePanel.offsetHeight;
+      }
       filmstripPanel.style.maxHeight = h + 'px';
       if (filmstripHandle) filmstripHandle.style.height = h + 'px';
     }
@@ -173,9 +176,23 @@ var PreviewPanel = (function() {
     }
   }
 
-  // Same CDN as deck.html — srcdoc iframes cannot use local paths
-  var REVEAL_CORE_CSS = 'https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css';
-  var REVEAL_THEME_CSS = 'https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css';
+  // Minimal inline CSS for preview thumbnails (no external links to avoid sandbox warnings)
+  var PREVIEW_BASE_CSS =
+    '*{margin:0;padding:0;box-sizing:border-box;}' +
+    'body{font-family:"Lato","Source Sans Pro",Helvetica,sans-serif;font-size:40px;color:#222;line-height:1.3;}' +
+    'h1,h2,h3{font-weight:bold;line-height:1.2;margin:0 0 0.3em 0;}' +
+    'h1{font-size:1.5em;}h2{font-size:1.2em;}h3{font-size:1.0em;}' +
+    'ul,ol{text-align:left;margin:0 0 0 1em;}' +
+    'li{margin:0.2em 0;}' +
+    'table{border-collapse:collapse;margin:0.5em auto;}' +
+    'td,th{border:1px solid #ddd;padding:0.3em 0.6em;font-size:0.7em;}' +
+    'th{background:#f5f5f5;font-weight:bold;}' +
+    'pre,code{font-family:monospace;font-size:0.6em;background:#f5f5f5;padding:0.2em 0.4em;border-radius:3px;}' +
+    'pre{padding:0.5em;overflow:hidden;}' +
+    'blockquote{border-left:4px solid #ddd;padding-left:0.8em;margin:0.5em 0;font-size:0.9em;color:#555;}' +
+    'img{max-width:100%;max-height:100%;object-fit:contain;}' +
+    'mark{background:#ffe066;padding:0 0.1em;}' +
+    'a{color:#4e79a7;text-decoration:none;}';
 
   // Cache for resolved YouTube thumbnail URLs
   var ytThumbCache = {};
@@ -208,6 +225,19 @@ var PreviewPanel = (function() {
     return html;
   }
 
+  // Strip all script-triggering content from HTML for preview iframes
+  function sanitizeForPreview(html) {
+    return html
+      // Remove paired <script>…</script> (including multiline, nested whitespace)
+      .replace(/<script\b[\s\S]*?<\/script\s*>/gi, '')
+      // Remove any remaining orphaned <script> opening tags
+      .replace(/<script\b[^>]*>/gi, '')
+      // Remove inline event handlers (onclick, onerror, etc.)
+      // Use (?:^|\s) to avoid matching data-onclick, aria-onchange, etc.
+      .replace(/(?:^|\s)on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '')
+      .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+  }
+
   function buildSlideData(slidesHtml, cssText, config, inverted) {
     slideWidth = config.width || 1280;
     slideHeight = config.height || 800;
@@ -220,15 +250,14 @@ var PreviewPanel = (function() {
     var deckSection = tmp.querySelector('section.deck');
     var sections = deckSection ? deckSection.querySelectorAll(':scope > section') : tmp.querySelectorAll('section');
 
-    var cleanCss = cssText ? cssText.replace(/<\/?style[^>]*>/gi, '') : '';
+    var cleanCss = cssText ? cssText.replace(/<\/?style[^>]*>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '') : '';
 
     slideData = [];
     for (var i = 0; i < sections.length; i++) {
-      var slideHtml = replaceMediaForThumb(sections[i].innerHTML);
+      var slideHtml = sanitizeForPreview(replaceMediaForThumb(sections[i].innerHTML));
       var slideDoc = '<!doctype html><html><head><meta charset="utf-8">' +
-        '<link rel="stylesheet" href="' + REVEAL_CORE_CSS + '">' +
-        '<link rel="stylesheet" href="' + REVEAL_THEME_CSS + '">' +
         '<style>' +
+        PREVIEW_BASE_CSS +
           'html,body{margin:0;padding:0;overflow:hidden;}' +
           '.reveal{width:' + slideWidth + 'px;height:' + slideHeight + 'px;overflow:hidden;}' +
           '.reveal .slides{width:100%;height:100%;}' +
@@ -321,7 +350,7 @@ var PreviewPanel = (function() {
     for (var i = range.start; i < range.end; i++) {
       if (renderedSet[i]) continue;
       var fr = document.createElement('iframe');
-      fr.setAttribute('sandbox', 'allow-same-origin');
+      // No sandbox: content is sanitized (scripts/handlers stripped by sanitizeForPreview)
       fr.setAttribute('tabindex', '-1');
       fr.srcdoc = slideData[i];
       fr.style.cssText = 'width:' + slideWidth + 'px;height:' + slideHeight + 'px;transform:scale(' + slideScale + ');';
@@ -346,10 +375,20 @@ var PreviewPanel = (function() {
     for (var i = 0; i < thumbDivs.length; i++) {
       if (i === index) {
         thumbDivs[i].classList.add('active');
-        thumbDivs[i].scrollIntoView({ block: 'center', behavior: 'smooth' });
       } else {
         thumbDivs[i].classList.remove('active');
       }
+    }
+    // Scroll within filmstrip container only (not the page)
+    if (thumbDivs[index]) {
+      var thumb = thumbDivs[index];
+      var containerHeight = filmstripScroll.clientHeight;
+      // Use getBoundingClientRect for reliable position relative to scroll container
+      var containerRect = filmstripScroll.getBoundingClientRect();
+      var thumbRect = thumb.getBoundingClientRect();
+      var thumbTopInContainer = thumbRect.top - containerRect.top + filmstripScroll.scrollTop;
+      var targetScroll = thumbTopInContainer - (containerHeight - thumbRect.height) / 2;
+      filmstripScroll.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
     }
   }
 
@@ -514,6 +553,8 @@ var PreviewPanel = (function() {
     isVisible: isVisible,
     forceUpdate: forceUpdate,
     updateAspectRatio: updateAspectRatio,
-    _replaceMediaForThumb: replaceMediaForThumb
+    syncHeight: syncFilmstripHeight,
+    _replaceMediaForThumb: replaceMediaForThumb,
+    _sanitizeForPreview: sanitizeForPreview
   };
 })();

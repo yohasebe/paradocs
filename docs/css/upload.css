@@ -121,6 +121,8 @@ div.demo-gif img {
   display: inline-block;
   width: auto;
   vertical-align: middle;
+  font-size: 14px;
+  padding: 0.25rem 0.5rem;
 }
 
 span.form-label {
@@ -143,9 +145,13 @@ div#font_controller,
 div#wallpaper_controller,
 div#accent_color_controller,
 div#highlight_background_color_controller,
-div#text_background_controller {
+div#text_background_controller,
+div#tts_provider_controller,
+div#tts_api_key_controller,
+div#tts_cloud_voice_controller,
+div#tts_cloud_rate_controller {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 div.alert {
@@ -158,7 +164,9 @@ span#rate_disabled_message, span#textarea_message {
 }
 
 div#lang_controller, div#rate_controller, div#voice_controller, div#font_controller,
-div#accent_color_controller, div#highlight_background_color_controller, div#resolution_controller, div#text_background_controller, div#wallpaper_controller, div#fontfamily_controller {
+div#accent_color_controller, div#highlight_background_color_controller, div#resolution_controller, div#text_background_controller, div#wallpaper_controller, div#fontfamily_controller,
+div#tts_provider_controller, div#tts_api_key_controller, div#tts_cloud_voice_controller,
+div#tts_cloud_rate_controller {
   margin-bottom: 10px;
 }
 
@@ -565,6 +573,85 @@ span.marker{
   border-radius: 4px 4px 0 0;
 }
 
+#editor-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Style panel toggle button */
+#style-panel-toggle {
+  cursor: pointer;
+  color: #999;
+  font-weight: normal;
+  font-size: 12px;
+  transition: color 0.15s;
+  user-select: none;
+}
+
+#style-panel-toggle:hover {
+  color: #4e79a7;
+}
+
+#style-panel-toggle.active {
+  color: #4e79a7;
+}
+
+/* Style panel */
+#style-panel {
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-top: none;
+  padding: 6px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+}
+
+.sp-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 0;
+}
+
+.sp-label {
+  font-size: 10px;
+  color: #999;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.sp-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #555;
+  font-size: 12px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.sp-btn:hover {
+  background: #e8f0fe;
+  border-color: #4e79a7;
+  color: #4e79a7;
+}
+
+.sp-btn:active {
+  background: #d0e0f5;
+}
+
+.sp-btn i {
+  font-size: 11px;
+}
+
 /* Filmstrip resize handle */
 #filmstrip-handle {
   flex: none;
@@ -589,19 +676,57 @@ span.marker{
   flex-direction: column;
 }
 
-.filmstrip-sync {
+.filmstrip-sync-label {
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
-  color: #bbb;
   font-size: 11px;
-  transition: color 0.15s;
+  gap: 5px;
+  user-select: none;
+  vertical-align: middle;
 }
 
-.filmstrip-sync.active {
+.filmstrip-sync-label input {
+  display: none;
+}
+
+.filmstrip-sync-slider {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  background: #ccc;
+  border-radius: 8px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.filmstrip-sync-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.filmstrip-sync-label input:checked + .filmstrip-sync-slider {
+  background: #4e79a7;
+}
+
+.filmstrip-sync-label input:checked + .filmstrip-sync-slider::after {
+  transform: translateX(12px);
+}
+
+.filmstrip-sync-text {
+  color: #999;
+  transition: color 0.2s;
+}
+
+.filmstrip-sync-label input:checked ~ .filmstrip-sync-text {
   color: #4e79a7;
-}
-
-.filmstrip-sync:hover {
-  color: #3d6490;
 }
 
 #filmstrip-scroll {

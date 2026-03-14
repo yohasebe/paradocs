@@ -21,6 +21,11 @@ function setupDOM() {
       </div>
     </div>
     <span id="preview_toggle_button" class="btn"></span>
+    <label class="filmstrip-sync-label" style="display:none;">
+      <input type="checkbox" id="filmstrip-sync-checkbox" checked>
+      <span class="slider"></span>
+      <span class="filmstrip-sync-text">Sync</span>
+    </label>
     <span id="filmstrip-sync-btn" class="filmstrip-sync active" style="display:none;"></span>
   `;
 }
@@ -141,18 +146,20 @@ describe('PreviewPanel', () => {
   });
 
   describe('sync toggle', () => {
-    test('should toggle active class on sync button click', () => {
+    test('should toggle sync via checkbox', () => {
       PreviewPanel.init();
       PreviewPanel.toggle(); // open panel
-      var syncBtn = document.getElementById('filmstrip-sync-btn');
-      // Default is on (active class)
-      expect(syncBtn.classList.contains('active')).toBe(true);
-      // Click to disable
-      syncBtn.click();
-      expect(syncBtn.classList.contains('active')).toBe(false);
-      // Click to re-enable
-      syncBtn.click();
-      expect(syncBtn.classList.contains('active')).toBe(true);
+      var syncCheckbox = document.getElementById('filmstrip-sync-checkbox');
+      // Default is checked (sync enabled)
+      expect(syncCheckbox.checked).toBe(true);
+      // Uncheck to disable
+      syncCheckbox.checked = false;
+      syncCheckbox.dispatchEvent(new Event('change'));
+      expect(syncCheckbox.checked).toBe(false);
+      // Re-check to enable
+      syncCheckbox.checked = true;
+      syncCheckbox.dispatchEvent(new Event('change'));
+      expect(syncCheckbox.checked).toBe(true);
     });
   });
 
@@ -280,5 +287,57 @@ describe('PreviewPanel DOM missing', () => {
     loadPreview();
     PreviewPanel.init();
     expect(PreviewPanel.isVisible()).toBe(false);
+  });
+});
+
+describe('sanitizeForPreview', () => {
+  beforeAll(() => {
+    setupDOM();
+    setWindowWidth(800);
+    loadPreview();
+  });
+
+  test('removes script tags with content', () => {
+    var html = '<div>ok</div><script>alert(1)</script><p>safe</p>';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).not.toContain('<script');
+    expect(result).not.toContain('alert');
+    expect(result).toContain('<div>ok</div>');
+    expect(result).toContain('<p>safe</p>');
+  });
+
+  test('removes orphaned script opening tags', () => {
+    var html = '<script src="evil.js"><p>content</p>';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).not.toContain('<script');
+    expect(result).toContain('<p>content</p>');
+  });
+
+  test('removes inline event handlers (onclick, onerror)', () => {
+    var html = '<img src="x" onerror="alert(1)">';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).not.toContain('onerror');
+    expect(result).not.toContain('alert');
+  });
+
+  test('preserves data- attributes that contain "on" prefix', () => {
+    var html = '<div data-onclick="handler" class="test">text</div>';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).toContain('data-onclick="handler"');
+  });
+
+  test('replaces javascript: URLs with #', () => {
+    var html = '<a href="javascript:alert(1)">click</a>';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).not.toContain('javascript:');
+    expect(result).toContain('href="#"');
+  });
+
+  test('handles multiline script tags', () => {
+    var html = '<div>before</div><script\n  type="text/javascript"\n>code();\n</script\n><div>after</div>';
+    var result = PreviewPanel._sanitizeForPreview(html);
+    expect(result).not.toContain('<script');
+    expect(result).toContain('before');
+    expect(result).toContain('after');
   });
 });

@@ -109,7 +109,58 @@
       <div id="editor-wrapper">
         <div id="editor-header">
           <span>{{label_text_input}}</span>
-          <span id="filmstrip-sync-btn" class="filmstrip-sync active" title="Sync with cursor" style="display:none;"><i class="fa-solid fa-link"></i></span>
+          <div id="editor-header-right">
+            <span id="style-panel-toggle" role="button" tabindex="0" title="{{btn_style_panel}}"><i class="fa-solid fa-palette"></i> {{btn_style_panel}}</span>
+            <label id="filmstrip-sync-btn" class="filmstrip-sync-label" title="Sync with cursor" style="display:none;"><input type="checkbox" id="filmstrip-sync-checkbox" checked><span class="filmstrip-sync-slider"></span><span class="filmstrip-sync-text"><i class="fa-solid fa-link"></i> {{btn_sync}}</span></label>
+          </div>
+        </div>
+        <div id="style-panel" style="display:none;">
+          <div class="sp-group">
+            <span class="sp-label">{{sp_structure}}</span>
+            <button class="sp-btn" data-insert="slide-sep" title="{{sp_slide_sep}}"><i class="fa-solid fa-minus"></i> Slide</button>
+            <button class="sp-btn" data-insert="deck-sep" title="{{sp_deck_sep}}"><i class="fa-solid fa-equals"></i> Deck</button>
+
+            <button class="sp-btn" data-insert="static" title="{{sp_static}}"><i class="fa-solid fa-thumbtack"></i> |</button>
+            <button class="sp-btn" data-insert="auto-split" title="{{sp_auto_split}}"><i class="fa-solid fa-scissors"></i> !!</button>
+          </div>
+          <div class="sp-group">
+            <span class="sp-label">{{sp_heading}}</span>
+            <button class="sp-btn" data-insert="h1" title="# Heading 1">H1</button>
+            <button class="sp-btn" data-insert="h2" title="## Heading 2">H2</button>
+            <button class="sp-btn" data-insert="h3" title="### Heading 3">H3</button>
+          </div>
+          <div class="sp-group">
+            <span class="sp-label">{{sp_text}}</span>
+            <button class="sp-btn" data-insert="bold" title="**bold**"><i class="fa-solid fa-bold"></i></button>
+            <button class="sp-btn" data-insert="italic" title="*italic*"><i class="fa-solid fa-italic"></i></button>
+            <button class="sp-btn" data-insert="underline" title="_underline_"><i class="fa-solid fa-underline"></i></button>
+            <button class="sp-btn" data-insert="strikethrough" title="~~strikethrough~~"><i class="fa-solid fa-strikethrough"></i></button>
+            <button class="sp-btn" data-insert="highlight" title="==highlight=="><i class="fa-solid fa-highlighter"></i></button>
+            <button class="sp-btn" data-insert="code-inline" title="`code`"><i class="fa-solid fa-code"></i></button>
+          </div>
+          <div class="sp-group">
+            <span class="sp-label">{{sp_list}}</span>
+            <button class="sp-btn" data-insert="ul" title="* item"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="sp-btn" data-insert="ol" title="1. item"><i class="fa-solid fa-list-ol"></i></button>
+            <button class="sp-btn" data-insert="blockquote" title="> quote"><i class="fa-solid fa-quote-left"></i></button>
+            <button class="sp-btn" data-insert="code-block" title="```code```"><i class="fa-solid fa-terminal"></i></button>
+            <button class="sp-btn" data-insert="table" title="table"><i class="fa-solid fa-table"></i></button>
+          </div>
+          <div class="sp-group">
+            <span class="sp-label">{{sp_media}}</span>
+            <button class="sp-btn" data-insert="link" title="[text](url)"><i class="fa-solid fa-link"></i></button>
+            <button class="sp-btn" data-insert="image" title="image: url"><i class="fa-solid fa-image"></i></button>
+            <button class="sp-btn" data-insert="youtube" title="youtube: url"><i class="fa-brands fa-youtube"></i></button>
+            <button class="sp-btn" data-insert="video" title="video: url"><i class="fa-solid fa-video"></i></button>
+            <button class="sp-btn" data-insert="audio" title="audio: url"><i class="fa-solid fa-music"></i></button>
+          </div>
+          <div class="sp-group">
+            <span class="sp-label">{{sp_annotation}}</span>
+            <button class="sp-btn" data-insert="note" title="{note: text}"><i class="fa-solid fa-comment"></i> Note</button>
+            <button class="sp-btn" data-insert="image-note" title="{image: url}"><i class="fa-solid fa-image"></i> Popup</button>
+            <button class="sp-btn" data-insert="hidden" title="{hidden text}"><i class="fa-solid fa-eye-slash"></i> Hidden</button>
+            <button class="sp-btn" data-insert="mcq" title="{mcq: ...}"><i class="fa-solid fa-circle-question"></i> MCQ</button>
+          </div>
         </div>
         <div id='input-textarea' class="ui-widget-content" style='height:450px; border:solid 1px lightgray; border-top:none;'></div>
       </div>
@@ -235,7 +286,7 @@
           <option value="#9c755f">Brown</option>
           <option value="#464646">Gray</option>
         </select>
-        <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Accent Color</span>
+        <span id='accent_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color: #e15759; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);' class='color-sample'>Accent Color</span>
       </div>
 
       <div id='highlight_background_color_controller'>
@@ -251,12 +302,54 @@
           <option value="#9c755f">Brown</option>
           <option value="#464646">Black</option>
         </select>
-        <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);'>Highlight Color</span>
+        <span id='highlight_background_color_sample' style='margin-left:10px; display:inline-block; line-height:1.5em; padding:2px; font-weight:bold; color:#4e79a7; text-shadow:-1px 1px 2px rgba(0,0,0,0.25);' class='color-sample'>Highlight Color</span>
       </div>
 
       <div id="text_background_controller">
         <span class='form-label'>{{label_invert_colors}}</span>
         <input id="text_background" type="checkbox" name="text_background" value="text_background">
+      </div>
+
+      <div id='cloud_tts_section' style='display: none;'>
+        <div id='cloud_tts_toggle' style='cursor:pointer; user-select:none; margin-bottom:8px;'>
+          <i class="fa-solid fa-caret-right" id="cloud_tts_caret"></i> <span class='form-label' style='cursor:pointer;'>{{label_cloud_tts}}</span>
+        </div>
+        <div id='cloud_tts_controls' style='display:none; padding-left:12px; border-left:2px solid #ddd; margin-bottom:8px;'>
+          <div id='tts_provider_controller'>
+            <span class='form-label'>{{label_tts_provider}}</span>
+            <select class="form-control inline-form" id='tts_provider_selected' name='tts_provider'>
+              <option value="browser" selected>Browser</option>
+              <option value="openai">OpenAI</option>
+              <option value="elevenlabs">ElevenLabs</option>
+            </select>
+          </div>
+          <div id='tts_api_key_controller' style='display:none;'>
+            <span class='form-label'>API Key</span>
+            <input type="password" class="form-control inline-form" id='tts_api_key' placeholder='{{label_api_key_placeholder}}' autocomplete="off">
+            <span id='tts_api_key_verify' class="btn btn-sm btn-outline-secondary" style="margin-left:6px; white-space:nowrap;">Verify</span>
+            <small class="text-muted" style="margin-left:8px;">{{label_api_key_hint}}</small>
+            <span id='tts_api_key_status' style='margin-left:8px;'></span>
+          </div>
+          <div id='tts_cloud_voice_controller' style='display:none;'>
+            <span class='form-label'>{{label_cloud_voice}}</span>
+            <select class="form-control inline-form" id='tts_cloud_voice_selected' name='tts_cloud_voice'></select>
+          </div>
+          <div id='tts_cloud_rate_controller' style='display:none;'>
+            <span class='form-label'>{{label_cloud_rate}}</span>
+            <select class="form-control inline-form" id='tts_cloud_rate_selected' name='tts_cloud_rate'>
+              <option value="2.0">2.0</option>
+              <option value="1.8">1.8</option>
+              <option value="1.6">1.6</option>
+              <option value="1.4">1.4</option>
+              <option value="1.2">1.2</option>
+              <option value="1.0" selected>1.0</option>
+              <option value="0.8">0.8</option>
+              <option value="0.6">0.6</option>
+              <option value="0.5">0.5</option>
+              <option value="0.25">0.25</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -339,6 +432,7 @@
     safeLoadHTML(BASE_PATH + 'data/readme{{data_suffix}}.html', 'readme-content');
     safeLoadHTML(BASE_PATH + 'data/documentation{{data_suffix}}.html', 'documentation-content');
   </script>
+  <script src="{{base_path}}js/cloud-tts.js"></script>
   <script src="{{base_path}}js/autosave.js"></script>
   <script src="{{base_path}}js/exporter.js"></script>
   <script src="{{base_path}}js/parser.js"></script>

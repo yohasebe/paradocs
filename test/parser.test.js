@@ -320,6 +320,42 @@ describe('Parser', () => {
     });
   });
 
+  // ---- Blockquote ----
+
+  describe('blockquote', () => {
+    test('renders single blockquote line with left border', () => {
+      var text = '----\n> Hello world\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('<blockquote');
+      expect(html).toContain('border-left');
+      expect(html).toContain('Hello world');
+    });
+
+    test('preserves line breaks across multiple blockquote lines', () => {
+      var text = '----\n> quote1\n> quote2\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('quote1<br>quote2');
+    });
+
+    test('sanitizes HTML in blockquote content', () => {
+      var text = '----\n> <script>alert(1)</script>\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).not.toContain('<script>');
+      expect(html).toContain('&lt;script&gt;');
+    });
+
+    test('renders inline markdown inside blockquote', () => {
+      var text = '----\n> **bold** and *italic*\n----';
+      var p = new Parser(text, config);
+      var html = p.parse();
+      expect(html).toContain('<strong>bold</strong>');
+      expect(html).toContain('<em>italic</em>');
+    });
+  });
+
   // ---- Ordered list multi-digit ----
 
   describe('ordered list multi-digit numbers', () => {

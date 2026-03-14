@@ -36,8 +36,20 @@ All notable changes to Paradocs are documented in this file.
 - Beep sound on fragment advance (toggle via bell icon)
 - Save/Load source text via File dropdown menu (with security validation)
 - YouTube thumbnail placeholders in filmstrip and overview (maxresdefault with hqdefault fallback)
+- Cloud TTS integration (OpenAI and ElevenLabs) with streaming playback, prefetching, and per-provider API key management
+- Cloud TTS speed control (OpenAI), API key verification, and ElevenLabs voice list auto-fetch
+- Toggle switch UI for filmstrip sync control
+- Style panel for quick insertion of Paradocs markdown and custom tags
+- Blockquote rendering with left border and line break preservation
 
 ### Fixed
+- Blockquote `> ` prefix was HTML-escaped by `sanitizeUserText()`, preventing marked from parsing it
+- Preview sanitizer regex incorrectly stripped `data-onclick` / `aria-on*` attributes
+- Preview sanitizer script tag regex strengthened for multiline and orphaned tags
+- Cloud TTS API key management unified: single source of truth via `_cloudKeys` object
+- Cloud TTS voice restore `setInterval` now exits early on fetch failure
+- Cloud TTS synthesis timeout hardcoded values replaced with `SYNTHESIS_TIMEOUT` constant
+- Unused marked `renderer.blockquote` override removed (blockquote now rendered directly)
 - XSS: file name escaping in error messages and image list display
 - XSS: `fromJSON()` now sanitizes keys and validates data URL MIME types
 - XSS: CSS injection in deck.html uses `createElement('style')` with `textContent`

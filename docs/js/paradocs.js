@@ -758,6 +758,17 @@ jQuery(function($){
   
   // Create speech synthesis prototype
   function initializeSpeechSynthesis(){
+    // Check for Cloud TTS provider
+    if (typeof CloudTTS !== 'undefined' && pconf.tts_provider && pconf.tts_provider !== 'browser') {
+      CloudTTS.setProvider(pconf.tts_provider);
+      CloudTTS.setApiKey(pconf.tts_api_key || '');
+      CloudTTS.setVoice(pconf.tts_cloud_voice || '');
+      CloudTTS.setSpeed(pconf.tts_cloud_rate || '1.0');
+      utterance = true; // truthy to show speaker icon
+      voiceSpecified = true;
+      return;
+    }
+
     try{
       utterance = new SpeechSynthesisUtterance();
     } catch(e) {
@@ -1213,6 +1224,13 @@ jQuery(function($){
 
   ///// stop speech sound
   function stopSpeechSound(){
+    // Cloud TTS path
+    if (typeof CloudTTS !== 'undefined' && CloudTTS.isCloudProvider()) {
+      CloudTTS.stop();
+      $speaker_icon.removeClass("playing");
+      return;
+    }
+
     if(speechSynthesis.speaking){
       speechSynthesis.cancel();
     }
@@ -1229,6 +1247,41 @@ jQuery(function($){
       return false;
     }
 
+    // Cloud TTS path
+    if (typeof CloudTTS !== 'undefined' && CloudTTS.isCloudProvider()) {
+      if (CloudTTS.isPlaying()) {
+        CloudTTS.stop();
+        $speaker_icon.removeClass("playing");
+        return false;
+      }
+
+      if (cfragment == undefined) return false;
+      var text = cfragment.text();
+      if (!text || !text.trim()) return false;
+
+      var segments;
+      if (typeof(defer) != "undefined") {
+        segments = splitTextForAutomatic(text);
+      } else {
+        segments = splitText(text);
+      }
+
+      $speaker_icon.addClass("playing");
+      CloudTTS.speakSequence(segments, function() {
+        $speaker_icon.removeClass("playing");
+        if (typeof defer !== "undefined") {
+          defer.resolve();
+        }
+      }, function(err) {
+        console.error('Cloud TTS error:', err.message);
+        $speaker_icon.removeClass("playing");
+        if (typeof defer !== "undefined") {
+          defer.reject();
+        }
+      });
+      return true;
+    }
+
     if(speechSynthesis.speaking){
       $speaker_icon.removeClass("playing");
       speechSynthesis.cancel();
@@ -1238,7 +1291,7 @@ jQuery(function($){
     if(cfragment == undefined){
       return false;
     }
-  
+
     var text = cfragment.text();
 
     if(typeof(defer) != "undefined"){

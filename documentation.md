@@ -415,13 +415,33 @@ audio: url_to_your_audio_file.mp3#t=0,5
 
 #### Text-to-Speech
 
-Sentences in regular paragraphs can be played back with a text-to-speech engine available in your browser. The available languages and audio variations vary by OS and browser.
+Sentences in regular paragraphs can be read aloud using the browser's built-in Web Speech API (`speechSynthesis`). This is a standard browser API, not limited to Chrome — it works in Safari, Firefox, Edge, and other modern browsers.
+
+The available voices include both browser-provided voices (e.g., Google TTS in Chrome, Microsoft TTS in Edge) and OS-level system voices (e.g., macOS Siri voices, Windows SAPI voices). You can select the **Speech Language** and **Speech Voice** from the dropdowns on the input page. The **Speech Rate** can also be adjusted, though some voices may not support rate changes.
 
 When TTS is available for highlighted content, a speaker icon appears in the upper left corner of the presentation screen. Click on this icon or press the `.` key on the keyboard to play the TTS voice. You can stop playback by clicking the button or hitting the key again.
 
 During TTS playback, the word currently being spoken is highlighted with a yellow background. This word-level highlighting helps the audience follow along with the read-aloud text. The highlighting is automatically cleaned up when playback ends or is stopped.
 
-**N.B.** Word-level highlighting depends on the browser's `onboundary` event support. It works well in Chrome and Edge but may not be available in all browsers.
+**N.B.** Word-level highlighting depends on the browser's `onboundary` event support. It works well in Chrome and Edge but may not be available in all browsers. The set of available languages and voices depends entirely on your OS and browser — installing additional language packs on your OS may add more voices.
+
+#### Cloud TTS (Advanced)
+
+In addition to the browser's built-in TTS, Paradocs supports cloud-based text-to-speech via **OpenAI** and **ElevenLabs** APIs. Cloud TTS offers higher-quality, more natural-sounding voices.
+
+To use Cloud TTS, expand the **Cloud TTS (Advanced)** section on the input page:
+
+1. **TTS Provider**: Select *OpenAI* or *ElevenLabs* from the dropdown. Selecting a cloud provider hides the browser TTS controls and shows cloud-specific options.
+2. **API Key**: Enter your API key for the selected provider. Click **Verify** to check that the key is valid. Your key is stored only in your browser's local storage and is never sent to any server other than the provider's API.
+3. **Voice**: For OpenAI, choose from a fixed list of voices (alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer). For ElevenLabs, the voice list is fetched from your account after entering a valid API key.
+4. **Speed** (OpenAI only): Adjust the playback speed from 0.5× to 2.0×.
+
+**Limitations:**
+
+- Cloud TTS does not support word-level highlighting during playback (the browser's `onboundary` event is not available for cloud-generated audio).
+- An active internet connection and a valid API key are required.
+- API usage may incur costs according to the provider's pricing.
+- When exporting as a standalone HTML file, API keys are **not** included in the exported file for security reasons. Cloud TTS will not be available in exported files.
 
 #### Sticky Note
 

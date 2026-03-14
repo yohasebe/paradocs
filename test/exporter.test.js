@@ -102,6 +102,23 @@ describe('Exporter', () => {
       expect(html).not.toMatch(/<\/script>\s*<script>alert/);
     });
 
+    test('strips Cloud TTS API keys from exported config', () => {
+      var configWithKeys = Object.assign({}, sampleConfig, {
+        tts_api_key: 'sk-secret-test-key-12345',
+        tts_provider: 'openai',
+        tts_cloud_voice: 'alloy',
+        tts_cloud_rate: '1.5'
+      });
+      var html = Exporter.generateHTML(sampleSlides, configWithKeys, sampleCSS, false, sampleScript);
+      expect(html).not.toContain('sk-secret-test-key-12345');
+      expect(html).not.toContain('"tts_api_key"');
+      expect(html).not.toContain('"tts_provider"');
+      expect(html).not.toContain('"tts_cloud_voice"');
+      expect(html).not.toContain('"tts_cloud_rate"');
+      // Original config should not be mutated
+      expect(configWithKeys.tts_api_key).toBe('sk-secret-test-key-12345');
+    });
+
     test('escapes script-breaking sequences in config', () => {
       var maliciousConfig = Object.assign({}, sampleConfig, {
         speech_voice: 'test</scr' + 'ipt><script>alert(1)'

@@ -17,10 +17,6 @@ const ALPHA_SET = [
 function configureMarked() {
   const renderer = new marked.Renderer();
 
-  renderer.blockquote = function({ text }) {
-    return `<blockquote style='font-size: 0.9em; box-shadow:none;'>${text}</blockquote>`;
-  };
-
   // Extension: ==text== → <mark>text</mark> (highlight)
   const highlightExtension = {
     name: 'highlight',
@@ -498,7 +494,9 @@ class Parser {
             }
             // blockquote
             else if (/^> /.test(sentence)) {
-              spans.push(sanitizeUserText(sentence));
+              // Preserve '> ' prefix for stripping in case 'bq';
+              // sanitize only the content after the prefix.
+              spans.push('> ' + sanitizeUserText(sentence.slice(2)));
               mode = 'bq';
             }
             // code block (4 spaces or tab)
@@ -616,7 +614,11 @@ class Parser {
 
             // Blockquote
             case 'bq': {
-              renderedSentences = renderMarkdown(spans.join('\n')).trim();
+              // Each span is already sanitized via sanitizeUserText() at detection time.
+              // Strip '> ' prefix and render inline markdown per line.
+              const bqLines = spans.map(s => renderInlineMarkdown(s.replace(/^> /, '')));
+              renderedSentences = "<blockquote style='font-size: 0.9em; box-shadow: none; border-left: 4px solid; padding-left: 0.8em; text-align: left;'>"
+                + bqLines.join('<br>') + '</blockquote>';
               break;
             }
 
