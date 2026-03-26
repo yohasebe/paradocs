@@ -4,6 +4,8 @@ jQuery(function($){
   if (window.location.search.indexOf('mode=preview') !== -1) return;
 
   //////////////////// Variables ///////////////
+  var DEFAULT_WIDTH = 1280;
+  var DEFAULT_HEIGHT = 800;
   var sqrScale;
   var originalNoteCo = {left: "20%", top: "70%"};
   var originalImageNoteCo = {left: "60%", top: "10%"};
@@ -37,13 +39,20 @@ jQuery(function($){
   var mouseY = 0;
   var mouse_mode = "regular" // or "laser"
 
+  var rafPending = false;
   $(document).on('mousemove', function(e) {
     mouseX = e.pageX;
     mouseY = e.pageY;
-    cursor.css({
-      left: mouseX - (cursorWidth / 2),
-      top: mouseY - (cursorWidth / 2)
-    })
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(function() {
+        cursor.css({
+          left: mouseX - (cursorWidth / 2),
+          top: mouseY - (cursorWidth / 2)
+        });
+        rafPending = false;
+      });
+    }
   }).on('mouseleave', function(e) {
     if(mouse_mode === "laser"){
       $("#highlighted_cursor").hide();
@@ -607,8 +616,8 @@ jQuery(function($){
         cleanCss += s.textContent;
       });
       var inverted = document.getElementById('reveal-container').classList.contains('inverted') ? ' inverted' : '';
-      var w = pconf.width || 1280;
-      var h = pconf.height || 800;
+      var w = pconf.width || DEFAULT_WIDTH;
+      var h = pconf.height || DEFAULT_HEIGHT;
 
       // Build overlay
       customOverlayEl = document.createElement('div');

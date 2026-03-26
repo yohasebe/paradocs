@@ -147,12 +147,12 @@ if (autosave.hasSavedData()) {
             }, 200);
           }
           // Restore per-provider API keys
-          if (window._cloudKeys) {
-            if (savedSettings.tts_api_key_openai) window._cloudKeys.openai = savedSettings.tts_api_key_openai;
-            if (savedSettings.tts_api_key_elevenlabs) window._cloudKeys.elevenlabs = savedSettings.tts_api_key_elevenlabs;
+          if (window._setCloudKey) {
+            if (savedSettings.tts_api_key_openai) window._setCloudKey('openai', savedSettings.tts_api_key_openai);
+            if (savedSettings.tts_api_key_elevenlabs) window._setCloudKey('elevenlabs', savedSettings.tts_api_key_elevenlabs);
             // Legacy: single key field
             if (!savedSettings.tts_api_key_openai && !savedSettings.tts_api_key_elevenlabs && savedSettings.tts_api_key) {
-              if (savedSettings.tts_provider) window._cloudKeys[savedSettings.tts_provider] = savedSettings.tts_api_key;
+              if (savedSettings.tts_provider) window._setCloudKey(savedSettings.tts_provider, savedSettings.tts_api_key);
             }
           }
           if (savedSettings.tts_provider && savedSettings.tts_provider !== 'browser') {
@@ -192,8 +192,10 @@ if (autosave.hasSavedData()) {
     });
 }
 
-// Character counter for editor
+// Limits and defaults
 var MAX_CHARS = 50000;
+var DEFAULT_RESOLUTION = '1280x800';
+var ALLOWED_RESOLUTIONS = ['800x600', '1280x800', '1920x1080'];
 function updateCharCounter() {
   var len = editor.getValue().length;
   var $counter = $('#char_counter');
@@ -633,9 +635,10 @@ $("#voice_selected").change(function(){
     }
   }
 
-  // Expose for settings restore
+  // Expose for settings restore (closure-scoped, not on window)
   window._populateCloudVoices = populateCloudVoices;
-  window._cloudKeys = _cloudKeys;
+  window._getCloudKey = function(provider) { return _cloudKeys[provider] || ''; };
+  window._setCloudKey = function(provider, key) { _cloudKeys[provider] = key; };
 })();
 
 //////////////////// Default config (matches paradocs.conf) ///////////////
@@ -718,10 +721,9 @@ function buildPresentation() {
     config.progress_color = safeHlColor;
   }
 
-  var allowedResolutions = ['800x600', '1280x800', '1920x1080'];
-  var resolution = $('#resolution_selected').val() || '1280x800';
-  if (allowedResolutions.indexOf(resolution) === -1) {
-    resolution = '1280x800';
+  var resolution = $('#resolution_selected').val() || DEFAULT_RESOLUTION;
+  if (ALLOWED_RESOLUTIONS.indexOf(resolution) === -1) {
+    resolution = DEFAULT_RESOLUTION;
   }
   var resParts = resolution.split('x');
   config.width = parseInt(resParts[0]);
@@ -736,6 +738,7 @@ function buildPresentation() {
     var parser = new Parser(text, config, imageResolver);
     slides = parser.parse();
   } catch(e) {
+    console.error('Parser error:', e);
     showError('Parser error: ' + e.message);
     return null;
   }
@@ -900,18 +903,18 @@ function saveFormSettings(config) {
     font_family: config.font_family,
     accent_color: config.accent_color,
     highlight_background_color: $('#highlight_background_color_selected').val() || '#4e79a7',
-    resolution: $('#resolution_selected').val() || '1280x800',
+    resolution: $('#resolution_selected').val() || DEFAULT_RESOLUTION,
     wallpaper: $('#wallpaper_selected').val() || 'sandpaper.png',
     color_inverted: config.color_inverted,
     tts_provider: config.tts_provider || 'browser',
     // Sync current input to _cloudKeys before saving
     tts_api_key_openai: (function() {
-      if (config.tts_provider === 'openai' && config.tts_api_key) window._cloudKeys.openai = config.tts_api_key;
-      return (window._cloudKeys && window._cloudKeys.openai) || '';
+      if (config.tts_provider === 'openai' && config.tts_api_key) window._setCloudKey('openai', config.tts_api_key);
+      return window._getCloudKey('openai');
     })(),
     tts_api_key_elevenlabs: (function() {
-      if (config.tts_provider === 'elevenlabs' && config.tts_api_key) window._cloudKeys.elevenlabs = config.tts_api_key;
-      return (window._cloudKeys && window._cloudKeys.elevenlabs) || '';
+      if (config.tts_provider === 'elevenlabs' && config.tts_api_key) window._setCloudKey('elevenlabs', config.tts_api_key);
+      return window._getCloudKey('elevenlabs');
     })(),
     tts_cloud_voice: config.tts_cloud_voice || '',
     tts_cloud_rate: config.tts_cloud_rate || '1.0'
@@ -960,7 +963,7 @@ function escapeHtml(str) {
 }
 
 function showError(message){
-  $("div.alert").html(message).show("fast");
+  $("div.alert").text(message).show("fast");
   setTimeout(function() {
     $("div.alert").hide();
   }, 10000);
@@ -1159,11 +1162,11 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
       var errors = [];
       results.forEach(function(r) {
         if (r.status === 'rejected') {
-          errors.push(escapeHtml(r.reason.message));
+          errors.push(r.reason.message);
         }
       });
       if (errors.length > 0) {
-        showError(errors.join('<br>'));
+        showError(errors.join('\n'));
       }
       persistImages();
       refreshImageList();
@@ -1175,46 +1178,54 @@ $("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize'
    */
   function refreshImageList() {
     var names = ImageStore.list();
+    imageList.textContent = '';
+
     if (names.length === 0) {
-      imageList.innerHTML = "<span class='text-muted'>" +
-        (document.documentElement.lang === 'ja' ? '画像はまだアップロードされていません' :
-         document.documentElement.lang === 'zh-CN' ? '尚未上传图片' :
-         document.documentElement.lang === 'ko' ? '아직 업로드된 이미지가 없습니다' :
-         'No images uploaded') + "</span>";
+      var emptyMsg = document.createElement('span');
+      emptyMsg.className = 'text-muted';
+      emptyMsg.textContent =
+        document.documentElement.lang === 'ja' ? '画像はまだアップロードされていません' :
+        document.documentElement.lang === 'zh-CN' ? '尚未上传图片' :
+        document.documentElement.lang === 'ko' ? '아직 업로드된 이미지가 없습니다' :
+        'No images uploaded';
+      imageList.appendChild(emptyMsg);
       return;
     }
 
-    var html = '';
     names.forEach(function(name) {
       var dataUrl = ImageStore.get(name);
-      var thumbSrc = dataUrl ? dataUrl : '';
-      var safeName = escapeHtml(name);
-      html += "<div class='image-list-item'>" +
-        "<img src='" + escapeHtml(thumbSrc) + "' alt=''>" +
-        "<span class='image-name' data-name='" + safeName + "'>" + safeName + "</span>" +
-        "<span class='image-remove' data-name='" + safeName + "' title='Remove'><i class='fa-solid fa-xmark'></i></span>" +
-        "</div>";
-    });
-    imageList.innerHTML = html;
 
-    // Click on name → insert into editor
-    imageList.querySelectorAll('.image-name').forEach(function(el) {
-      el.addEventListener('click', function() {
-        var name = el.getAttribute('data-name');
-        insertImageReference(name);
-      });
-    });
+      var div = document.createElement('div');
+      div.className = 'image-list-item';
 
-    // Click on remove → delete from store and remove references from editor
-    imageList.querySelectorAll('.image-remove').forEach(function(el) {
-      el.addEventListener('click', function() {
-        var name = el.getAttribute('data-name');
+      var img = document.createElement('img');
+      img.src = dataUrl || '';
+      img.alt = '';
+      div.appendChild(img);
+
+      var nameSpan = document.createElement('span');
+      nameSpan.className = 'image-name';
+      nameSpan.dataset.name = name;
+      nameSpan.textContent = name;
+      nameSpan.addEventListener('click', function() { insertImageReference(name); });
+      div.appendChild(nameSpan);
+
+      var removeSpan = document.createElement('span');
+      removeSpan.className = 'image-remove';
+      removeSpan.dataset.name = name;
+      removeSpan.title = 'Remove';
+      var icon = document.createElement('i');
+      icon.className = 'fa-solid fa-xmark';
+      removeSpan.appendChild(icon);
+      removeSpan.addEventListener('click', function() {
         ImageStore.remove(name);
         persistImages();
         refreshImageList();
-        // Remove matching image: local:name lines from the editor
         removeImageReferences(name);
       });
+      div.appendChild(removeSpan);
+
+      imageList.appendChild(div);
     });
   }
 

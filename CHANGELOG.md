@@ -2,6 +2,21 @@
 
 All notable changes to Paradocs are documented in this file.
 
+## [0.9.1] - 2026-03-26
+
+### Fixed
+- Security: API keys no longer exposed on `window` global; access via closure-scoped getter/setter
+- Security: `showError()` uses `.text()` instead of `.html()` to prevent XSS
+- Security: Image list UI rebuilt with DOM API (`createElement`/`textContent`) instead of `innerHTML`
+- Security: Content Security Policy (CSP) meta tag added to all HTML pages
+- Security: Exporter fetch checks `r.ok` status before using response
+- Performance: `mousemove` cursor tracking throttled via `requestAnimationFrame`
+- Parser errors now log full stack trace to console for debugging
+
+### Changed
+- Default resolution values extracted to named constants (`DEFAULT_RESOLUTION`, `DEFAULT_WIDTH`, `DEFAULT_HEIGHT`)
+- Allowed resolutions list extracted to `ALLOWED_RESOLUTIONS` constant
+
 ## [0.9.0] - 2026-03-14
 
 ### Added

@@ -1,5 +1,7 @@
 // Filmstrip Preview — slide thumbnails next to editor (virtual scroll)
 var PreviewPanel = (function() {
+  var DEFAULT_WIDTH = 1280;
+  var DEFAULT_HEIGHT = 800;
   var filmstripPanel = null;
   var filmstripScroll = null;
   var filmstripHandle = null;
@@ -18,8 +20,8 @@ var PreviewPanel = (function() {
   var thumbDivs = [];    // Array of placeholder DOM elements
   var thumbH = 0;
   var slideScale = 0;
-  var slideWidth = 1280;
-  var slideHeight = 800;
+  var slideWidth = DEFAULT_WIDTH;
+  var slideHeight = DEFAULT_HEIGHT;
   var renderedSet = {};  // { index: true } for slides with iframes
   var BUFFER = 2;
 
@@ -239,8 +241,8 @@ var PreviewPanel = (function() {
   }
 
   function buildSlideData(slidesHtml, cssText, config, inverted) {
-    slideWidth = config.width || 1280;
-    slideHeight = config.height || 800;
+    slideWidth = config.width || DEFAULT_WIDTH;
+    slideHeight = config.height || DEFAULT_HEIGHT;
     var thumbW = Math.max(100, filmstripPanel.clientWidth - 8);
     slideScale = thumbW / slideWidth;
     thumbH = Math.round(slideHeight * slideScale);

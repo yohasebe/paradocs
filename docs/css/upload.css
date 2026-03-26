@@ -157,6 +157,7 @@ div#tts_cloud_rate_controller {
 div.alert {
   margin: 1em;
   display:none;
+  white-space: pre-line;
 }
 
 span#rate_disabled_message, span#textarea_message {

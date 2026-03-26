@@ -175,8 +175,8 @@
   Exporter.download = function (slidesHtml, config, cssText, inverted, basePath) {
     var base = basePath || './';
     Promise.all([
-      fetch(base + 'js/paradocs.js').then(function (r) { return r.text(); }),
-      fetch(base + 'js/tts-highlight.js').then(function (r) { return r.text(); }).catch(function () { return ''; }),
+      fetch(base + 'js/paradocs.js').then(function (r) { if (!r.ok) throw new Error('Failed to fetch paradocs.js: ' + r.status); return r.text(); }),
+      fetch(base + 'js/tts-highlight.js').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).catch(function () { return ''; }),
       inlineWallpaperInCSS(cssText)
     ])
       .then(function (results) {
