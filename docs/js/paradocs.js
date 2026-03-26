@@ -433,6 +433,7 @@ jQuery(function($){
       $current_fragment = $('.current-fragment');
       $('.reveal').css("visibility", "visible");
       $('.fragment').css("visibility", "visible");
+      document.body.classList.add('ready');
 
       $overview_icon.click(function () {
         this.blur();

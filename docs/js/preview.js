@@ -43,6 +43,7 @@ var PreviewPanel = (function() {
     if (syncCheckbox) {
       syncCheckbox.addEventListener('change', function() {
         syncEnabled = syncCheckbox.checked;
+        updateSyncUI();
       });
     }
 
@@ -101,6 +102,25 @@ var PreviewPanel = (function() {
     }
   }
 
+  function updateSyncUI() {
+    var syncLabel = document.getElementById('filmstrip-sync-label');
+    var syncIcon = document.getElementById('filmstrip-sync-icon');
+    var syncBtn = document.getElementById('filmstrip-sync-btn');
+    if (syncLabel) {
+      syncLabel.textContent = syncEnabled ?
+        (syncLabel.dataset.labelOn || 'Click to scroll') :
+        (syncLabel.dataset.labelOff || 'Click to preview');
+    }
+    if (syncIcon) {
+      syncIcon.className = syncEnabled ? 'fa-solid fa-link' : 'fa-solid fa-magnifying-glass';
+    }
+    if (syncBtn) {
+      syncBtn.title = syncEnabled ?
+        (syncBtn.dataset.hintOn || '') :
+        (syncBtn.dataset.hintOff || '');
+    }
+  }
+
   function rerender() {
     lastText = null;
     sendUpdate();
@@ -115,7 +135,7 @@ var PreviewPanel = (function() {
       if (syncBtn) syncBtn.style.display = '';
       syncFilmstripHeight();
       toggleBtn.classList.add('active');
-      sendUpdate();
+      sendUpdate({ scrollToActive: true });
       if (typeof editor !== 'undefined') {
         setTimeout(function() { editor.resize(); }, 50);
       }
@@ -152,7 +172,7 @@ var PreviewPanel = (function() {
     }, 800);
   }
 
-  function sendUpdate() {
+  function sendUpdate(options) {
     if (!visible) return;
 
     var text = (typeof editor !== 'undefined') ? editor.getValue() : '';
@@ -171,7 +191,9 @@ var PreviewPanel = (function() {
       var result = buildPresentation();
       if (result && result.slides) {
         buildSlideData(result.slides, result.css, result.config, result.colorInverted);
-        highlightSlide(getCurrentSlideIndex());
+        if (options && options.scrollToActive) {
+          highlightSlide(getCurrentSlideIndex(), true);
+        }
       }
     } catch (e) {
       // Keep last good thumbnails on error
@@ -180,9 +202,10 @@ var PreviewPanel = (function() {
 
   // Minimal inline CSS for preview thumbnails (no external links to avoid sandbox warnings)
   var PREVIEW_BASE_CSS =
+    '@import url("https://fonts.googleapis.com/css?family=News+Cycle:400,700|Lato:400,700&display=swap");' +
     '*{margin:0;padding:0;box-sizing:border-box;}' +
     'body{font-family:"Lato","Source Sans Pro",Helvetica,sans-serif;font-size:40px;color:#222;line-height:1.3;}' +
-    'h1,h2,h3{font-weight:bold;line-height:1.2;margin:0 0 0.3em 0;}' +
+    'h1,h2,h3{font-family:"News Cycle",Impact,sans-serif;font-weight:bold;line-height:1.2;margin:0 0 0.3em 0;}' +
     'h1{font-size:1.5em;}h2{font-size:1.2em;}h3{font-size:1.0em;}' +
     'ul,ol{text-align:left;margin:0 0 0 1em;}' +
     'li{margin:0.2em 0;}' +
@@ -371,7 +394,7 @@ var PreviewPanel = (function() {
     });
   }
 
-  function highlightSlide(index) {
+  function highlightSlide(index, scroll) {
     if (!filmstripScroll) return;
     lastSlideIndex = index;
     for (var i = 0; i < thumbDivs.length; i++) {
@@ -381,11 +404,10 @@ var PreviewPanel = (function() {
         thumbDivs[i].classList.remove('active');
       }
     }
-    // Scroll within filmstrip container only (not the page)
-    if (thumbDivs[index]) {
+    // Only scroll filmstrip when explicitly requested (user click, toggle open)
+    if (scroll && thumbDivs[index]) {
       var thumb = thumbDivs[index];
       var containerHeight = filmstripScroll.clientHeight;
-      // Use getBoundingClientRect for reliable position relative to scroll container
       var containerRect = filmstripScroll.getBoundingClientRect();
       var thumbRect = thumb.getBoundingClientRect();
       var thumbTopInContainer = thumbRect.top - containerRect.top + filmstripScroll.scrollTop;

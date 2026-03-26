@@ -106,7 +106,7 @@ editor.setTheme("ace/theme/textmate");
 editor.session.setMode("ace/mode/custom");
 editor.session.setOption('wrap', true);
 editor.session.setOption('tabSize', 2);
-editor.renderer.setOption('fontSize', 16);
+editor.renderer.setOption('fontSize', 14);
 
 editor.container.style.lineHeight = 1.7;
 editor.renderer.updateFontSize();
@@ -217,9 +217,10 @@ editor.session.on('change', function() {
   }
 });
 
-// Sync preview slide on cursor movement
+// Sync preview slide on cursor movement (skip during style panel insertion)
 editor.selection.on('changeCursor', function() {
-  if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+  if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible() &&
+      !(typeof window._isStylePanelInserting === 'function' && window._isStylePanelInserting())) {
     PreviewPanel.syncSlide(editor.getCursorPosition().row);
   }
 });
@@ -233,22 +234,13 @@ $(function() { updateCharCounter(); });
   var $panel = $('#style-panel');
   if (!$toggle.length || !$panel.length) return;
 
-  // Toggle panel visibility
+  // Toggle panel visibility — flex layout handles height automatically
   $toggle.on('click', function() {
-    if ($panel.is(':visible')) {
-      $panel.slideUp(150, function() {
-        $toggle.removeClass('active');
-        if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
-          PreviewPanel.syncHeight();
-        }
-      });
-    } else {
-      $panel.slideDown(150, function() {
-        $toggle.addClass('active');
-        if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
-          PreviewPanel.syncHeight();
-        }
-      });
+    $panel.toggle();
+    $toggle.toggleClass('active');
+    editor.resize();
+    if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+      PreviewPanel.syncHeight();
     }
   });
 
@@ -300,6 +292,30 @@ $(function() { updateCharCounter(); });
     if (_scrollGuard) window.scrollTo(0, _guardScrollY);
   }, { passive: false });
 
+  // Helper: check if text is wrapped with before/after markers
+  function isWrapped(text, before, after) {
+    return text.length >= before.length + after.length &&
+      text.substring(0, before.length) === before &&
+      text.substring(text.length - after.length) === after;
+  }
+
+  // Helper: strip prefix from a line (returns stripped line or null if not present)
+  function stripPrefix(line, prefix) {
+    var trimmed = line.replace(/^\s*/, '');
+    var indent = line.length - trimmed.length;
+    if (trimmed.substring(0, prefix.length) === prefix) {
+      return line.substring(0, indent) + trimmed.substring(prefix.length);
+    }
+    return null;
+  }
+
+  // Helper: check if line has a numbered list prefix (e.g. "1. ", "12. ")
+  function stripNumberedPrefix(line) {
+    var m = line.match(/^(\s*)\d+\.\s/);
+    if (m) return line.substring(0, m[1].length) + line.substring(m[0].length);
+    return null;
+  }
+
   $panel.on('click', '.sp-btn', function() {
     var key = $(this).data('insert');
     var snip = snippets[key];
@@ -318,46 +334,70 @@ $(function() { updateCharCounter(); });
     var range = selection.getRange();
     var selectedText = session.getTextRange(range);
 
-    // Block-aware: apply prefix to each selected line
-    if (selectedText && snip.blockAware) {
-      var lines = selectedText.split('\n');
-      var num = 0;
-      var result = lines.map(function(ln) {
-        if (!ln.trim()) return ln;
-        if (snip.numbered) {
-          num++;
-          return num + '. ' + ln;
+    // === Line-level toggle (h1, h2, h3, static, auto-split, ul, ol, blockquote) ===
+    if (snip.prefix && snip.lineStart) {
+      var startRow = range.start.row;
+      var endRow = selectedText ? range.end.row : startRow;
+
+      // Check if ALL non-empty lines already have the prefix → toggle off
+      var allHavePrefix = true;
+      for (var r = startRow; r <= endRow; r++) {
+        var ln = session.getLine(r);
+        if (!ln.trim()) continue;
+        var stripped = snip.numbered ? stripNumberedPrefix(ln) : stripPrefix(ln, snip.prefix);
+        if (stripped === null) { allHavePrefix = false; break; }
+      }
+
+      if (allHavePrefix) {
+        // Remove prefix from all lines (iterate in reverse to preserve row indices)
+        for (var r = endRow; r >= startRow; r--) {
+          var ln = session.getLine(r);
+          if (!ln.trim()) continue;
+          var stripped = snip.numbered ? stripNumberedPrefix(ln) : stripPrefix(ln, snip.prefix);
+          if (stripped !== null) {
+            session.replace({ start: { row: r, column: 0 }, end: { row: r, column: ln.length } }, stripped);
+          }
         }
-        return snip.prefix + ln;
-      }).join('\n');
-      session.replace(range, result);
-    // Block wrap: wrap selected text in delimiters (e.g. ```)
-    } else if (selectedText && snip.blockWrap) {
-      session.replace(range, snip.wrapBefore + selectedText + snip.wrapAfter);
-    // Line insert (separators, templates)
-    } else if (snip.line) {
-      var pos = editor.getCursorPosition();
-      var line = session.getLine(pos.row);
-      var text = snip.line;
-      if (snip.lineStart && pos.column > 0 && line.length > 0) {
-        text = '\n' + text;
-      }
-      session.insert(pos, text);
-    // Prefix at line start (no selection)
-    } else if (snip.prefix && snip.lineStart) {
-      var pos = editor.getCursorPosition();
-      var line = session.getLine(pos.row);
-      if (pos.column === 0 || line.trim().length === 0) {
-        session.insert({ row: pos.row, column: 0 }, snip.prefix);
       } else {
-        session.insert(pos, '\n' + snip.prefix);
+        // Add prefix to all non-empty lines
+        var num = 0;
+        for (var r = startRow; r <= endRow; r++) {
+          var ln = session.getLine(r);
+          if (!ln.trim()) continue;
+          var pfx = snip.numbered ? (++num) + '. ' : snip.prefix;
+          session.insert({ row: r, column: 0 }, pfx);
+        }
       }
-    // Inline wrap (bold, italic, etc.)
+
+    // === Inline toggle (bold, italic, underline, etc.) ===
     } else if (snip.before !== undefined) {
       if (selectedText) {
-        var replacement = snip.before + selectedText + snip.after;
-        session.replace(range, replacement);
+        // Check if selected text itself is wrapped
+        if (isWrapped(selectedText, snip.before, snip.after)) {
+          // Unwrap: remove markers from inside selection
+          var inner = selectedText.substring(snip.before.length, selectedText.length - snip.after.length);
+          session.replace(range, inner);
+        // Check if surrounding text has the markers (user selected content without markers)
+        } else {
+          var lineText = session.getLine(range.start.row);
+          var bLen = snip.before.length;
+          var aLen = snip.after.length;
+          var beforeChars = lineText.substring(range.start.column - bLen, range.start.column);
+          var afterChars = lineText.substring(range.end.column, range.end.column + aLen);
+          if (range.start.row === range.end.row && beforeChars === snip.before && afterChars === snip.after) {
+            // Unwrap: remove surrounding markers
+            var expandedRange = {
+              start: { row: range.start.row, column: range.start.column - bLen },
+              end: { row: range.end.row, column: range.end.column + aLen }
+            };
+            session.replace(expandedRange, selectedText);
+          } else {
+            // Wrap: add markers
+            session.replace(range, snip.before + selectedText + snip.after);
+          }
+        }
       } else {
+        // No selection: insert placeholder with markers
         var pos = editor.getCursorPosition();
         var text = snip.before + snip.placeholder + snip.after;
         session.insert(pos, text);
@@ -368,20 +408,49 @@ $(function() { updateCharCounter(); });
           end: { row: pos.row, column: endCol }
         });
       }
+
+    // === Block wrap (code-block) ===
+    } else if (snip.blockWrap) {
+      if (selectedText) {
+        // Check if already wrapped
+        var lines = selectedText.split('\n');
+        if (lines[0].trim() === snip.wrapBefore.trim() && lines[lines.length - 1].trim() === snip.wrapAfter.trim()) {
+          session.replace(range, lines.slice(1, -1).join('\n'));
+        } else {
+          session.replace(range, snip.wrapBefore + selectedText + snip.wrapAfter);
+        }
+      } else {
+        var pos = editor.getCursorPosition();
+        var line = session.getLine(pos.row);
+        var text = snip.line;
+        if (pos.column > 0 && line.length > 0) text = '\n' + text;
+        session.insert(pos, text);
+      }
+
+    // === Line insert (separators, templates — no toggle) ===
+    } else if (snip.line) {
+      var pos = editor.getCursorPosition();
+      var line = session.getLine(pos.row);
+      var text = snip.line;
+      if (snip.lineStart && pos.column > 0 && line.length > 0) {
+        text = '\n' + text;
+      }
+      session.insert(pos, text);
     }
 
     // Restore editor internal scroll
     editor.renderer.scrollToY(editorScrollTop);
 
-    // Release scroll guard, refocus editor, then update preview
+    // Release guards and refocus editor
     setTimeout(function() {
-      editor.focus();
       _scrollGuard = false;
       _suppressPreview = false;
+      editor.focus();
+      // Quietly update preview without scroll
       if (typeof PreviewPanel !== 'undefined') {
         PreviewPanel.scheduleUpdate();
       }
-    }, 300);
+    }, 150);
   });
 })();
 
@@ -973,6 +1042,33 @@ function showError(message){
 $("#input-textarea").focus(function(){
   $("div.alert").hide();
   return true;
+});
+
+//////////////////// Settings panel toggle ///////////////
+$('#settings_toggle_button').on('click', function() {
+  var $btn = $(this);
+  var $panel = $('#settings-and-images');
+  $panel.slideToggle(200, function() {
+    if ($panel.is(':visible')) {
+      $btn.addClass('active');
+      // Expand all groups
+      $('.settings-group-header').addClass('open');
+      $('.settings-group-body').show();
+      $('html, body').animate({ scrollTop: $panel.offset().top - 60 }, 300);
+    } else {
+      $btn.removeClass('active');
+      // Collapse all groups when panel closes
+      $('.settings-group-header').removeClass('open');
+      $('.settings-group-body').hide();
+    }
+  });
+});
+
+$('.settings-group-header').on('click', function() {
+  var $header = $(this);
+  var targetId = $header.data('target');
+  $header.toggleClass('open');
+  $('#' + targetId).slideToggle(200);
 });
 
 //////////////////// Scroll to top ///////////////

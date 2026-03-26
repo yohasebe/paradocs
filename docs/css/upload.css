@@ -7,6 +7,7 @@ body {
   font-size: 17px;
   font-family: 'Lato', sans-serif;
   padding-top: 50px;
+  padding-bottom: 36px;
   background-color: #ffffff;
   background-image: url(../img/wallpaper/sandpaper.png);
   line-height: 180%;
@@ -92,8 +93,20 @@ div.demo-gif img {
 }
 
 #footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background-color: #f5f5f5;
-  border-top: 2px solid lightgray;
+  border-top: 1px solid lightgray;
+}
+
+#footer p {
+  margin: 0 !important;
+  padding: 4px 1em !important;
+  font-size: 0.75em;
+  line-height: 1.4;
 }
 
 .file_upload {
@@ -115,6 +128,8 @@ div.demo-gif img {
 
 #input-textarea {
   overflow: hidden;
+  flex: 1;
+  min-height: 0;
 }
 
 .inline-form {
@@ -350,6 +365,11 @@ blockquote p{
 nav {
   border-bottom: 2px solid lightgray;
   background-color: #f5f5f5 !important;
+  font-size: 0.85em;
+}
+
+nav .dropdown-menu {
+  font-size: 0.95em;
 }
 
 nav a.navbar-brand {
@@ -451,11 +471,52 @@ span.marker{
 
 /* Settings layout */
 #settings-and-images {
-  display: block;
+  display: none;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.6);
 }
 
 #settings-column {
   width: 100%;
+}
+
+.settings-group {
+  margin-bottom: 6px;
+}
+
+.settings-group-header {
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+}
+
+.settings-group-header .form-label {
+  width: auto;
+  text-align: left;
+  padding-right: 0;
+}
+
+.settings-group-header .settings-caret {
+  transition: transform 0.15s;
+  width: 12px;
+  display: inline-block;
+}
+
+.settings-group-header.open .settings-caret {
+  transform: rotate(90deg);
+}
+
+.settings-group-body {
+  padding-left: 12px;
+  border-left: 2px solid #ddd;
+  margin-bottom: 4px;
+}
+
+.app-container {
+  margin-top: 10px;
 }
 
 /* Editor footer & dropzone */
@@ -559,6 +620,9 @@ span.marker{
 #editor-wrapper {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 570px;
 }
 
 #editor-header {
@@ -600,7 +664,7 @@ span.marker{
 
 /* Style panel */
 #style-panel {
-  background: #fafafa;
+  background: #eef2f7;
   border: 1px solid #ccc;
   border-top: none;
   padding: 6px 10px;
@@ -787,12 +851,14 @@ span.marker{
   z-index: 1;
 }
 
-#preview_toggle_button.active {
+#preview_toggle_button.active,
+#settings_toggle_button.active {
   background-color: #4e79a7;
   border-color: #4e79a7;
   color: #fff;
 }
-#preview_toggle_button.active:hover {
+#preview_toggle_button.active:hover,
+#settings_toggle_button.active:hover {
   background-color: #3d6490;
   border-color: #3d6490;
 }

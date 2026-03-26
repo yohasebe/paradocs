@@ -25,12 +25,14 @@ All processing runs entirely in the browser. No server, no account, no data sent
 
 - **Sentence-by-sentence highlighting** — Navigate through text one sentence at a time
 - **Text-to-Speech** — Read sentences aloud with word-level highlighting
+- **Cloud TTS** — OpenAI and ElevenLabs integration with streaming playback
 - **Automatic presentation** — Auto-advance through all slides with TTS
 - **Rich content** — Headings, lists, tables, static text, and numbered blocks
 - **Media embedding** — Images, YouTube videos, MP4 video, and MP3 audio
 - **Quizzes** — Fill-in-the-blank and multiple-choice quizzes with retry
 - **Notes and pop-ups** — Tooltips and image popups on any sentence
 - **Text decoration** — Bold, italic, underline, and highlight (Markdown-compatible)
+- **Live preview** — Filmstrip thumbnail panel with virtual scroll
 - **Dark mode** — Inverted color scheme for comfortable viewing
 - **Auto-save** — Your text and settings are saved automatically
 - **HTML export** — Download as a standalone HTML file for offline use
@@ -42,8 +44,8 @@ All processing runs entirely in the browser. No server, no account, no data sent
 1. Open **[https://yohasebe.github.io/paradocs](https://yohasebe.github.io/paradocs)**
 2. Type or paste your text (or load the sample)
 3. Adjust settings if needed (font, colors, TTS language, etc.)
-4. Click **Convert Text**
-5. Present! Use arrow keys or space bar to advance
+4. Click **Present**
+5. Use arrow keys or space bar to advance
 
 ## How It Works
 
@@ -59,7 +61,7 @@ Various block types are available:
   <img src="docs/img/blocks.png" alt="Block types" width="640">
 </p>
 
-For the full format reference and all features, see the **Documentation** tab in the app.
+For the full format reference and all features, see the [Documentation](https://yohasebe.github.io/paradocs/docs.html) page.
 
 ## Key Bindings
 
@@ -91,7 +93,7 @@ Paradocs is a fully static site. See the `docs/` directory for the source. Contr
 npm install          # Install dev dependencies
 npm test             # Run tests
 npm run build:docs   # Rebuild documentation fragments
-npm run build:pages  # Rebuild language pages from template
+npm run build:pages  # Rebuild language pages from templates
 npm run build        # Run both
 ```
 

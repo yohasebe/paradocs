@@ -7,18 +7,18 @@ const OUT_DIR = path.join(ROOT, 'docs', 'data');
 
 // File mapping: source (relative to root) -> output filename
 const FILES = [
-  { src: 'tldr.md',             out: 'tldr.html' },
-  { src: 'tldr_ja.md',          out: 'tldr_ja.html' },
-  { src: 'overview.md',          out: 'readme.html' },
-  { src: 'overview_ja.md',      out: 'readme_ja.html' },
-  { src: 'documentation.md',    out: 'documentation.html' },
-  { src: 'documentation_ja.md', out: 'documentation_ja.html' },
-  { src: 'tldr_zh.md',             out: 'tldr_zh.html' },
-  { src: 'overview_zh.md',         out: 'readme_zh.html' },
-  { src: 'documentation_zh.md',    out: 'documentation_zh.html' },
-  { src: 'tldr_ko.md',             out: 'tldr_ko.html' },
-  { src: 'overview_ko.md',         out: 'readme_ko.html' },
-  { src: 'documentation_ko.md',    out: 'documentation_ko.html' },
+  { src: 'docs/en/tldr.md',             out: 'tldr.html' },
+  { src: 'docs/en/overview.md',          out: 'readme.html' },
+  { src: 'docs/en/documentation.md',    out: 'documentation.html' },
+  { src: 'docs/ja/tldr_ja.md',          out: 'tldr_ja.html' },
+  { src: 'docs/ja/overview_ja.md',      out: 'readme_ja.html' },
+  { src: 'docs/ja/documentation_ja.md', out: 'documentation_ja.html' },
+  { src: 'docs/zh/tldr_zh.md',          out: 'tldr_zh.html' },
+  { src: 'docs/zh/overview_zh.md',      out: 'readme_zh.html' },
+  { src: 'docs/zh/documentation_zh.md', out: 'documentation_zh.html' },
+  { src: 'docs/ko/tldr_ko.md',          out: 'tldr_ko.html' },
+  { src: 'docs/ko/overview_ko.md',      out: 'readme_ko.html' },
+  { src: 'docs/ko/documentation_ko.md', out: 'documentation_ko.html' },
 ];
 
 // Custom renderer

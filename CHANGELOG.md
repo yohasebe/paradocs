@@ -2,7 +2,16 @@
 
 All notable changes to Paradocs are documented in this file.
 
-## [0.9.1] - 2026-03-26
+## [1.0.0] - 2026-03-26
+
+### Added
+- Page separation: app page (`index.html`) and docs page (`docs.html`) are now independent
+- Collapsible settings panel with categorized groups (Presentation, Appearance, Speech)
+- Settings toggle button in button row, auto-scrolls to panel on open
+- Style panel smart toggle: inline markers (bold, italic, etc.) and line-level prefixes (headings, lists) now toggle on/off
+- Sync toggle label dynamically shows current mode ("Click to scroll" / "Click to preview")
+- Google Fonts (News Cycle, Lato) loaded in deck.html and preview iframes for correct heading display
+- Fixed sticky footer (single line, always visible at bottom)
 
 ### Fixed
 - Security: API keys no longer exposed on `window` global; access via closure-scoped getter/setter
@@ -10,10 +19,20 @@ All notable changes to Paradocs are documented in this file.
 - Security: Image list UI rebuilt with DOM API (`createElement`/`textContent`) instead of `innerHTML`
 - Security: Content Security Policy (CSP) meta tag added to all HTML pages
 - Security: Exporter fetch checks `r.ok` status before using response
+- Style panel buttons now use `type="button"` to prevent unintended form submission
+- CSP updated to allow external images, media, and source maps
+- Preview updates no longer cause page or filmstrip scroll during editing
 - Performance: `mousemove` cursor tracking throttled via `requestAnimationFrame`
 - Parser errors now log full stack trace to console for debugging
 
 ### Changed
+- App page: large center logo removed (navbar logo only)
+- Documentation navbar item now includes Overview in dropdown menu
+- Editor textarea height adjusts automatically when style panel opens/closes (flex layout)
+- Editor default font size reduced from 16px to 14px
+- Style panel background color changed for visual distinction
+- Build system generates 2 pages per language (app + docs) from separate templates
+- Obsolete `page-template.html` removed
 - Default resolution values extracted to named constants (`DEFAULT_RESOLUTION`, `DEFAULT_WIDTH`, `DEFAULT_HEIGHT`)
 - Allowed resolutions list extracted to `ALLOWED_RESOLUTIONS` constant
 

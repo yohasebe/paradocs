@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="{{html_lang}}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self' api.openai.com api.elevenlabs.io cdn.jsdelivr.net; media-src 'self' blob: https:; frame-src 'self' blob: https://www.youtube.com;">
-    <meta name="description" content="Paradocs: パラグラフ指向 テキスト・プレゼンテーション・システム">
+    <meta name="description" content="{{meta_description}}">
     <meta name="author" content="Yoichiro Hasebe">
 
     <meta name="twitter:card"        content="summary" />
@@ -14,29 +14,29 @@
     <meta property="og:url"           content="https://yohasebe.com/paradocs/" />
     <meta property="og:type"          content="website" />
     <meta property="og:title"         content="Paradocs" />
-    <meta property="og:description"   content="パラグラフ指向 テキスト・プレゼンテーション・システム" />
+    <meta property="og:description"   content="{{og_description}}" />
     <meta property="og:image"         content="https://yohasebe.github.io/paradocs/img/paradocs.png" />
 
-    <link rel="shortcut icon" href="../ico/favicon.ico">
-    <title>Paradocs: パラグラフ指向 テキスト・プレゼンテーション・システム</title>
+    <link rel="shortcut icon" href="{{base_path}}ico/favicon.ico">
+    <title>{{title}}</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../ico/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../ico/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../ico/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{base_path}}ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{base_path}}ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{base_path}}ico/favicon-16x16.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css" integrity="sha384-zR/jkclV8JzpZv6ONtyAg2c/SJQRL8k3ZYyDf2O9XGHO16FV9l6/kEdN4IGkspLj" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href="../css/upload.css" rel="stylesheet">
+    <link href="{{base_path}}css/upload.css" rel="stylesheet">
   </head>
 
   <body>
   <div id="wrap">
-  <div id='top' style='visibility:hidden;' subdir='../'></div>
+  <div id='top' style='visibility:hidden;' subdir='{{base_path}}'></div>
 
     <nav class="navbar fixed-top navbar-expand-lg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="./"><img src="../img/paradocs-icon.png" alt="" class="navbar-logo" />Paradocs</a>
+        <a class="navbar-brand" href="./"><img src="{{base_path}}img/paradocs-icon.png" alt="" class="navbar-logo" />Paradocs</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -45,28 +45,28 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-globe"></i> 日本語
+                <i class="fa-solid fa-globe"></i> {{current_lang_label}}
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../">English</a></li>
-                <li><a class="dropdown-item" href="../ja/">日本語</a></li>
-                <li><a class="dropdown-item" href="../zh/">中文</a></li>
-                <li><a class="dropdown-item" href="../ko/">한국어</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}">English</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}ja/">日本語</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}zh/">中文</a></li>
+                <li><a class="dropdown-item" href="{{base_path}}ko/">한국어</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-book"></i> 詳しい仕様
+                <i class="fa-solid fa-book"></i> {{nav_docs}}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="docs.html">概要と背景</a>
+                <a class="dropdown-item" href="{{docs_href}}">{{nav_overview}}</a>
                 <hr class="dropdown-divider">
-                <a class="dropdown-item" href="docs.html#bindings">キーバインディング</a>
-                <a class="dropdown-item" href="docs.html#concepts">いくつかの基本的概念</a>
-                <a class="dropdown-item" href="docs.html#blocks">ブロックの種類</a>
-                <a class="dropdown-item" href="docs.html#decoration">装飾と注記</a>
-                <a class="dropdown-item" href="docs.html#embedding">メディアの埋め込み</a>
-                <a class="dropdown-item" href="docs.html#additional">その他の機能</a>
+                <a class="dropdown-item" href="{{docs_href}}#bindings">{{nav_bindings}}</a>
+                <a class="dropdown-item" href="{{docs_href}}#concepts">{{nav_concepts}}</a>
+                <a class="dropdown-item" href="{{docs_href}}#blocks">{{nav_blocks}}</a>
+                <a class="dropdown-item" href="{{docs_href}}#decoration">{{nav_decoration}}</a>
+                <a class="dropdown-item" href="{{docs_href}}#embedding">{{nav_embedding}}</a>
+                <a class="dropdown-item" href="{{docs_href}}#additional">{{nav_additional}}</a>
               </div>
             </li>
           </ul>
@@ -90,29 +90,29 @@
     <div id="editor-preview-container">
       <div id="editor-wrapper">
         <div id="editor-header">
-          <span>入力テキスト（自動的に色がつきます）</span>
+          <span>{{label_text_input}}</span>
           <div id="editor-header-right">
-            <span id="style-panel-toggle" role="button" tabindex="0" title="スタイル"><i class="fa-solid fa-palette"></i> スタイル</span>
-            <label id="filmstrip-sync-btn" class="filmstrip-sync-label" title="サムネールクリックでエディタをスクロール" data-hint-on="サムネールクリックでエディタをスクロール" data-hint-off="サムネールクリックで拡大プレビュー" style="display:none;"><input type="checkbox" id="filmstrip-sync-checkbox" checked><span class="filmstrip-sync-slider"></span><span class="filmstrip-sync-text"><i class="fa-solid fa-link" id="filmstrip-sync-icon"></i> <span id="filmstrip-sync-label" data-label-on="クリックでスクロール" data-label-off="クリックで拡大">クリックでスクロール</span></span></label>
+            <span id="style-panel-toggle" role="button" tabindex="0" title="{{btn_style_panel}}"><i class="fa-solid fa-palette"></i> {{btn_style_panel}}</span>
+            <label id="filmstrip-sync-btn" class="filmstrip-sync-label" title="{{sync_hint_on}}" data-hint-on="{{sync_hint_on}}" data-hint-off="{{sync_hint_off}}" style="display:none;"><input type="checkbox" id="filmstrip-sync-checkbox" checked><span class="filmstrip-sync-slider"></span><span class="filmstrip-sync-text"><i class="fa-solid fa-link" id="filmstrip-sync-icon"></i> <span id="filmstrip-sync-label" data-label-on="{{sync_label_on}}" data-label-off="{{sync_label_off}}">{{sync_label_on}}</span></span></label>
           </div>
         </div>
         <div id="style-panel" style="display:none;">
           <div class="sp-group">
-            <span class="sp-label">構造</span>
-            <button type="button" class="sp-btn" data-insert="slide-sep" title="スライド区切り (----)"><i class="fa-solid fa-minus"></i> Slide</button>
-            <button type="button" class="sp-btn" data-insert="deck-sep" title="デック区切り (====)"><i class="fa-solid fa-equals"></i> Deck</button>
+            <span class="sp-label">{{sp_structure}}</span>
+            <button type="button" class="sp-btn" data-insert="slide-sep" title="{{sp_slide_sep}}"><i class="fa-solid fa-minus"></i> Slide</button>
+            <button type="button" class="sp-btn" data-insert="deck-sep" title="{{sp_deck_sep}}"><i class="fa-solid fa-equals"></i> Deck</button>
 
-            <button type="button" class="sp-btn" data-insert="static" title="静的パラグラフ (|)"><i class="fa-solid fa-thumbtack"></i> |</button>
-            <button type="button" class="sp-btn" data-insert="auto-split" title="自動文分割 (!!)"><i class="fa-solid fa-scissors"></i> !!</button>
+            <button type="button" class="sp-btn" data-insert="static" title="{{sp_static}}"><i class="fa-solid fa-thumbtack"></i> |</button>
+            <button type="button" class="sp-btn" data-insert="auto-split" title="{{sp_auto_split}}"><i class="fa-solid fa-scissors"></i> !!</button>
           </div>
           <div class="sp-group">
-            <span class="sp-label">見出し</span>
+            <span class="sp-label">{{sp_heading}}</span>
             <button type="button" class="sp-btn" data-insert="h1" title="# Heading 1">H1</button>
             <button type="button" class="sp-btn" data-insert="h2" title="## Heading 2">H2</button>
             <button type="button" class="sp-btn" data-insert="h3" title="### Heading 3">H3</button>
           </div>
           <div class="sp-group">
-            <span class="sp-label">テキスト</span>
+            <span class="sp-label">{{sp_text}}</span>
             <button type="button" class="sp-btn" data-insert="bold" title="**bold**"><i class="fa-solid fa-bold"></i></button>
             <button type="button" class="sp-btn" data-insert="italic" title="*italic*"><i class="fa-solid fa-italic"></i></button>
             <button type="button" class="sp-btn" data-insert="underline" title="_underline_"><i class="fa-solid fa-underline"></i></button>
@@ -121,7 +121,7 @@
             <button type="button" class="sp-btn" data-insert="code-inline" title="`code`"><i class="fa-solid fa-code"></i></button>
           </div>
           <div class="sp-group">
-            <span class="sp-label">ブロック</span>
+            <span class="sp-label">{{sp_list}}</span>
             <button type="button" class="sp-btn" data-insert="ul" title="* item"><i class="fa-solid fa-list-ul"></i></button>
             <button type="button" class="sp-btn" data-insert="ol" title="1. item"><i class="fa-solid fa-list-ol"></i></button>
             <button type="button" class="sp-btn" data-insert="blockquote" title="> quote"><i class="fa-solid fa-quote-left"></i></button>
@@ -129,7 +129,7 @@
             <button type="button" class="sp-btn" data-insert="table" title="table"><i class="fa-solid fa-table"></i></button>
           </div>
           <div class="sp-group">
-            <span class="sp-label">メディア</span>
+            <span class="sp-label">{{sp_media}}</span>
             <button type="button" class="sp-btn" data-insert="link" title="[text](url)"><i class="fa-solid fa-link"></i></button>
             <button type="button" class="sp-btn" data-insert="image" title="image: url"><i class="fa-solid fa-image"></i></button>
             <button type="button" class="sp-btn" data-insert="youtube" title="youtube: url"><i class="fa-brands fa-youtube"></i></button>
@@ -137,7 +137,7 @@
             <button type="button" class="sp-btn" data-insert="audio" title="audio: url"><i class="fa-solid fa-music"></i></button>
           </div>
           <div class="sp-group">
-            <span class="sp-label">注記</span>
+            <span class="sp-label">{{sp_annotation}}</span>
             <button type="button" class="sp-btn" data-insert="note" title="{note: text}"><i class="fa-solid fa-comment"></i> Note</button>
             <button type="button" class="sp-btn" data-insert="image-note" title="{image: url}"><i class="fa-solid fa-image"></i> Popup</button>
             <button type="button" class="sp-btn" data-insert="hidden" title="{hidden text}"><i class="fa-solid fa-eye-slash"></i> Hidden</button>
@@ -156,33 +156,33 @@
     </div>
     <div id="dropzone-button-row">
       <div id="editor-dropzone">
-        <div id="image-drop-zone" tabindex="0" role="button" aria-label="画像を選択">
+        <div id="image-drop-zone" tabindex="0" role="button" aria-label="{{btn_upload_images}}">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>画像をドロップまたはクリック（各5MBまで）</span>
+          <span>{{image_drop_hint}}</span>
           <input type="file" id="image-file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
         </div>
       </div>
       <div id="button-row">
-        <span id='submit_button' class="file_reset btn btn-sm btn-primary"><i class="fa-solid fa-play"></i> プレゼン</span>
+        <span id='submit_button' class="file_reset btn btn-sm btn-primary"><i class="fa-solid fa-play"></i> {{btn_convert}}</span>
         <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-file"></i> ファイル</button>
+          <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-file"></i> {{btn_file}}</button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#" id="save_text_button"><i class="fa-solid fa-floppy-disk"></i> テキストを保存</a></li>
-            <li><a class="dropdown-item" href="#" id="load_text_button"><i class="fa-solid fa-folder-open"></i> テキストを読込</a></li>
+            <li><a class="dropdown-item" href="#" id="save_text_button"><i class="fa-solid fa-floppy-disk"></i> {{btn_save_text}}</a></li>
+            <li><a class="dropdown-item" href="#" id="load_text_button"><i class="fa-solid fa-folder-open"></i> {{btn_load_text}}</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#" id="download_button"><i class="fa-solid fa-download"></i> HTMLをダウンロード</a></li>
+            <li><a class="dropdown-item" href="#" id="download_button"><i class="fa-solid fa-download"></i> {{btn_download}}</a></li>
           </ul>
         </div>
         <input type="file" id="load-text-input" accept=".txt,.md,text/plain,text/markdown" style="display:none;">
-        <span id='clear_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-eraser"></i> クリア</span>
-        <span id='reset_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-rotate-left"></i> リセット</span>
-        <span id='preview_toggle_button' class="file_reset btn btn-sm btn-light" title="プレビュー"><i class="fa-solid fa-eye"></i> プレビュー</span>
-        <span id='settings_toggle_button' class="file_reset btn btn-sm btn-light" title="設定"><i class="fa-solid fa-gear"></i> 設定</span>
+        <span id='clear_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-eraser"></i> {{btn_clear}}</span>
+        <span id='reset_button' class="file_reset btn btn-sm btn-light"><i class="fa-solid fa-rotate-left"></i> {{btn_reset}}</span>
+        <span id='preview_toggle_button' class="file_reset btn btn-sm btn-light" title="{{btn_preview}}"><i class="fa-solid fa-eye"></i> {{btn_preview}}</span>
+        <span id='settings_toggle_button' class="file_reset btn btn-sm btn-light" title="{{btn_settings}}"><i class="fa-solid fa-gear"></i> {{btn_settings}}</span>
       </div>
     </div>
     <div id="image-list-container" style="font-size:0.75em;">
-      <span class="text-muted">ファイル名をクリックするとエディタに挿入</span>
-      <div id="image-list"><span class="text-muted">画像はまだアップロードされていません</span></div>
+      <span class="text-muted">{{image_insert_hint}}</span>
+      <div id="image-list"><span class="text-muted">{{image_list_empty}}</span></div>
     </div>
   </div>
 
@@ -193,11 +193,11 @@
 
       <div class="settings-group">
         <div class="settings-group-header" data-target="settings-presentation">
-          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">プレゼンテーション</span>
+          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">{{settings_presentation}}</span>
         </div>
         <div class="settings-group-body" id="settings-presentation" style="display:none;">
           <div id='resolution_controller'>
-            <span class='form-label'>スクリーンの解像度</span>
+            <span class='form-label'>{{label_resolution}}</span>
             <select class="form-control inline-form" id='resolution_selected' name='resolution'>
               <option value="800x600">SVGA (800x600)</option>
               <option value="1280x800" selected='selected'>WXGA (1280x800)</option>
@@ -206,7 +206,7 @@
           </div>
 
           <div id='fontfamily_controller'>
-            <span class='form-label'>フォント・ファミリー</span>
+            <span class='form-label'>{{label_font_family}}</span>
             <select class="form-control inline-form" id='font_family_selected' name='font_family'>
               <option value="sans" selected='selected'>Sans Serif</option>
               <option value="serif">Serif</option>
@@ -215,7 +215,7 @@
           </div>
 
           <div id='font_controller'>
-            <span class='form-label'>フォント・サイズ</span>
+            <span class='form-label'>{{label_font_size}}</span>
             <select class="form-control inline-form" id='font_size_selected' name='font_size'>
               <option value="80">Huge</option>
               <option value="70">XLarge</option>
@@ -232,11 +232,11 @@
 
       <div class="settings-group">
         <div class="settings-group-header" data-target="settings-appearance">
-          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">外観</span>
+          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">{{settings_appearance}}</span>
         </div>
         <div class="settings-group-body" id="settings-appearance" style="display:none;">
           <div id='wallpaper_controller'>
-            <span class='form-label'>背景の壁紙</span>
+            <span class='form-label'>{{label_wallpaper}}</span>
             <select class="form-control inline-form" id='wallpaper_selected' name='wallpaper'>
               <option value="sandpaper.png" selected='selected'>sandpaper</option>
               <option value="project-paper.png">project-paper</option>
@@ -254,7 +254,7 @@
           </div>
 
           <div id='accent_color_controller'>
-            <span class='form-label'>アクセント・カラー</span>
+            <span class='form-label'>{{label_accent_color}}</span>
             <select class="form-control inline-form" id='accent_color_selected' name='accent_color'>
               <option value="#e15759" selected='selected'>Red</option>
               <option value="#4e79a7">Blue</option>
@@ -270,7 +270,7 @@
           </div>
 
           <div id='highlight_background_color_controller'>
-            <span class='form-label'>ハイライト・カラー</span>
+            <span class='form-label'>{{label_highlight_color}}</span>
             <select class="form-control inline-form" id='highlight_background_color_selected' name='highlight_background_color'>
               <option value="#e15759">Red</option>
               <option value="#4e79a7" selected='selected'>Blue</option>
@@ -286,7 +286,7 @@
           </div>
 
           <div id="text_background_controller">
-            <span class='form-label'>文字/背景の色を逆転</span>
+            <span class='form-label'>{{label_invert_colors}}</span>
             <input id="text_background" type="checkbox" name="text_background" value="text_background">
           </div>
         </div>
@@ -294,31 +294,31 @@
 
       <div class="settings-group">
         <div class="settings-group-header" data-target="settings-speech">
-          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">音声</span>
+          <i class="fa-solid fa-caret-right settings-caret"></i> <span class="form-label" style="cursor:pointer;">{{settings_speech}}</span>
         </div>
         <div class="settings-group-body" id="settings-speech" style="display:none;">
           <div id='lang_controller' style='display: none;'>
-            <span class='form-label'>音声合成用言語</span>
+            <span class='form-label'>{{label_speech_lang}}</span>
             <select class="form-control inline-form" id='lang_selected' name='speech_lang'></select>
           </div>
 
           <div id='voice_controller' style='display: none;'>
-            <span class='form-label'>音声合成用ボイス</span>
+            <span class='form-label'>{{label_speech_voice}}</span>
             <select class="form-control inline-form" id='voice_selected' name='speech_voice' style='max-width: 100%;'></select>
           </div>
           <div id='rate_controller' style='display: none;'>
-            <span class='form-label'>音声発話スピード</span>
+            <span class='form-label'>{{label_speech_rate}}</span>
             <select class="form-control inline-form" id='rate_selected' name='speech_rate'></select>
-            <span class='text-warning' id='rate_disabled_message'>選択中のボイスではスピードの変更ができません。</span>
+            <span class='text-warning' id='rate_disabled_message'>{{label_rate_disabled}}</span>
           </div>
 
           <div id='cloud_tts_section' style='display: none;'>
             <div id='cloud_tts_toggle' style='cursor:pointer; user-select:none; margin-bottom:8px;'>
-              <i class="fa-solid fa-caret-right" id="cloud_tts_caret"></i> <span class='form-label' style='cursor:pointer;'>クラウドTTS（上級）</span>
+              <i class="fa-solid fa-caret-right" id="cloud_tts_caret"></i> <span class='form-label' style='cursor:pointer;'>{{label_cloud_tts}}</span>
             </div>
             <div id='cloud_tts_controls' style='display:none; padding-left:12px; border-left:2px solid #ddd; margin-bottom:8px;'>
               <div id='tts_provider_controller'>
-                <span class='form-label'>TTSプロバイダー</span>
+                <span class='form-label'>{{label_tts_provider}}</span>
                 <select class="form-control inline-form" id='tts_provider_selected' name='tts_provider'>
                   <option value="browser" selected>Browser</option>
                   <option value="openai">OpenAI</option>
@@ -327,17 +327,17 @@
               </div>
               <div id='tts_api_key_controller' style='display:none;'>
                 <span class='form-label'>API Key</span>
-                <input type="password" class="form-control inline-form" id='tts_api_key' placeholder='APIキーを入力' autocomplete="off">
+                <input type="password" class="form-control inline-form" id='tts_api_key' placeholder='{{label_api_key_placeholder}}' autocomplete="off">
                 <span id='tts_api_key_verify' class="btn btn-sm btn-outline-secondary" style="margin-left:6px; white-space:nowrap;">Verify</span>
-                <small class="text-muted" style="margin-left:8px;">キーはブラウザ内にのみ保存</small>
+                <small class="text-muted" style="margin-left:8px;">{{label_api_key_hint}}</small>
                 <span id='tts_api_key_status' style='margin-left:8px;'></span>
               </div>
               <div id='tts_cloud_voice_controller' style='display:none;'>
-                <span class='form-label'>ボイス</span>
+                <span class='form-label'>{{label_cloud_voice}}</span>
                 <select class="form-control inline-form" id='tts_cloud_voice_selected' name='tts_cloud_voice'></select>
               </div>
               <div id='tts_cloud_rate_controller' style='display:none;'>
-                <span class='form-label'>スピード</span>
+                <span class='form-label'>{{label_cloud_rate}}</span>
                 <select class="form-control inline-form" id='tts_cloud_rate_selected' name='tts_cloud_rate'>
                   <option value="2.0">2.0</option>
                   <option value="1.8">1.8</option>
@@ -370,7 +370,7 @@
   </div>
 
   <div id="footer">
-    <p class='text-center text-muted'>Paradocs v1.0.0 | Yoichiro Hasebe 2018-2026 | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a></p>
+    <p class='text-center text-muted'>Paradocs v{{version}} | Yoichiro Hasebe 2018-2026 | <a href='mailto:yohasebe@gmail.com'>E-mail</a> | <a href='https://yohasebe.com'>Web</a></p>
   </div>
 
   <div id="to-top" class="scroll-top ctrl-wrapper">
@@ -385,16 +385,16 @@
   <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.36.5/src-min-noconflict/ace.js" integrity="sha384-QU7d+axY0TxOMR9uCXjWz6BNu9DAMSXb8y4Aoxhoo2EBAJpa/ojisnoFf1K29/uo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@15.0.4/marked.min.js" integrity="sha384-2NndlFAl0twi2nmu3w9mixodZFiN2fbxlakcYJF86bn1JeS1VB87/XqA7cqymzS+" crossorigin="anonymous"></script>
   <script>
-    var default_lang = 'ja-JP';
-    var BASE_PATH = '../';
+    var default_lang = '{{default_lang}}';
+    var BASE_PATH = '{{base_path}}';
   </script>
-  <script src="../js/cloud-tts.js"></script>
-  <script src="../js/autosave.js"></script>
-  <script src="../js/exporter.js"></script>
-  <script src="../js/parser.js"></script>
-  <script src="../js/helper.js"></script>
-  <script src="../js/image-store.js"></script>
-  <script src="../js/preview.js"></script>
-  <script src="../js/upload.js"></script>
+  <script src="{{base_path}}js/cloud-tts.js"></script>
+  <script src="{{base_path}}js/autosave.js"></script>
+  <script src="{{base_path}}js/exporter.js"></script>
+  <script src="{{base_path}}js/parser.js"></script>
+  <script src="{{base_path}}js/helper.js"></script>
+  <script src="{{base_path}}js/image-store.js"></script>
+  <script src="{{base_path}}js/preview.js"></script>
+  <script src="{{base_path}}js/upload.js"></script>
   </body>
 </html>

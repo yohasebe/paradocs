@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Paradocs: Paragraph-Oriented Document Presentation System</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com; img-src 'self' data: blob:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net; connect-src 'self' api.openai.com api.elevenlabs.io; media-src 'self' blob:; frame-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com www.youtube.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self' api.openai.com api.elevenlabs.io cdn.jsdelivr.net; media-src 'self' blob: https:; frame-src 'self' blob: https://www.youtube.com;">
     <meta name="description" content="Presentation Toolkit for Reading Class">
     <meta name="author" content="Yoichiro Hasebe">
     <meta name="mobile-web-app-capable" content="yes" />
@@ -15,12 +15,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=News+Cycle:400,700|Lato:400,700,400italic,700italic&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" integrity="sha384-tK61vs+AeByBmiQ/i6CLgp/PbaaoB/k7M4J5mlX70GVtBPGUk5avjbXhSwhsf3fS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css" integrity="sha384-zR/jkclV8JzpZv6ONtyAg2c/SJQRL8k3ZYyDf2O9XGHO16FV9l6/kEdN4IGkspLj" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css" integrity="sha384-ehqmozZTBdv1kA7Yt6spb58A7CjWyVBkGSylak98DAT911TnSeJFdGLTPHsHatzi" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css" integrity="sha384-IBgYl+I5X6ZDZXI5zv1vsSE3VopDomz4BxSu/GlxaPHfFtcrJ3uj70z1w6srO9zU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/themes/light-border.css" integrity="sha384-oAnSdqFEFRIeYi0SBLHb5HS5ALP/C8FjjBKFAHpjn/9cXWK3iKVrWaxJRz3t9a91" crossorigin="anonymous">
+    <style>body { opacity: 0; transition: opacity 0.3s ease; } body.ready { opacity: 1; }</style>
   </head>
   <body>
     <div class="reveal" id="reveal-container">

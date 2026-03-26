@@ -1,6 +1,6 @@
 {
   "name": "paradocs",
-  "version": "0.9.1",
+  "version": "1.0.0",
   "description": "Paragraph-oriented text presentation system",
   "private": true,
   "scripts": {
