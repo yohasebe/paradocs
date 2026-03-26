@@ -439,8 +439,8 @@ span.marker{
   display: flex;
   align-items: stretch;
   gap: 12px;
-  margin-top: 4px;
-  margin-bottom: 1em;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 /* Button row */
@@ -523,7 +523,8 @@ span.marker{
 #editor-footer {
   text-align: right;
   font-size: 0.75em;
-  padding: 2px 4px;
+  padding: 0 4px;
+  line-height: 1.4;
 }
 
 #editor-dropzone {
@@ -559,7 +560,8 @@ span.marker{
 
 #image-list-container {
   font-size: 1em;
-  margin-top: 2px;
+  margin-top: 0;
+  line-height: 1.2;
 }
 
 #image-list-container > small {

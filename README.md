@@ -49,7 +49,7 @@ All processing runs entirely in the browser. No server, no account, no data sent
 
 ## How It Works
 
-Write your text with **one sentence per line**. Separate slides with `----`.
+Write your text with **one sentence per line**. Separate slides with `---`.
 
 <p align="center">
   <img src="docs/img/text.png" alt="Input and output" width="640">

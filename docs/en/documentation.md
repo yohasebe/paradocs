@@ -50,11 +50,7 @@ A block is separated by two or more consecutive line breaks `↩↩`; a single b
 
 **Slide**
 
-A slide can also be called a "page." Slides are separated by a single line break after four or more hyphens (`----↩` or`- - - -↩`). A single slide can have more than one block.
-
-**Deck**
-
-A deck is a group of slides. Decks are separated by four or more equals signs (`====`). When a presentation contains multiple decks, slides within each deck are arranged vertically within the same horizontal section in Reveal.js.
+A slide can also be called a "page." Slides are separated by three or more hyphens on a line (`---↩`). A single slide can have more than one block.
 
 #### How to describe a paragraph
 
@@ -244,8 +240,7 @@ Paradocs supports a subset of Markdown syntax alongside its own formatting rules
 **N.B.** Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, please note the following differences:
 
 - `_text_` produces **underline**, not italic (use `*text*` for italic)
-- `----` (4+ hyphens) is a **slide separator**, not a horizontal rule
-- `====` (4+ equals) is a **deck separator** (groups of slides)
+- `---` (3+ hyphens) and `====` (4+ equals) are **slide separators**, not horizontal rules
 - Raw HTML tags (e.g. `<b>`, `<div>`) are **escaped** and displayed as plain text
 - **Nested lists** are not supported (use flat lists only)
 - **Setext-style headings** (`Title` followed by `===` or `---`) are not supported; use ATX-style (`# Title`) instead

@@ -504,7 +504,7 @@ var PreviewPanel = (function() {
   function jumpToSlide(index) {
     if (typeof editor === 'undefined') return;
     var lines = editor.session.getDocument().getAllLines();
-    var sepRegex = /^\s*(?:=\s?|-\s?|~\s?){4,}\s*$/;
+    var sepRegex = /^\s*(?:(?:=\s?|~\s?){4,}|(?:-\s?){3,})\s*$/;
     var sepCount = 0;
     var startLine = -1;
     var endLine = lines.length - 1;
@@ -543,7 +543,7 @@ var PreviewPanel = (function() {
     var lines = editor.session.getLines(0, row);
     var count = 0;
     for (var i = 0; i < lines.length; i++) {
-      if (/^\s*(?:=\s?|-\s?|~\s?){4,}\s*$/.test(lines[i])) {
+      if (/^\s*(?:(?:=\s?|~\s?){4,}|(?:-\s?){3,})\s*$/.test(lines[i])) {
         count++;
       }
     }

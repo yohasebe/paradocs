@@ -89,9 +89,7 @@ The automatic sentence-segmentation feature allows you to automatically split th
 <p><strong>Block</strong></p>
 <p>A block is separated by two or more consecutive line breaks <code>↩↩</code>; a single block can have more than one element. A block composed of multiple sentences is specifically called a paragraph.</p>
 <p><strong>Slide</strong></p>
-<p>A slide can also be called a &quot;page.&quot; Slides are separated by a single line break after four or more hyphens (<code>----↩</code> or<code>- - - -↩</code>). A single slide can have more than one block.</p>
-<p><strong>Deck</strong></p>
-<p>A deck is a group of slides. Decks are separated by four or more equals signs (<code>====</code>). When a presentation contains multiple decks, slides within each deck are arranged vertically within the same horizontal section in Reveal.js.</p>
+<p>A slide can also be called a &quot;page.&quot; Slides are separated by three or more hyphens on a line (<code>---↩</code>). A single slide can have more than one block.</p>
 <h4>How to describe a paragraph</h4>
 <p>Multiple sentences are arranged vertically with a line break to form a paragraph.</p>
 <pre><code class="language-text">----
@@ -298,8 +296,7 @@ Highlight: orange ==strawberry== apple
 <p><strong>N.B.</strong> Paradocs has its own text parser designed for presentation use. While some syntax overlaps with Markdown, please note the following differences:</p>
 <ul>
 <li><code>_text_</code> produces <strong>underline</strong>, not italic (use <code>*text*</code> for italic)</li>
-<li><code>----</code> (4+ hyphens) is a <strong>slide separator</strong>, not a horizontal rule</li>
-<li><code>====</code> (4+ equals) is a <strong>deck separator</strong> (groups of slides)</li>
+<li><code>---</code> (3+ hyphens) and <code>====</code> (4+ equals) are <strong>slide separators</strong>, not horizontal rules</li>
 <li>Raw HTML tags (e.g. <code>&lt;b&gt;</code>, <code>&lt;div&gt;</code>) are <strong>escaped</strong> and displayed as plain text</li>
 <li><strong>Nested lists</strong> are not supported (use flat lists only)</li>
 <li><strong>Setext-style headings</strong> (<code>Title</code> followed by <code>===</code> or <code>---</code>) are not supported; use ATX-style (<code># Title</code>) instead</li>

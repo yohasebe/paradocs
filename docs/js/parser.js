@@ -243,23 +243,20 @@ class Parser {
     let numYtVideos = 0;
     let numMedia = 0;
 
-    // Split by ==== (deck separator)
-    let decks = this.data.split(/(?:= ?){4,}/m);
-    decks = decks.filter(dk => dk.trim().length > 0);
-
     this.output += "<section class='deck'>\n";
 
-    decks.forEach((deck) => {
-      // Split by ---- or ~~~~ (slide separator / auto-animate separator)
+    {
+      // Split by ----, ====, or ~~~~ (slide separator / auto-animate separator)
+      // ==== is treated identically to ---- (legacy deck separator, now just a slide break)
       // Keep the separator tokens so we know which type was used
-      let parts = deck.split(/^(\s*(?:- ?){4,}\s*|\s*(?:~ ?){4,}\s*)$/m);
+      let parts = this.data.split(/^(\s*(?:- ?){3,}\s*|\s*(?:= ?){4,}\s*|\s*(?:~ ?){4,}\s*)$/m);
 
       // Build slides array with auto-animate flags
       let slides = [];
       let autoAnimateNext = false;
       for (let pi = 0; pi < parts.length; pi++) {
         let part = parts[pi];
-        if (/^\s*(?:- ?){4,}\s*$/.test(part)) {
+        if (/^\s*(?:- ?){3,}\s*$/.test(part) || /^\s*(?:= ?){4,}\s*$/.test(part)) {
           autoAnimateNext = false;
           continue;
         }
@@ -667,7 +664,7 @@ class Parser {
         }
         this.output += '</section>\n';
       });
-    });
+    }
 
     this.output += '</section>\n';
     return this.output;

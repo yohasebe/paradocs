@@ -89,9 +89,7 @@
 <p><strong>블록(Block)</strong></p>
 <p>블록은 두 번 이상의 연속 줄바꿈 <code>↩↩</code>으로 구분됩니다. 하나의 블록에는 둘 이상의 요소를 포함할 수 있습니다. 여러 문장으로 구성된 블록을 특별히 단락이라고 합니다.</p>
 <p><strong>슬라이드(Slide)</strong></p>
-<p>슬라이드는 &quot;페이지&quot;라고도 부를 수 있습니다. 슬라이드는 네 개 이상의 하이픈 뒤에 줄바꿈(<code>----↩</code> 또는 <code>- - - -↩</code>)으로 구분됩니다. 하나의 슬라이드에는 둘 이상의 블록을 포함할 수 있습니다.</p>
-<p><strong>덱(Deck)</strong></p>
-<p>덱은 슬라이드의 그룹입니다. 네 개 이상의 등호(<code>====</code>)로 구분됩니다. 프레젠테이션에 여러 덱이 포함된 경우, 각 덱 내의 슬라이드는 Reveal.js의 동일한 수평 섹션 내에서 세로로 배치됩니다.</p>
+<p>슬라이드는 &quot;페이지&quot;라고도 부를 수 있습니다. 슬라이드는 세 개 이상의 하이픈(<code>---↩</code>)으로 구분됩니다. 하나의 슬라이드에는 둘 이상의 블록을 포함할 수 있습니다.</p>
 <h4>단락 작성 방법</h4>
 <p>여러 문장을 줄바꿈으로 세로로 나열하면 단락이 됩니다.</p>
 <pre><code class="language-text">----
@@ -298,8 +296,7 @@ Highlight: orange ==strawberry== apple
 <p><strong>참고:</strong> Paradocs는 프레젠테이션 용도에 특화된 자체 텍스트 파서를 갖추고 있습니다. 일부 구문은 Markdown과 공통이지만 다음 사항에 유의하세요:</p>
 <ul>
 <li><code>_text_</code>는 기울임이 아닌 <strong>밑줄</strong>을 생성합니다(기울임에는 <code>*text*</code> 사용)</li>
-<li><code>----</code>(4개 이상의 하이픈)는 수평선이 아닌 <strong>슬라이드 구분선</strong>입니다</li>
-<li><code>====</code>(4개 이상의 등호)는 <strong>슬라이드 그룹 구분선</strong>(덱 구분)입니다</li>
+<li><code>---</code>(3개 이상의 하이픈) 및 <code>====</code>(4개 이상의 등호)는 수평선이 아닌 <strong>슬라이드 구분선</strong>입니다</li>
 <li>원시 HTML 태그(예: <code>&lt;b&gt;</code>, <code>&lt;div&gt;</code>)는 <strong>이스케이프</strong>되어 일반 텍스트로 표시됩니다</li>
 <li><strong>중첩 목록</strong>은 지원되지 않습니다(단일 수준 목록만 사용 가능)</li>
 <li><strong>Setext 스타일 제목</strong>(<code>제목</code> 아래에 <code>===</code> 또는 <code>---</code>)은 지원되지 않습니다; ATX 스타일(<code># 제목</code>)을 사용하세요</li>

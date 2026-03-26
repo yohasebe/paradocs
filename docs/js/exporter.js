@@ -38,10 +38,10 @@
         var cls = classMatch ? classMatch[1] : '';
         var watchUrl = 'https://www.youtube.com/watch?v=' + ytid;
         var thumbUrl = 'https://img.youtube.com/vi/' + ytid + '/hqdefault.jpg';
-        return '<div class="' + cls + ' youtube-link" style="text-align:center; padding:2em;">' +
+        return '<div class="' + cls + ' youtube-link" style="text-align:center; padding:0.5em; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">' +
           '<a href="' + watchUrl + '" target="_blank" style="text-decoration:none; color:inherit;">' +
-          '<img src="' + thumbUrl + '" style="max-width:80%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="YouTube Video"><br>' +
-          '<span style="font-size:1.2em; margin-top:0.5em; display:inline-block;">' +
+          '<img src="' + thumbUrl + '" style="max-width:70%; max-height:70vh; object-fit:contain; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="YouTube Video"><br>' +
+          '<span style="font-size:0.6em; margin-top:0.3em; display:inline-block;">' +
           '<i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Watch on YouTube</span>' +
           '</a></div>';
       }
@@ -102,14 +102,18 @@
       '          <span class="left_switch"><span class="fa-regular fa-note-sticky" id="sticky_icon" role="button" aria-label="Toggle Sticky Note (s)" tabindex="0"></span></span>\n' +
       '          <span class="left_switch"><span class="fa-solid fa-circle" id="pointer_icon" role="button" aria-label="Switch Pointer Shape/Color (p)" tabindex="0"></span></span>\n' +
       '          <span class="left_switch"><span class="fa-solid fa-wand-magic-sparkles" id="playall_icon" role="button" aria-label="Start/Stop Automatic Presentation (a)" tabindex="0"></span></span>\n' +
+      '          <span class="left_switch"><span class="fa-solid fa-bell" id="beep_icon" role="button" aria-label="Toggle Beep Sound" tabindex="0"></span></span>\n' +
       '          <span class="left_switch"><span class="fa-solid fa-volume-high" id="speaker_icon" role="button" aria-label="Start/Stop Text-to-Speech (.)" tabindex="0"></span></span>\n' +
       '        </div>\n' +
       '        <div id="right_switches">\n' +
-      '          <span class="fa-solid fa-arrows-up-down" id="overview_icon" role="button" aria-label="Toggle Overview (ESC)" tabindex="0"></span>\n' +
+      '          <span class="fa-solid fa-grip" id="overview_icon" role="button" aria-label="Toggle Overview (ESC)" tabindex="0"></span>\n' +
       '        </div>\n' +
       '      </div>\n' +
       '    </div>\n' +
       '\n' +
+      '    <div id="img-lightbox" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);cursor:zoom-out;align-items:center;justify-content:center;">\n' +
+      '      <img id="img-lightbox-img" src="" alt="" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:4px;box-shadow:0 0 30px rgba(0,0,0,0.5);">\n' +
+      '    </div>\n' +
       '    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"><\/script>\n' +
       '    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"><\/script>\n' +
       '    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"><\/script>\n' +
@@ -120,6 +124,17 @@
       '    <\/script>\n' +
       (safeTtsScript ? '    <script>\n' + safeTtsScript + '\n<\/script>\n' : '') +
       '    <script>\n' + safeParadocsScript + '\n<\/script>\n' +
+      '    <script>\n' +
+      '    (function(){\n' +
+      '      var lb=document.getElementById("img-lightbox"),lbImg=document.getElementById("img-lightbox-img"),isOpen=false;\n' +
+      '      function closeLB(){lb.style.display="none";lbImg.src="";isOpen=false;}\n' +
+      '      function openLB(src){lbImg.onerror=closeLB;lbImg.src=src;lb.style.display="flex";isOpen=true;}\n' +
+      '      function findImg(el){var img=el.closest("img.large_img")||el.closest(".slides img[style*=zoom-in]");if(img)return img;img=el.closest("img");return img&&img.closest(".slides")&&(img.classList.contains("fragment")||img.classList.contains("large_img"))?img:null;}\n' +
+      '      document.addEventListener("mousedown",function(e){if(isOpen){e.preventDefault();e.stopImmediatePropagation();closeLB();return;}var img=findImg(e.target);if(img){e.preventDefault();e.stopImmediatePropagation();openLB(img.src);}},true);\n' +
+      '      document.addEventListener("click",function(e){if(e.target.closest("#img-lightbox")||findImg(e.target))e.stopImmediatePropagation();},true);\n' +
+      '      document.addEventListener("keydown",function(e){var t=e.target.tagName;if(t==="INPUT"||t==="TEXTAREA")return;if(e.key==="Escape"&&isOpen){e.preventDefault();closeLB();return;}if(e.key==="."){if(isOpen){closeLB();return;}var cs=typeof Reveal!=="undefined"&&Reveal.getCurrentSlide?Reveal.getCurrentSlide():null;if(cs){var img=cs.querySelector("img.large_img")||cs.querySelector("img[style*=zoom-in]");if(img){e.preventDefault();e.stopImmediatePropagation();openLB(img.src);}}}});\n' +
+      '    })();\n' +
+      '    <\/script>\n' +
       '  </body>\n' +
       '</html>\n';
   };

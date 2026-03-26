@@ -20,7 +20,7 @@ ace.define('ace/mode/custom_highlight_rules', [], function(require, exports, mod
     this.$rules = {
       "start": [
         {
-          regex: /^\s*(?:\= ?|\- ?){4,}\s*$/,
+          regex: /^\s*(?:(?:\= ?){4,}|(?:\- ?){3,})\s*$/,
           token: "invalid",
           next: "start"
         },
@@ -251,8 +251,7 @@ $(function() { updateCharCounter(); });
 
   // Snippet definitions: what to insert for each data-insert value
   var snippets = {
-    'slide-sep':    { line: '\n----\n\n', wrap: false },
-    'deck-sep':     { line: '\n====\n\n', wrap: false },
+    'slide-sep':    { line: '\n---\n\n', wrap: false },
 
     'static':       { prefix: '| ', wrap: false, lineStart: true, blockAware: true },
     'auto-split':   { prefix: '!! ', wrap: false, lineStart: true, blockAware: true },

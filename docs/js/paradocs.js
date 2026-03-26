@@ -562,12 +562,29 @@ jQuery(function($){
       return html;
     }
 
+    var OVERVIEW_BASE_CSS =
+      '@import url("https://fonts.googleapis.com/css?family=News+Cycle:400,700|Lato:400,700&display=swap");' +
+      '*{margin:0;padding:0;box-sizing:border-box;}' +
+      'body{font-family:"Lato","Source Sans Pro",Helvetica,sans-serif;font-size:40px;color:#222;line-height:1.3;}' +
+      'h1,h2,h3{font-family:"News Cycle",Impact,sans-serif;font-weight:bold;line-height:1.2;margin:0 0 0.3em 0;}' +
+      'h1{font-size:1.5em;}h2{font-size:1.2em;}h3{font-size:1.0em;}' +
+      'ul,ol{text-align:left;margin:0 0 0 1em;}' +
+      'li{margin:0.2em 0;}' +
+      'table{border-collapse:collapse;margin:0.5em auto;}' +
+      'td,th{border:1px solid #ddd;padding:0.3em 0.6em;font-size:0.7em;}' +
+      'th{background:#f5f5f5;font-weight:bold;}' +
+      'pre,code{font-family:monospace;font-size:0.6em;background:#f5f5f5;padding:0.2em 0.4em;border-radius:3px;}' +
+      'pre{padding:0.5em;overflow:hidden;}' +
+      'blockquote{border-left:4px solid #ddd;padding-left:0.8em;margin:0.5em 0;font-size:0.9em;color:#555;}' +
+      'img{max-width:100%;max-height:100%;object-fit:contain;}' +
+      'mark{background:#ffe066;padding:0 0.1em;}' +
+      'a{color:#4e79a7;text-decoration:none;}';
+
     function buildSlideSrcdoc(sectionInnerHtml, cleanCss, inverted, w, h) {
       sectionInnerHtml = replaceMediaForThumb(sectionInnerHtml);
       return '<!doctype html><html><head><meta charset="utf-8">' +
-        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">' +
-        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css">' +
         '<style>' +
+          OVERVIEW_BASE_CSS +
           'html,body{margin:0;padding:0;overflow:hidden;}' +
           '.reveal{width:' + w + 'px;height:' + h + 'px;overflow:hidden;}' +
           '.reveal .slides{width:100%;height:100%;}' +
@@ -611,10 +628,13 @@ jQuery(function($){
       $('#overview_icon').removeClass('fa-grip').addClass('fa-compress');
       Reveal.configure({keyboard: false, mouseWheel: false});
 
-      // Collect custom CSS (strip <style> tags)
+      // Collect custom CSS (skip FOUC prevention style containing opacity:0)
       var cleanCss = '';
       document.querySelectorAll('style').forEach(function(s) {
-        cleanCss += s.textContent;
+        var text = s.textContent;
+        if (text.indexOf('opacity') === -1 || text.indexOf('.reveal') !== -1) {
+          cleanCss += text;
+        }
       });
       var inverted = document.getElementById('reveal-container').classList.contains('inverted') ? ' inverted' : '';
       var w = pconf.width || DEFAULT_WIDTH;
@@ -641,7 +661,6 @@ jQuery(function($){
         iframeWrap.className = 'custom-overview-iframe-wrap';
 
         var iframe = document.createElement('iframe');
-        iframe.setAttribute('sandbox', 'allow-same-origin');
         iframe.setAttribute('tabindex', '-1');
         iframe.style.pointerEvents = 'none';
         iframe.srcdoc = buildSlideSrcdoc(sec.innerHTML, cleanCss, inverted, w, h);
@@ -1162,7 +1181,14 @@ jQuery(function($){
       }
     } else {
       var tagname = $current_fragment[0].tagName;
-      if(tagname == "IFRAME"){
+      // Check for link-only fragments first (e.g. downloaded HTML YouTube links)
+      var $fragmentLink = $current_fragment.find('a[href]');
+      if (!$fragmentLink.length && $current_fragment.is('a[href]')) $fragmentLink = $current_fragment;
+      if ($fragmentLink.length > 0 && $fragmentLink.attr('href') && $fragmentLink.attr('href') !== '#' &&
+          ($current_fragment.hasClass('youtube-link') || $fragmentLink.attr('href').indexOf('youtube.com') !== -1 || $fragmentLink.attr('href').indexOf('youtu.be') !== -1)) {
+        window.open($fragmentLink.attr('href'), '_blank');
+        if (typeof defer !== "undefined") { defer.resolve(); }
+      } else if(tagname == "IFRAME"){
         playYoutube($current_fragment, defer);
       } else if(tagname == "VIDEO" || tagname == "AUDIO"){
         playVideo($current_fragment, defer);
@@ -1177,7 +1203,14 @@ jQuery(function($){
           defer.resolve()
         }
       } else if (tagname == "SPAN" && $current_fragment.text().length > 0){
-        playSpeechSound($current_fragment, defer);
+        // If the fragment contains a link, open it instead of TTS
+        var $link = $current_fragment.find('a[href]');
+        if ($link.length > 0 && $link.attr('href') && $link.attr('href') !== '#') {
+          window.open($link.attr('href'), '_blank');
+          if (typeof defer !== "undefined") { defer.resolve(); }
+        } else {
+          playSpeechSound($current_fragment, defer);
+        }
       } else {
         if(typeof defer != "undefined"){
           defer.resolve()

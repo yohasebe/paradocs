@@ -89,9 +89,7 @@
 <p><strong>块</strong></p>
 <p>块之间通过两个或更多连续换行符 <code>↩↩</code> 分隔；一个块可以包含多个元素。由多个句子组成的块特别称为段落。</p>
 <p><strong>幻灯片</strong></p>
-<p>幻灯片也可以称为&quot;页面&quot;。幻灯片之间通过四个或更多连字符后跟一个换行符（<code>----↩</code> 或 <code>- - - -↩</code>）分隔。一张幻灯片可以包含多个块。</p>
-<p><strong>幻灯片组（Deck）</strong></p>
-<p>幻灯片组是幻灯片的集合。通过四个或更多等号（<code>====</code>）分隔。当演示文稿包含多个幻灯片组时，每个组内的幻灯片在 Reveal.js 的同一水平部分中垂直排列。</p>
+<p>幻灯片也可以称为&quot;页面&quot;。幻灯片之间通过三个或更多连字符（<code>---↩</code>）分隔。一张幻灯片可以包含多个块。</p>
 <h4>如何编写段落</h4>
 <p>将多个句子垂直排列，每行一个句子，即可构成段落。</p>
 <pre><code class="language-text">----
@@ -298,8 +296,7 @@ Highlight: orange ==strawberry== apple
 <p><strong>注意：</strong> Paradocs 拥有专为演示用途设计的文本解析器。虽然部分语法与 Markdown 重叠，但请注意以下区别：</p>
 <ul>
 <li><code>_text_</code> 产生<strong>下划线</strong>，而非斜体（斜体请使用 <code>*text*</code>）</li>
-<li><code>----</code>（4个以上连字符）是<strong>幻灯片分隔符</strong>，而非水平线</li>
-<li><code>====</code>（4个以上等号）是<strong>幻灯片组分隔符</strong>（将幻灯片分组）</li>
+<li><code>---</code>（3个以上连字符）和<code>====</code>（4个以上等号）是<strong>幻灯片分隔符</strong>，而非水平线</li>
 <li>原始 HTML 标签（如 <code>&lt;b&gt;</code>、<code>&lt;div&gt;</code>）会被<strong>转义</strong>并显示为纯文本</li>
 <li>不支持<strong>嵌套列表</strong>（仅可使用扁平列表）</li>
 <li>不支持 <strong>Setext 样式标题</strong>（<code>标题</code>后跟 <code>===</code> 或 <code>---</code>）；请使用 ATX 样式（<code># 标题</code>）</li>
