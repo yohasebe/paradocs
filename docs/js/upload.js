@@ -121,8 +121,14 @@ var langKey = { 'ja-JP': 'ja_', 'zh-CN': 'zh_', 'ko-KR': 'ko_' }[default_lang] |
 var autosave = new AutoSave('paradocs_' + langKey);
 
 //////////////////// Load saved or sample text ///////////////
+function hideEditorLoading() {
+  var el = document.getElementById('editor-loading');
+  if (el) el.style.display = 'none';
+}
+
 if (autosave.hasSavedData()) {
   editor.setValue(autosave.loadText(), -1);
+  hideEditorLoading();
   // Restore form settings after speech voices are loaded
   var savedSettings = autosave.loadSettings();
   if (savedSettings) {
@@ -186,9 +192,11 @@ if (autosave.hasSavedData()) {
     })
     .then(function(text) {
       editor.setValue(text, -1);
+      hideEditorLoading();
     })
     .catch(function(err) {
       console.warn('Failed to load sample text:', err.message);
+      hideEditorLoading();
     });
 }
 

@@ -2,6 +2,14 @@
 
 All notable changes to Paradocs are documented in this file.
 
+## [1.0.1] - 2026-04-07
+
+### Added
+- Loading spinner on editor while sample text is being fetched
+
+### Fixed
+- Reduced page margins to minimize window scrollbar in default view
+
 ## [1.0.0] - 2026-03-26
 
 ### Added
