@@ -252,22 +252,30 @@ class Parser {
       let parts = this.data.split(/^(\s*(?:- ?){3,}\s*|\s*(?:= ?){4,}\s*|\s*(?:~ ?){4,}\s*)$/m);
 
       // Build slides array with auto-animate flags
+      // Every segment between separators becomes a slide (even if empty = blank slide)
       let slides = [];
       let autoAnimateNext = false;
+      let foundFirstSep = false;
       for (let pi = 0; pi < parts.length; pi++) {
         let part = parts[pi];
         if (/^\s*(?:- ?){3,}\s*$/.test(part) || /^\s*(?:= ?){4,}\s*$/.test(part)) {
           autoAnimateNext = false;
+          foundFirstSep = true;
           continue;
         }
         if (/^\s*(?:~ ?){4,}\s*$/.test(part)) {
           autoAnimateNext = true;
+          foundFirstSep = true;
           continue;
         }
-        if (part.trim().length > 0) {
-          slides.push({ content: part, autoAnimate: autoAnimateNext });
-          autoAnimateNext = false;
-        }
+        // Skip empty content before the first separator
+        if (!foundFirstSep && part.trim().length === 0) continue;
+        slides.push({ content: part, autoAnimate: autoAnimateNext });
+        autoAnimateNext = false;
+      }
+      // Remove trailing empty slide (from trailing separator)
+      while (slides.length > 0 && slides[slides.length - 1].content.trim().length === 0) {
+        slides.pop();
       }
 
       // Mark previous slide for auto-animate pairs (both slides need the attribute)

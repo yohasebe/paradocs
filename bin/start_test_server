@@ -1,9 +1,0 @@
-#!/bin/sh
-DIR=$(cd $(dirname "$0"); pwd)
-
-Rake minify
-
-gemfile_lock=${DIR}/../Gemfile.lock
-rm -rf "$gemfile_lock"
-
-/Users/yohasebe/.rbenv/shims/unicorn config.ru unicorn.rb

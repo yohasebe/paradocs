@@ -14,6 +14,15 @@ All notable changes to Paradocs are documented in this file.
 - Fixed sticky footer (single line, always visible at bottom)
 
 ### Fixed
+- CPU leak: `setInterval` without `clearInterval` in `waitUntilFinished()` caused infinite polling
+- CPU leak: `setInterval` instead of `setTimeout` for timed media stop caused permanent loop
+- Media polling now clears previous interval before starting new one, with 5-minute safety timeout
+- Overview blank slides: FOUC `opacity:0` style was leaking into overview iframe CSS
+- Overview now uses inline CSS (same as filmstrip preview) for reliable rendering
+- Exporter: overview icon updated (`fa-grip`), beep icon added, image lightbox included
+- Exporter: YouTube thumbnail preserves aspect ratio (`object-fit:contain`), text no longer overflows
+- `.` key opens URL in new tab when a link fragment is focused (including YouTube in downloaded HTML)
+- Sample text URLs updated from `yohasebe.com` to `yohasebe.github.io`
 - Security: API keys no longer exposed on `window` global; access via closure-scoped getter/setter
 - Security: `showError()` uses `.text()` instead of `.html()` to prevent XSS
 - Security: Image list UI rebuilt with DOM API (`createElement`/`textContent`) instead of `innerHTML`
@@ -26,6 +35,11 @@ All notable changes to Paradocs are documented in this file.
 - Parser errors now log full stack trace to console for debugging
 
 ### Changed
+- Slide separator changed from `----` (4+) to `---` (3+), matching Markdown convention
+- Deck concept removed: `====` now treated as regular slide separator
+- Deck button removed from style panel
+- Doc sources reorganized into `docs/<lang>/` directories
+- Japanese README (`README_ja.md`) added
 - App page: large center logo removed (navbar logo only)
 - Documentation navbar item now includes Overview in dropdown menu
 - Editor textarea height adjusts automatically when style panel opens/closes (flex layout)

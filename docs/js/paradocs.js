@@ -1459,6 +1459,10 @@ jQuery(function($){
   };
 
   function waitUntilFinished(target, media, maxtime, defer){
+    // Always clear any previous polling before starting new one
+    clearInterval(magicIntervalId);
+    clearTimeout(magicTimerId);
+
     if(media == "speech" || media == "video" || media == "audio" || media == "youtube") {
 
       var mediaStarted = false;
@@ -1467,9 +1471,7 @@ jQuery(function($){
         if(e.type === "start" || e.type === "started"){
           mediaStarted = true;
         } else if(e.type === "error"){
-          defer.resolve();
-          clearInterval(magicIntervalId);
-          clearTimeout(magicTimerId);
+          mediaDone = true;
         } else if(e.type === "end" || e.type === "ended" || e.type === "pause" || e.type === "paused"){
           mediaDone = true;
         }
@@ -1483,19 +1485,26 @@ jQuery(function($){
         });
       }
 
-      magicIntervalId= setInterval(function(){
+      // Safety timeout: force cleanup after 5 minutes max (prevents infinite polling)
+      var safetyTimeout = setTimeout(function(){
+        mediaDone = true;
+      }, 300000);
+
+      magicIntervalId = setInterval(function(){
         if(mediaDone){
-          defer.resolve();
           clearInterval(magicIntervalId);
           clearTimeout(magicTimerId);
+          clearTimeout(safetyTimeout);
+          defer.resolve();
         }
       }, 500);
 
       if(media === "speech"){
         magicTimerId = setTimeout(function(){
           if(!mediaStarted){
-            defer.reject();
             clearInterval(magicIntervalId);
+            clearTimeout(safetyTimeout);
+            defer.reject();
           }
         }, 2000);
       }
@@ -1503,7 +1512,7 @@ jQuery(function($){
     } else if (maxtime == 0){
       defer.resolve();
     } else {
-      var timerId2 = setInterval(function(){
+      setTimeout(function(){
         if(media === "video" || media === "audio"){
           target.pause();
           videoPlaying = false;
@@ -1514,7 +1523,7 @@ jQuery(function($){
           target.cancel();
         }
         defer.resolve();
-      }, maxtime)
+      }, maxtime);
     }
   }
 

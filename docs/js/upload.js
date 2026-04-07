@@ -234,9 +234,21 @@ $(function() { updateCharCounter(); });
   var $panel = $('#style-panel');
   if (!$toggle.length || !$panel.length) return;
 
-  // Toggle panel visibility — flex layout handles height automatically
+  // Toggle panel visibility — adjust textarea height to keep total constant
+  var $textarea = $('#input-textarea');
   $toggle.on('click', function() {
-    $panel.toggle();
+    var wasVisible = $panel.is(':visible');
+    if (!wasVisible) {
+      $panel.show();
+      var panelH = $panel.outerHeight();
+      $textarea.height($textarea.height() - panelH);
+    } else {
+      var panelH = $panel.outerHeight();
+      $panel.hide();
+      $textarea.height($textarea.height() + panelH);
+    }
+    // Ensure flex is off so explicit height is used
+    $textarea.css('flex', 'none');
     $toggle.toggleClass('active');
     editor.resize();
     if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
@@ -672,6 +684,10 @@ $("#voice_selected").change(function(){
       } else {
         $status.html('<i class="fa-solid fa-circle-xmark"></i> ' + result.error).css('color', '#e15759');
       }
+    }).catch(function(err) {
+      $btn.removeClass('disabled');
+      $status.text('Verification failed').css('color', '#e15759');
+      console.error('API key verification error:', err);
     });
   });
 
@@ -1097,8 +1113,17 @@ $(document).click(function (event) {
   }
 });
 
-$("#input-textarea").resizable( {handles:"se", grid: [10000000,1] }).on('resize', function(){
+var _initialTextareaHeight = $('#input-textarea').height();
+$("#input-textarea").resizable( {handles:"se", grid: [10000000,1],
+  minHeight: _initialTextareaHeight,
+  start: function() {
+    $(this).css('flex', 'none');
+  }
+}).on('resize', function(){
   editor.resize();
+  if (typeof PreviewPanel !== 'undefined' && PreviewPanel.isVisible()) {
+    PreviewPanel.syncHeight();
+  }
 });
 
 //////////////////// Local image upload ///////////////

@@ -504,22 +504,11 @@ var PreviewPanel = (function() {
   function jumpToSlide(index) {
     if (typeof editor === 'undefined') return;
     var lines = editor.session.getDocument().getAllLines();
-    var sepRegex = /^\s*(?:(?:=\s?|~\s?){4,}|(?:-\s?){3,})\s*$/;
-    var sepCount = 0;
-    var startLine = -1;
-    var endLine = lines.length - 1;
-    for (var i = 0; i < lines.length; i++) {
-      if (sepRegex.test(lines[i])) {
-        if (sepCount === index) {
-          startLine = i + 1;
-        } else if (sepCount === index + 1) {
-          endLine = i - 1;
-          break;
-        }
-        sepCount++;
-      }
-    }
-    if (startLine < 0) return;
+    var ranges = buildSlideRanges(lines);
+
+    if (index < 0 || index >= ranges.length) return;
+    var startLine = ranges[index].start;
+    var endLine = ranges[index].end;
     // Select the slide's text range
     var Range = ace.require('ace/range').Range;
     editor.selection.setRange(new Range(startLine, 0, endLine, lines[endLine].length));
@@ -540,14 +529,50 @@ var PreviewPanel = (function() {
 
   function getSlideIndexForRow(row) {
     if (typeof editor === 'undefined') return 0;
-    var lines = editor.session.getLines(0, row);
-    var count = 0;
+    var allLines = editor.session.getDocument().getAllLines();
+    // Build slide ranges matching parser logic, then find which one contains the cursor row
+    var ranges = buildSlideRanges(allLines);
+    for (var i = ranges.length - 1; i >= 0; i--) {
+      if (row >= ranges[i].start) return i;
+    }
+    return 0;
+  }
+
+  // Build slide ranges from editor text, matching parser's slide splitting logic
+  function buildSlideRanges(lines) {
+    var sepRegex = /^\s*(?:(?:=\s?|~\s?){4,}|(?:-\s?){3,})\s*$/;
+    var ranges = [];
+    var segStart = 0;
+    var foundFirstSep = false;
+
     for (var i = 0; i < lines.length; i++) {
-      if (/^\s*(?:(?:=\s?|~\s?){4,}|(?:-\s?){3,})\s*$/.test(lines[i])) {
-        count++;
+      if (sepRegex.test(lines[i])) {
+        // Push the segment before this separator (even if empty = blank slide)
+        // But skip empty content before the first separator
+        if (foundFirstSep || hasNonEmpty(lines, segStart, i - 1)) {
+          ranges.push({ start: segStart, end: Math.max(segStart, i - 1) });
+        }
+        segStart = i + 1;
+        foundFirstSep = true;
       }
     }
-    return Math.max(0, count - 1);
+    // Last segment (after last separator, or entire text if no separators)
+    if (segStart <= lines.length - 1) {
+      if (foundFirstSep || hasNonEmpty(lines, segStart, lines.length - 1)) {
+        ranges.push({ start: segStart, end: lines.length - 1 });
+      }
+    }
+    if (ranges.length === 0) {
+      ranges.push({ start: 0, end: lines.length - 1 });
+    }
+    return ranges;
+  }
+
+  function hasNonEmpty(lines, from, to) {
+    for (var i = from; i <= to; i++) {
+      if (lines[i] && lines[i].trim().length > 0) return true;
+    }
+    return false;
   }
 
   function getCurrentSlideIndex() {

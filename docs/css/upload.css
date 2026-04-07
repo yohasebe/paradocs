@@ -624,7 +624,7 @@ span.marker{
   min-width: 0;
   display: flex;
   flex-direction: column;
-  height: 570px;
+  min-height: 570px;
 }
 
 #editor-header {

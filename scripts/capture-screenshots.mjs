@@ -30,7 +30,7 @@ async function main() {
     await popup.setRequestInterception(true);
     popup.on('request', (req) => {
       const url = req.url();
-      if (url.includes('yohasebe.com/paradocs/')) {
+      if (url.includes('yohasebe.github.io/paradocs/')) {
         const localUrl = url.replace(/https?:\/\/[^/]*\/paradocs\//, `${BASE_URL}/`);
         req.continue({ url: localUrl });
       } else {
