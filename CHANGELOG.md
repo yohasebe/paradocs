@@ -46,7 +46,9 @@ All notable changes to Paradocs are documented in this file.
 - Editor default font size reduced from 16px to 14px
 - Style panel background color changed for visual distinction
 - Build system generates 2 pages per language (app + docs) from separate templates
-- Obsolete `page-template.html` removed
+- Obsolete `page-template.html`, `bin/` deployment scripts, `docs/en/title.md` removed
+- Unused i18n keys (`h2_use`, `label_textarea_resize`) removed
+- `og:url` meta tags updated to `yohasebe.github.io`
 - Default resolution values extracted to named constants (`DEFAULT_RESOLUTION`, `DEFAULT_WIDTH`, `DEFAULT_HEIGHT`)
 - Allowed resolutions list extracted to `ALLOWED_RESOLUTIONS` constant
 

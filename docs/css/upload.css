@@ -6,8 +6,8 @@ body {
   color: #707070;
   font-size: 17px;
   font-family: 'Lato', sans-serif;
-  padding-top: 50px;
-  padding-bottom: 36px;
+  padding-top: 44px;
+  padding-bottom: 28px;
   background-color: #ffffff;
   background-image: url(../img/wallpaper/sandpaper.png);
   line-height: 180%;
@@ -516,7 +516,8 @@ span.marker{
 }
 
 .app-container {
-  margin-top: 10px;
+  margin-top: 4px;
+  margin-bottom: 0;
 }
 
 /* Editor footer & dropzone */
