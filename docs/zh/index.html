@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self' api.openai.com api.elevenlabs.io cdn.jsdelivr.net; media-src 'self' blob: https:; frame-src 'self' blob: https://www.youtube.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self' api.openai.com api.elevenlabs.io cdn.jsdelivr.net www.google-analytics.com; media-src 'self' blob: https:; frame-src 'self' blob: https://www.youtube.com;">
     <meta name="description" content="Paradocs: 面向段落的文档演示系统">
     <meta name="author" content="Yoichiro Hasebe">
 
@@ -23,6 +23,15 @@
     <link rel="apple-touch-icon" sizes="180x180" href="../ico/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../ico/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../ico/favicon-16x16.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P3T3JBB8ZG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-P3T3JBB8ZG');
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css" integrity="sha384-zR/jkclV8JzpZv6ONtyAg2c/SJQRL8k3ZYyDf2O9XGHO16FV9l6/kEdN4IGkspLj" crossorigin="anonymous">

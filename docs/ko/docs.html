@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self'; media-src 'self'; frame-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com; connect-src 'self' www.google-analytics.com; media-src 'self'; frame-src 'self';">
     <meta name="description" content="Paradocs: 단락 중심 문서 프레젠테이션 시스템">
     <meta name="author" content="Yoichiro Hasebe">
 
@@ -13,6 +13,15 @@
     <link rel="apple-touch-icon" sizes="180x180" href="../ico/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../ico/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../ico/favicon-16x16.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P3T3JBB8ZG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-P3T3JBB8ZG');
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
