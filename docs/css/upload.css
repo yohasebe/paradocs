@@ -629,6 +629,11 @@ span.marker{
   position: relative;
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
+}
+
 #editor-header {
   display: flex;
   align-items: center;
