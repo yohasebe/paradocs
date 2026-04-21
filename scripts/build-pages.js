@@ -17,9 +17,9 @@ const OUTPUT_MAP = {
   ko: path.join(DOCS, 'ko'),
 };
 
-function buildPage(template, lang, strings) {
+function buildPage(template, lang, strings, canonicalPath) {
   let html = template;
-  const vars = { ...strings, version: PKG.version };
+  const vars = { ...strings, version: PKG.version, canonical_path: canonicalPath };
 
   for (const [key, value] of Object.entries(vars)) {
     const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
@@ -43,14 +43,17 @@ for (const [lang, strings] of Object.entries(i18n)) {
   const outDir = OUTPUT_MAP[lang];
   fs.mkdirSync(outDir, { recursive: true });
 
+  // canonical path: en -> "" or "docs.html", others -> "<lang>/" or "<lang>/docs.html"
+  const langPrefix = lang === 'en' ? '' : `${lang}/`;
+
   // Generate app page (index.html)
-  const appHtml = buildPage(appTemplate, lang, strings);
+  const appHtml = buildPage(appTemplate, lang, strings, langPrefix);
   const appPath = path.join(outDir, 'index.html');
   fs.writeFileSync(appPath, appHtml, 'utf-8');
   console.log(`  OK    ${lang}/index.html -> ${path.relative(ROOT, appPath)}`);
 
   // Generate docs page (docs.html)
-  const docsHtml = buildPage(docsTemplate, lang, strings);
+  const docsHtml = buildPage(docsTemplate, lang, strings, `${langPrefix}docs.html`);
   const docsPath = path.join(outDir, 'docs.html');
   fs.writeFileSync(docsPath, docsHtml, 'utf-8');
   console.log(`  OK    ${lang}/docs.html  -> ${path.relative(ROOT, docsPath)}`);

@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Paragraph-Oriented Document Presentation System</strong><br>
-  <a href="https://yohasebe.github.io/paradocs">https://yohasebe.github.io/paradocs</a>
+  <a href="https://yohasebe.com/paradocs">https://yohasebe.com/paradocs</a>
 </p>
 
 ---
@@ -41,7 +41,7 @@ All processing runs entirely in the browser. No server, no account, no data sent
 
 ## Quick Start
 
-1. Open **[https://yohasebe.github.io/paradocs](https://yohasebe.github.io/paradocs)**
+1. Open **[https://yohasebe.com/paradocs](https://yohasebe.com/paradocs)**
 2. Type or paste your text (or load the sample)
 3. Adjust settings if needed (font, colors, TTS language, etc.)
 4. Click **Present**
@@ -61,7 +61,7 @@ Various block types are available:
   <img src="docs/img/blocks.png" alt="Block types" width="640">
 </p>
 
-For the full format reference and all features, see the [Documentation](https://yohasebe.github.io/paradocs/docs.html) page.
+For the full format reference and all features, see the [Documentation](https://yohasebe.com/paradocs/docs.html) page.
 
 ## Key Bindings
 

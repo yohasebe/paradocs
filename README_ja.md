@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>パラグラフ指向テキスト・プレゼンテーション・システム</strong><br>
-  <a href="https://yohasebe.github.io/paradocs/ja/">https://yohasebe.github.io/paradocs/ja/</a>
+  <a href="https://yohasebe.com/paradocs/ja/">https://yohasebe.com/paradocs/ja/</a>
 </p>
 
 ---
@@ -41,7 +41,7 @@
 
 ## クイックスタート
 
-1. **[https://yohasebe.github.io/paradocs/ja/](https://yohasebe.github.io/paradocs/ja/)** を開く
+1. **[https://yohasebe.com/paradocs/ja/](https://yohasebe.com/paradocs/ja/)** を開く
 2. テキストを入力または貼り付け（サンプルを読み込むことも可能）
 3. 必要に応じて設定を調整（フォント、色、TTS言語など）
 4. **プレゼン** をクリック
@@ -61,7 +61,7 @@
   <img src="docs/img/blocks.png" alt="ブロックタイプ" width="640">
 </p>
 
-書式の詳細と全機能については、[ドキュメント](https://yohasebe.github.io/paradocs/ja/docs.html)ページをご覧ください。
+書式の詳細と全機能については、[ドキュメント](https://yohasebe.com/paradocs/ja/docs.html)ページをご覧ください。
 
 ## キーバインド
 
