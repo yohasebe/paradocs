@@ -2,7 +2,7 @@
 
 All notable changes to Paradocs are documented in this file.
 
-## [Unreleased]
+## [1.1.0] - 2026-10-21
 
 ### Changed
 - Cloud TTS API keys are kept only for the current tab by default. A new **Remember in this browser** option saves them across visits; turning it off removes stored keys immediately. Keys saved by earlier versions stay remembered.
