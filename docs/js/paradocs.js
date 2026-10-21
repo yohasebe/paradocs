@@ -1,8 +1,5 @@
 jQuery(function($){
 
-  // Skip all initialization in preview mode (used by live preview iframe)
-  if (window.location.search.indexOf('mode=preview') !== -1) return;
-
   //////////////////// Variables ///////////////
   var DEFAULT_WIDTH = 1280;
   var DEFAULT_HEIGHT = 800;
@@ -867,10 +864,10 @@ jQuery(function($){
   }
 
   function resetConfig(){
-    // configure() re-lays out the deck; in scroll view that re-activates the
-    // current page and fires slidechanged again, so skip it when nothing changes
-    var current = Reveal.getConfig();
-    if (current.slideNumber === 'c/t' && current.progress && current.controls) return;
+    // configure() also re-lays out the deck, which re-centers slides whose
+    // media (e.g. YouTube) sized themselves after the first layout. In scroll
+    // view this would re-fire slidechanged endlessly; scroll view is disabled
+    // via scrollActivationWidth: null.
     Reveal.configure({
       slideNumber: 'c/t',
       progress: true,
