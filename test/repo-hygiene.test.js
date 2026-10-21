@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const LOCAL_PATH = /\/Users\/[^/\s'"`]+\//;
+const LOCAL_PATH = /\/(?:Users|home)\/[^/\s'"`]+\//;
 
 function trackedFiles() {
   return execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' })
@@ -21,6 +21,7 @@ describe('Repository hygiene', () => {
   test('pattern detects a home-directory path', () => {
     // Built by concatenation so this file does not match its own check
     expect(LOCAL_PATH.test("const DIR = '/" + "Users/someone/project/img';")).toBe(true);
+    expect(LOCAL_PATH.test("const DIR = '/" + "home/someone/project/img';")).toBe(true);
     expect(LOCAL_PATH.test("const DIR = fileURLToPath(new URL('../img', import.meta.url));")).toBe(false);
   });
 
