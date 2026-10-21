@@ -406,7 +406,10 @@ jQuery(function($){
       transitionSpeed: 'normal',
       viewDistance: 3,
       keyboard: keybindings,
-      margin: 0.1
+      margin: 0.1,
+      // Keep paged slides on narrow screens: scroll view hides the gadgets,
+      // the wallpaper and the one-sentence-at-a-time highlighting
+      scrollActivationWidth: null
     }).then(function() {
       //////////////////// Configure reveal.js ///////////////
       Reveal.configure(pconf);
@@ -864,6 +867,10 @@ jQuery(function($){
   }
 
   function resetConfig(){
+    // configure() re-lays out the deck; in scroll view that re-activates the
+    // current page and fires slidechanged again, so skip it when nothing changes
+    var current = Reveal.getConfig();
+    if (current.slideNumber === 'c/t' && current.progress && current.controls) return;
     Reveal.configure({
       slideNumber: 'c/t',
       progress: true,

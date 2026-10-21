@@ -9,6 +9,9 @@ All notable changes to Paradocs are documented in this file.
 
 - Reveal.js 5.2.1 → 6.0.2 (deck and exported HTML). Headings keep the previous look: 6.0's simple theme switched to uppercase, heavier and smaller headings, which Paradocs now overrides
 
+### Fixed
+- On narrow screens such as phones, the deck switched to Reveal.js's scroll view, which hid the gadgets and the wallpaper and threw repeated stack-overflow errors (a slide change re-ran `configure()`, which re-fired the slide change). Paged slides are now kept on all screen sizes, and the configuration is only re-applied when it has changed
+
 ### Security
 - Preview decks initialize Reveal.js with `postMessage: false`, like the main deck; 6.0.2 also fixes a cross-origin XSS in Reveal's postMessage API
 - Markdown links are rendered as plain text unless they use `http:`, `https:` or `mailto:`, so a document can no longer run script through a `javascript:` link (including character-reference-obfuscated forms)
