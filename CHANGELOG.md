@@ -7,7 +7,10 @@ All notable changes to Paradocs are documented in this file.
 ### Changed
 - Cloud TTS API keys are kept only for the current tab by default. A new **Remember in this browser** option saves them across visits; turning it off removes stored keys immediately. Keys saved by earlier versions stay remembered.
 
+- Reveal.js 5.2.1 → 6.0.2 (deck and exported HTML). Headings keep the previous look: 6.0's simple theme switched to uppercase, heavier and smaller headings, which Paradocs now overrides
+
 ### Security
+- Preview decks initialize Reveal.js with `postMessage: false`, like the main deck; 6.0.2 also fixes a cross-origin XSS in Reveal's postMessage API
 - Markdown links are rendered as plain text unless they use `http:`, `https:` or `mailto:`, so a document can no longer run script through a `javascript:` link (including character-reference-obfuscated forms)
 - Documentation now recommends dedicated, limited API keys for Cloud TTS
 

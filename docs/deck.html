@@ -16,9 +16,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=News+Cycle:400,700|Lato:400,700,400italic,700italic&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" integrity="sha384-tK61vs+AeByBmiQ/i6CLgp/PbaaoB/k7M4J5mlX70GVtBPGUk5avjbXhSwhsf3fS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.css" integrity="sha384-rKClnwfQQ2b7LYSOAhRvm5m4LS7QKciQTAXBpVvr30y6oGB+ZBBXlpDnvFqlv5Eu" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/themes/base/jquery-ui.min.css" integrity="sha384-zR/jkclV8JzpZv6ONtyAg2c/SJQRL8k3ZYyDf2O9XGHO16FV9l6/kEdN4IGkspLj" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/simple.css" integrity="sha384-ehqmozZTBdv1kA7Yt6spb58A7CjWyVBkGSylak98DAT911TnSeJFdGLTPHsHatzi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/theme/simple.css" integrity="sha384-QcLGDXPg6vixKrwgaaqB7i5cbCi4awm8IiVWxeB1sfgOXOLRnGbb9piHMbRL6GV8" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css" integrity="sha384-IBgYl+I5X6ZDZXI5zv1vsSE3VopDomz4BxSu/GlxaPHfFtcrJ3uj70z1w6srO9zU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/themes/light-border.css" integrity="sha384-oAnSdqFEFRIeYi0SBLHb5HS5ALP/C8FjjBKFAHpjn/9cXWK3iKVrWaxJRz3t9a91" crossorigin="anonymous">
@@ -57,7 +57,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js" integrity="sha384-SStJQoPipVtHHnIgUfDI+jTAbSyU+HMbhwt2XRRNpLIRFg9VguopT6Y4+cdOlkqg" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js" integrity="sha384-rZIIVPQD/+U9IL3I62KrBHuVtPgYv+xdXvER5RBiVQRszJEJfLKRrcrZwI7fhcHT" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.js" integrity="sha384-UilXW7W77EPIY5TmQGBrjhBPcfX40NqGwuIC8DGs6OeGTCxKy36B+DiOXtfqgk9S" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js" integrity="sha384-AiTRpehQ7zqeua0Ypfa6Q4ki/ddhczZxrKtiQbTQUlJIhBkTeyoZP9/W/5ulFt29" crossorigin="anonymous"></script>
 
@@ -91,7 +91,7 @@
               if (e.data.empty) {
                 document.getElementById('slides-container').innerHTML =
                   '<section><div style="text-align:center;padding:2em;color:#999;"><p>Enter text to preview...</p></div></section>';
-                Reveal.initialize({ controls: false, progress: false, transition: 'none' });
+                Reveal.initialize({ controls: false, progress: false, transition: 'none', postMessage: false });
                 return;
               }
 
@@ -143,7 +143,8 @@
                 overview: false,
                 center: true,
                 transition: 'none',
-                margin: 0.1
+                margin: 0.1,
+                postMessage: false
               }).then(function() {
                 // Slides are vertical within a single deck section
                 try { Reveal.slide(0, slideIndex, 0); } catch(err) {}

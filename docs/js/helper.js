@@ -32,6 +32,16 @@ body{
   overflow: hidden;
 }
 
+/* Keep the heading look of reveal.js 5's simple theme (6.0 switched to
+   uppercase, weight 600 and smaller sizes) */
+:root{
+  --r-heading-text-transform: none;
+  --r-heading-font-weight: normal;
+  --r-heading1-size: 3.77em;
+  --r-heading2-size: 2.11em;
+  --r-heading3-size: 1.55em;
+}
+
 #highlighted_cursor {
   display: none;
   top: 0;
