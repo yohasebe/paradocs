@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import puppeteer from 'puppeteer';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const IMG_DIR = '/Users/yohasebe/Library/CloudStorage/Dropbox/code/paradocs/docs/img';
+const IMG_DIR = fileURLToPath(new URL('../docs/img', import.meta.url));
 const BASE_URL = 'http://localhost:8765';
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
