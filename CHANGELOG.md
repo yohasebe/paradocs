@@ -2,6 +2,15 @@
 
 All notable changes to Paradocs are documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Cloud TTS API keys are kept only for the current tab by default. A new **Remember in this browser** option saves them across visits; turning it off removes stored keys immediately. Keys saved by earlier versions stay remembered.
+
+### Security
+- Markdown links are rendered as plain text unless they use `http:`, `https:` or `mailto:`, so a document can no longer run script through a `javascript:` link (including character-reference-obfuscated forms)
+- Documentation now recommends dedicated, limited API keys for Cloud TTS
+
 ## [1.0.1] - 2026-04-07
 
 ### Added

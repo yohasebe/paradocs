@@ -68,6 +68,37 @@ function configureMarked() {
     gfm: true,
     breaks: false
   });
+
+  // Links: render unsafe schemes (javascript:, data:, vbscript:, ...) as plain text.
+  // Returning false falls back to marked's default link renderer.
+  marked.use({
+    renderer: {
+      link(token) {
+        if (isSafeLinkHref(token.href)) return false;
+        return this.parser.parseInline(token.tokens);
+      }
+    }
+  });
+}
+
+const SAFE_LINK_PROTOCOLS = ['http:', 'https:', 'mailto:'];
+
+/**
+ * Whether a link target is safe to emit as an href.
+ * Resolves the URL the way the browser will: character references are
+ * decoded by the HTML parser (marked emits them as-is), then the URL parser
+ * strips tabs/newlines and lowercases the scheme.
+ * Relative URLs resolve against the base and count as safe.
+ */
+function isSafeLinkHref(href) {
+  if (typeof href !== 'string') return false;
+  try {
+    const decoder = document.createElement('textarea');
+    decoder.innerHTML = href;
+    return SAFE_LINK_PROTOCOLS.includes(new URL(decoder.value, 'https://paradocs.invalid/').protocol);
+  } catch (_e) {
+    return false;
+  }
 }
 
 // ---------------------------------------------------------------------------

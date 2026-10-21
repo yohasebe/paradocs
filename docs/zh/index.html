@@ -338,7 +338,8 @@
                 <span class='form-label'>API Key</span>
                 <input type="password" class="form-control inline-form" id='tts_api_key' placeholder='输入您的API密钥' autocomplete="off">
                 <span id='tts_api_key_verify' class="btn btn-sm btn-outline-secondary" style="margin-left:6px; white-space:nowrap;">Verify</span>
-                <small class="text-muted" style="margin-left:8px;">仅保存在您的浏览器中</small>
+                <label style="margin-left:8px; white-space:nowrap;"><input type="checkbox" id="tts_remember_key"> 在此浏览器中记住</label>
+                <small class="text-muted" style="display:block; margin-top:4px;">关闭：关闭标签页后密钥即被清除。开启：同一域名下的其他页面可能读取到它。</small>
                 <span id='tts_api_key_status' style='margin-left:8px;'></span>
               </div>
               <div id='tts_cloud_voice_controller' style='display:none;'>

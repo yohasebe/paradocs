@@ -145,6 +145,79 @@ describe('AutoSave', () => {
     });
   });
 
+  // ---- API keys ----
+
+  describe('saveApiKeys / loadApiKeys', () => {
+    const keys = { openai: 'sk-openai-test', elevenlabs: 'el-test' };
+
+    // Every stored string, so a key cannot hide under another field name
+    function allStoredText(storage) {
+      return Object.keys(storage).map(k => storage.getItem(k)).join('\n');
+    }
+
+    beforeEach(() => {
+      sessionStorage.clear();
+    });
+
+    test('new user defaults to not remembering', () => {
+      expect(autosave.loadApiKeys()).toEqual({
+        keys: { openai: '', elevenlabs: '' },
+        remember: false
+      });
+    });
+
+    test('not remembered: keys stay out of localStorage but survive a reload in this tab', () => {
+      autosave.saveApiKeys(keys, false);
+      expect(allStoredText(localStorage)).not.toContain('sk-openai-test');
+      expect(allStoredText(localStorage)).not.toContain('el-test');
+      expect(new AutoSave('paradocs_').loadApiKeys()).toEqual({ keys, remember: false });
+    });
+
+    test('not remembered: keys are gone once the tab closes', () => {
+      autosave.saveApiKeys(keys, false);
+      sessionStorage.clear();  // what closing the tab does
+      expect(new AutoSave('paradocs_').loadApiKeys().keys).toEqual({ openai: '', elevenlabs: '' });
+    });
+
+    test('remembered: keys persist in localStorage and leave sessionStorage', () => {
+      autosave.saveApiKeys(keys, false);
+      autosave.saveApiKeys(keys, true);
+      expect(allStoredText(sessionStorage)).not.toContain('sk-openai-test');
+      sessionStorage.clear();
+      expect(new AutoSave('paradocs_').loadApiKeys()).toEqual({ keys, remember: true });
+    });
+
+    test('turning remember off removes stored keys, including the legacy field', () => {
+      autosave.saveSettings({ font_size: '40', tts_provider: 'openai', tts_api_key: 'sk-legacy' });
+      autosave.saveApiKeys(keys, true);
+      autosave.saveApiKeys(keys, false);
+      expect(allStoredText(localStorage)).not.toContain('sk-');
+      expect(allStoredText(localStorage)).not.toContain('el-test');
+      expect(autosave.loadSettings().font_size).toBe('40');
+    });
+
+    test('keys saved before the opt-in existed keep remember on', () => {
+      autosave.saveSettings({ tts_api_key_openai: 'sk-old', tts_provider: 'openai' });
+      expect(autosave.loadApiKeys()).toEqual({
+        keys: { openai: 'sk-old', elevenlabs: '' },
+        remember: true
+      });
+    });
+
+    test('legacy single key maps to its provider', () => {
+      autosave.saveSettings({ tts_api_key: 'el-legacy', tts_provider: 'elevenlabs' });
+      expect(autosave.loadApiKeys()).toEqual({
+        keys: { openai: '', elevenlabs: 'el-legacy' },
+        remember: true
+      });
+    });
+
+    test('explicit remember off is respected even if keys remain', () => {
+      autosave.saveSettings({ tts_api_key_openai: 'sk-x', tts_remember_key: false });
+      expect(autosave.loadApiKeys().remember).toBe(false);
+    });
+  });
+
   // ---- debounce ----
 
   describe('debouncedSaveText', () => {

@@ -427,7 +427,7 @@ In addition to the browser's built-in TTS, Paradocs supports cloud-based text-to
 To use Cloud TTS, expand the **Cloud TTS (Advanced)** section on the input page:
 
 1. **TTS Provider**: Select *OpenAI* or *ElevenLabs* from the dropdown. Selecting a cloud provider hides the browser TTS controls and shows cloud-specific options.
-2. **API Key**: Enter your API key for the selected provider. Click **Verify** to check that the key is valid. Your key is stored only in your browser's local storage and is never sent to any server other than the provider's API.
+2. **API Key**: Enter your API key for the selected provider. Click **Verify** to check that the key is valid. Your key is never sent to any server other than the provider's API. By default it is kept only for the current tab and is cleared when the tab closes. Check **Remember in this browser** to keep it across visits; it is then saved in the browser's local storage, where other pages served from the same domain could read it.
 3. **Voice**: For OpenAI, choose from a fixed list of voices (alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer). For ElevenLabs, the voice list is fetched from your account after entering a valid API key.
 4. **Speed** (OpenAI only): Adjust the playback speed from 0.5× to 2.0×.
 
@@ -437,6 +437,8 @@ To use Cloud TTS, expand the **Cloud TTS (Advanced)** section on the input page:
 - An active internet connection and a valid API key are required.
 - API usage may incur costs according to the provider's pricing.
 - When exporting as a standalone HTML file, API keys are **not** included in the exported file for security reasons. Cloud TTS will not be available in exported files.
+
+**Protecting your API key:** Create a key dedicated to Paradocs, restricted to text-to-speech, with a spending or credit limit, where your provider supports it (for example, an OpenAI project key with restricted permissions and a project budget, or an ElevenLabs key limited to text-to-speech with a credit quota). If a key might have been exposed, revoke it in the provider's dashboard and create a new one.
 
 #### Sticky Note
 

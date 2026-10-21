@@ -152,15 +152,6 @@ if (autosave.hasSavedData()) {
               if (savedSettings.speech_rate) $('#rate_selected').val(savedSettings.speech_rate);
             }, 200);
           }
-          // Restore per-provider API keys
-          if (window._setCloudKey) {
-            if (savedSettings.tts_api_key_openai) window._setCloudKey('openai', savedSettings.tts_api_key_openai);
-            if (savedSettings.tts_api_key_elevenlabs) window._setCloudKey('elevenlabs', savedSettings.tts_api_key_elevenlabs);
-            // Legacy: single key field
-            if (!savedSettings.tts_api_key_openai && !savedSettings.tts_api_key_elevenlabs && savedSettings.tts_api_key) {
-              if (savedSettings.tts_provider) window._setCloudKey(savedSettings.tts_provider, savedSettings.tts_api_key);
-            }
-          }
           if (savedSettings.tts_provider && savedSettings.tts_provider !== 'browser') {
             $('#tts_provider_selected').val(savedSettings.tts_provider).trigger('change');
             // Wait for voice list to populate, then restore selection
@@ -614,8 +605,10 @@ $("#voice_selected").change(function(){
     }
   });
 
-  // Per-provider API key storage
-  var _cloudKeys = { openai: '', elevenlabs: '' };
+  // Per-provider API key storage, restored from this browser or this tab
+  var storedKeys = autosave.loadApiKeys();
+  var _cloudKeys = { openai: storedKeys.keys.openai, elevenlabs: storedKeys.keys.elevenlabs };
+  $('#tts_remember_key').prop('checked', storedKeys.remember);
   var _prevProvider = 'browser';
 
   // Provider change
@@ -727,10 +720,24 @@ $("#voice_selected").change(function(){
     }
   }
 
-  // Expose for settings restore (closure-scoped, not on window)
+  // Store keys where the "remember" choice says; syncs the visible field first
+  function saveCloudKeys() {
+    var provider = $('#tts_provider_selected').val();
+    if (_cloudKeys.hasOwnProperty(provider)) {
+      _cloudKeys[provider] = $('#tts_api_key').val() || '';
+    }
+    autosave.saveApiKeys(
+      { openai: _cloudKeys.openai, elevenlabs: _cloudKeys.elevenlabs },
+      $('#tts_remember_key').is(':checked')
+    );
+  }
+
+  // Turning "remember" off removes stored keys at once, not at the next launch
+  $('#tts_remember_key').on('change', saveCloudKeys);
+
+  // Expose for settings restore and saving
   window._populateCloudVoices = populateCloudVoices;
-  window._getCloudKey = function(provider) { return _cloudKeys[provider] || ''; };
-  window._setCloudKey = function(provider, key) { _cloudKeys[provider] = key; };
+  window._saveCloudKeys = saveCloudKeys;
 })();
 
 //////////////////// Default config (matches paradocs.conf) ///////////////
@@ -999,18 +1006,11 @@ function saveFormSettings(config) {
     wallpaper: $('#wallpaper_selected').val() || 'sandpaper.png',
     color_inverted: config.color_inverted,
     tts_provider: config.tts_provider || 'browser',
-    // Sync current input to _cloudKeys before saving
-    tts_api_key_openai: (function() {
-      if (config.tts_provider === 'openai' && config.tts_api_key) window._setCloudKey('openai', config.tts_api_key);
-      return window._getCloudKey('openai');
-    })(),
-    tts_api_key_elevenlabs: (function() {
-      if (config.tts_provider === 'elevenlabs' && config.tts_api_key) window._setCloudKey('elevenlabs', config.tts_api_key);
-      return window._getCloudKey('elevenlabs');
-    })(),
     tts_cloud_voice: config.tts_cloud_voice || '',
     tts_cloud_rate: config.tts_cloud_rate || '1.0'
   });
+  // Keys are stored separately, honoring the "remember" choice
+  window._saveCloudKeys();
 }
 
 function clearImages() {

@@ -18,6 +18,7 @@
     this._prefix = prefix || 'paradocs_';
     this._textKey = this._prefix + 'editor_text';
     this._settingsKey = this._prefix + 'settings';
+    this._keysKey = this._prefix + 'tts_keys';
     this._timer = null;
   }
 
@@ -71,6 +72,80 @@
     } catch (_e) {
       return null;
     }
+  };
+
+  // ---- API keys ----
+  // Keys go into the persistent settings only when the user opts in
+  // ("remember"). Otherwise they live in sessionStorage and vanish with
+  // the tab, so other pages on the same origin cannot read them later.
+
+  var KEY_FIELDS = { openai: 'tts_api_key_openai', elevenlabs: 'tts_api_key_elevenlabs' };
+
+  AutoSave.prototype._getSessionStorage = function () {
+    try {
+      return sessionStorage;
+    } catch (_e) {
+      return null;
+    }
+  };
+
+  /**
+   * Store per-provider keys ({ openai, elevenlabs }) according to `remember`.
+   * Always removes them from the place they should not be.
+   */
+  AutoSave.prototype.saveApiKeys = function (keys, remember) {
+    var settings = this.loadSettings() || {};
+    var session = this._getSessionStorage();
+    Object.keys(KEY_FIELDS).forEach(function (provider) {
+      if (remember) {
+        settings[KEY_FIELDS[provider]] = keys[provider] || '';
+      } else {
+        delete settings[KEY_FIELDS[provider]];
+      }
+    });
+    delete settings.tts_api_key;  // legacy single-key field
+    settings.tts_remember_key = !!remember;
+    this.saveSettings(settings);
+    if (!session) return;
+    try {
+      if (remember) {
+        session.removeItem(this._keysKey);
+      } else {
+        session.setItem(this._keysKey, JSON.stringify(keys));
+      }
+    } catch (_e) { /* storage unavailable */ }
+  };
+
+  /**
+   * Returns { keys: { openai, elevenlabs }, remember }.
+   * Users whose keys were saved before the opt-in existed keep remember = true.
+   */
+  AutoSave.prototype.loadApiKeys = function () {
+    var settings = this.loadSettings() || {};
+    var keys = { openai: '', elevenlabs: '' };
+    Object.keys(KEY_FIELDS).forEach(function (provider) {
+      keys[provider] = settings[KEY_FIELDS[provider]] || '';
+    });
+    // Legacy: single key field tied to the selected provider
+    if (settings.tts_api_key && KEY_FIELDS[settings.tts_provider] && !keys[settings.tts_provider]) {
+      keys[settings.tts_provider] = settings.tts_api_key;
+    }
+    var remember = settings.tts_remember_key;
+    if (typeof remember !== 'boolean') {
+      remember = !!(keys.openai || keys.elevenlabs);
+    }
+    var session = this._getSessionStorage();
+    if (session) {
+      try {
+        var sessionKeys = JSON.parse(session.getItem(this._keysKey));
+        if (sessionKeys) {
+          Object.keys(KEY_FIELDS).forEach(function (provider) {
+            if (sessionKeys[provider]) keys[provider] = sessionKeys[provider];
+          });
+        }
+      } catch (_e) { /* storage unavailable or malformed */ }
+    }
+    return { keys: keys, remember: remember };
   };
 
   // ---- clear ----

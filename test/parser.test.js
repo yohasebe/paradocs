@@ -412,6 +412,45 @@ describe('Parser', () => {
       expect(html).toContain('Invalid');
     });
 
+    describe('link schemes', () => {
+      // Judge by what the DOM resolves each href to, not by string matching
+      function linkProtocols(src) {
+        var div = document.createElement('div');
+        div.innerHTML = new Parser('----\n' + src + '\n----', config).parse();
+        return Array.from(div.querySelectorAll('a[href]')).map(a => a.protocol);
+      }
+
+      test.each([
+        ['javascript', 'Click [here](javascript:alert(1)) now.'],
+        ['mixed case', 'Click [here](JavaScript:alert(1)) now.'],
+        ['decimal entity colon', 'Click [here](javascript&#58;alert(1)) now.'],
+        ['hex entity letter', 'Click [here](&#x6A;avascript:alert(1)) now.'],
+        ['data URL', 'Click [here](data:text/html;base64,PHNjcmlwdD4=) now.'],
+        ['vbscript', 'Click [here](vbscript:msgbox(1)) now.'],
+        ['list item', '* Item [here](javascript:alert(1))'],
+        ['blockquote', '> Quote [here](javascript:alert(1))'],
+        ['table cell', '| a | b |\n|---|---|\n| [c](javascript:alert(1)) | d |'],
+      ])('drops unsafe link: %s', (_name, src) => {
+        // Each case renders a live javascript:/data: link without the filter
+        var protocols = linkProtocols(src);
+        protocols.forEach(p => expect(['http:', 'https:', 'mailto:']).toContain(p));
+      });
+
+      test('keeps the link text when dropping an unsafe link', () => {
+        var html = new Parser('----\nClick [here](javascript:alert(1)) now.\n----', config).parse();
+        expect(html).toContain('here');
+        expect(html).not.toMatch(/javascript:/i);
+      });
+
+      test.each([
+        ['https', 'Visit [site](https://example.com).', 'https:'],
+        ['http', 'Visit [site](http://example.com).', 'http:'],
+        ['mailto', 'Write [me](mailto:a@example.com).', 'mailto:'],
+      ])('keeps safe link: %s', (_name, src, expected) => {
+        expect(linkProtocols(src)).toEqual([expected]);
+      });
+    });
+
     test('escapes HTML in note image URL', () => {
       var text = '----\nHello{image: javascript:alert(1)}\n----';
       var p = new Parser(text, config);

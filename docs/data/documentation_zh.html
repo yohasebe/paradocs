@@ -404,7 +404,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <p>要使用云端 TTS，请展开输入页面上的**云端TTS（高级）**部分：</p>
 <ol>
 <li><strong>TTS 提供商</strong>：从下拉菜单中选择 <em>OpenAI</em> 或 <em>ElevenLabs</em>。选择云端提供商后，浏览器 TTS 控件将隐藏，显示云端专用选项。</li>
-<li><strong>API 密钥</strong>：输入所选提供商的 API 密钥。点击 <strong>Verify</strong> 按钮检查密钥是否有效。您的密钥仅保存在浏览器的本地存储中，不会发送到提供商 API 以外的任何服务器。</li>
+<li><strong>API 密钥</strong>：输入所选提供商的 API 密钥。点击 <strong>Verify</strong> 按钮检查密钥是否有效。您的密钥不会发送到提供商 API 以外的任何服务器。默认情况下，密钥仅在当前标签页中保留，关闭标签页后即被清除。勾选<strong>在此浏览器中记住</strong>可在下次访问时继续使用；此时密钥会保存在浏览器的本地存储中，同一域名下提供的其他页面可能读取到它。</li>
 <li><strong>语音</strong>：对于 OpenAI，可从固定的语音列表（alloy、ash、ballad、coral、echo、fable、nova、onyx、sage、shimmer）中选择。对于 ElevenLabs，输入有效的 API 密钥后会自动从您的账户获取语音列表。</li>
 <li><strong>速度</strong>（仅限 OpenAI）：可在 0.5 倍至 2.0 倍的范围内调整播放速度。</li>
 </ol>
@@ -415,6 +415,7 @@ You can also add a pop-up image. {image: url_to_your_image_file.(png|jpg|gif)}
 <li>API 使用可能会根据提供商的定价产生费用。</li>
 <li>导出为独立 HTML 文件时，出于安全考虑，API 密钥<strong>不会</strong>包含在导出文件中。导出文件中将无法使用云端 TTS。</li>
 </ul>
+<p><strong>保护您的 API 密钥：</strong> 如果提供商支持，请为 Paradocs 创建专用密钥，将权限限制为语音合成，并设置消费或额度上限（例如：权限受限的 OpenAI 项目密钥及项目预算，或仅限语音合成并设有额度上限的 ElevenLabs 密钥）。如果密钥可能已泄露，请在提供商的控制台中将其撤销并创建新密钥。</p>
 <h4>便签</h4>
 <p>您可以在演示过程中将想到的内容写在便签上，展示给观众。</p>
 <p>点击演示屏幕左上角的便签图标即可显示或隐藏便签。即使幻灯片切换，便签的内容也会保留。</p>

@@ -404,7 +404,7 @@ To display an image on a slide, make sure that the above command is the only blo
 <p>To use Cloud TTS, expand the <strong>Cloud TTS (Advanced)</strong> section on the input page:</p>
 <ol>
 <li><strong>TTS Provider</strong>: Select <em>OpenAI</em> or <em>ElevenLabs</em> from the dropdown. Selecting a cloud provider hides the browser TTS controls and shows cloud-specific options.</li>
-<li><strong>API Key</strong>: Enter your API key for the selected provider. Click <strong>Verify</strong> to check that the key is valid. Your key is stored only in your browser&#39;s local storage and is never sent to any server other than the provider&#39;s API.</li>
+<li><strong>API Key</strong>: Enter your API key for the selected provider. Click <strong>Verify</strong> to check that the key is valid. Your key is never sent to any server other than the provider&#39;s API. By default it is kept only for the current tab and is cleared when the tab closes. Check <strong>Remember in this browser</strong> to keep it across visits; it is then saved in the browser&#39;s local storage, where other pages served from the same domain could read it.</li>
 <li><strong>Voice</strong>: For OpenAI, choose from a fixed list of voices (alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer). For ElevenLabs, the voice list is fetched from your account after entering a valid API key.</li>
 <li><strong>Speed</strong> (OpenAI only): Adjust the playback speed from 0.5× to 2.0×.</li>
 </ol>
@@ -415,6 +415,7 @@ To display an image on a slide, make sure that the above command is the only blo
 <li>API usage may incur costs according to the provider&#39;s pricing.</li>
 <li>When exporting as a standalone HTML file, API keys are <strong>not</strong> included in the exported file for security reasons. Cloud TTS will not be available in exported files.</li>
 </ul>
+<p><strong>Protecting your API key:</strong> Create a key dedicated to Paradocs, restricted to text-to-speech, with a spending or credit limit, where your provider supports it (for example, an OpenAI project key with restricted permissions and a project budget, or an ElevenLabs key limited to text-to-speech with a credit quota). If a key might have been exposed, revoke it in the provider&#39;s dashboard and create a new one.</p>
 <h4>Sticky Note</h4>
 <p>You can show your audience what comes to mind during your presentation by writing it in a sticky note. </p>
 <p>You can show or hide the sticky note by clicking its icon at the top left of the presentation screen. The contents of the sticky note will be retained even if the slide changes.</p>
