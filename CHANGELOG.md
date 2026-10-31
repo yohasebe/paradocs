@@ -2,6 +2,11 @@
 
 All notable changes to Paradocs are documented in this file.
 
+## [Unreleased]
+
+### Security
+- Content Security Policy on every page now also sets `object-src 'none'`, `base-uri 'self'` and `form-action 'self'`
+
 ## [1.1.0] - 2026-10-21
 
 ### Changed
